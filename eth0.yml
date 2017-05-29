@@ -1,0 +1,21 @@
+---
+- hosts: all
+  tasks: 
+   
+      
+   - name: creating eth0
+     blockinfile:
+        path: /home/sunny/test/ifcfg-eth0
+        block: |
+         DEVICE=eth0
+      	 HWADDR=<<Hardware Address of eth0 interface>>
+	 TYPE=Ethernet
+	 ONBOOT=yes
+	 NM_CONTROLLED=no
+	 BOOTPROTO=none
+	 BRIDGE=br0
+          
+
+...
+
+
