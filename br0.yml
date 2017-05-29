@@ -2,14 +2,14 @@
 - hosts: all
   tasks: 
    
-   - copy: 
+   - copy: Creates br0 file if doesnot exists 
       content: ""      
-      dest: "/home/sunny/test/ifcfg-br01"
+      dest: "/etc/sysconfig/network-scripts/ifcfg-br0"
    
       
    - name: creating Br0 file
      blockinfile:
-        path: /home/sunny/test/ifcfg-br01
+        path: /etc/sysconfig/network-scripts/ifcfg-br0
         block: |
          DEVICE=br0
          BOOTPROTO=static
