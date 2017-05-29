@@ -3,13 +3,21 @@
   tasks: 
    
       
-
-   - name: copying
-     copy: content="Device=br0 
-                    BOOTPROTO=static" dest="/etc/sysconfig/network-scripts/ifcfg-br01"
-
-
-
+   - name: creating
+     blockinfile:
+        path: /home/sunny/test/ifcfg-br01
+        block: |
+         DEVICE=br0
+         BOOTPROTO=static
+         ONBOOT=yes
+         TYPE=Bridge
+         NM_CONTROLLED=no
+         IPADDR=<ip>
+         NETMASK=255.255.252.0
+         GATEWAY=<ip>
+         DNS1=<ip>
+         DNS2=<ip>
+          
 
 ...
 
