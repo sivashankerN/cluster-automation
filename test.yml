@@ -5,7 +5,7 @@
       
    - name: creating
      blockinfile:
-        path: /home/sunny/test/ifcfg-br01
+        path: /etc/sysconfig/network-scripts/ifcfg-br0
         block: |
          DEVICE=br0
          BOOTPROTO=static
