@@ -3,7 +3,7 @@
   tasks: 
    
       
-   - name: creating
+   - name: creating Br0 file
      blockinfile:
         path: /etc/sysconfig/network-scripts/ifcfg-br0
         block: |
