@@ -1,0 +1,16 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+  tasks: 
+   - name: git install
+     command: yum -y install git
+     register: out
+   - debug: var=out.stdout_lines
+
+   - name: cloning from git
+     command: git clone https://github.com/vlead/setup-ovpl-centos.git
+     register: out
+   - debug: var=out.stdout_lines 
+
+   

@@ -1,6 +1,4 @@
 ---
-
-  
    
    - copy:  
        content: ""      
@@ -16,11 +14,11 @@
          ONBOOT=yes
          TYPE=Bridge
          NM_CONTROLLED=no
-         IPADDR=<ip>
+         IPADDR=10.2.59.220
          NETMASK=255.255.252.0
-         GATEWAY=<ip>
-         DNS1=<ip>
-         DNS2=<ip>
+         GATEWAY=10.2.56.1
+         DNS1=10.4.12.160
+         DNS2=10.4.12.220
           
 
 ...
