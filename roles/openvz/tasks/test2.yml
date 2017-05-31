@@ -1,0 +1,5 @@
+---
+    - yum: name=git state=installed
+      environment: 
+          http_proxy: http://proxy.iiit.ac.in:8080
+          https_proxy: http://proxy.iiit.ac.in:8080
