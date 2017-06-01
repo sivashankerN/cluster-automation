@@ -1,0 +1,13 @@
+---
+
+- name: Set root password
+  shell: sudo vzctl set 1001 --userpasswd root:test
+
+- name: copy interface ifcfg-eth0 file
+  copy: src=ifcfg-eth0 dest=/vz/private/1001/etc/sysconfig/network-scripts/
+  
+- name: copy interface ifcfg-eth1 file
+  copy: src=ifcfg-eth1 dest=/vz/private/1001/etc/sysconfig/network-scripts/
+
+- name: Router's Network restart
+  command: vzctl exec 1001 service network restart
