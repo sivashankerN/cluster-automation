@@ -1,0 +1,3 @@
+---
+# tasks file for cluster
+- include: runcluster.yml
