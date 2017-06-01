@@ -3,7 +3,7 @@
   become: root
   #become_method: sudo
   roles:
-   # - apache
+   # - basesetup
    #  - openvz
    # - cluster
     - router
