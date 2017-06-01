@@ -5,7 +5,7 @@
        dest: "/etc/sysconfig/network-scripts/ifcfg-br0"
    
       
-   - name: creating Br0 file
+   - name: creating br0 bridge
      blockinfile:
         path: /etc/sysconfig/network-scripts/ifcfg-br0
         block: |
