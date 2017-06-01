@@ -1,5 +1,5 @@
 ---
 #- include: test2.yml
-- include: test3.yml
-- include: test4.yml
+- include: cloning.yml
+- include: shellrun.yml
 # tasks file for openvz
