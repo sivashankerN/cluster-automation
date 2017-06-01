@@ -1,8 +1,9 @@
 ---
 - hosts: localhost
-  become: vlead04
-  become_method: "sudo"
+  become: root
+  #become_method: sudo
   roles:
    # - apache
    #  - openvz
-    - cluster
+   # - cluster
+    - router
