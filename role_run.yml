@@ -1,7 +1,8 @@
 ---
-- hosts: all
-  become: yes
+- hosts: localhost
+  become: vlead04
   become_method: "sudo"
   roles:
    # - apache
-     - openvz
+   #  - openvz
+    - cluster
