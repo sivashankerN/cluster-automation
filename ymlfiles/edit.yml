@@ -1,0 +1,14 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+  tasks: 
+    - replace: 
+          path: /etc/sysctl.conf
+          regexp: 'net.ipv4.ip_forward = 1'
+          replace: 'net.ipv4.ip_forward = 0'
+           
+    - replace: 
+          path: /etc/vz/conf/ve-vswap-256m.conf-sample 
+          regexp: 'NETFILTER="full"'
+          replace: 'NETFILTER="stateless"'

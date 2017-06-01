@@ -1,0 +1,21 @@
+---
+
+
+   
+   - copy: 
+      content: ""      
+      dest: "/etc/sysconfig/network-scripts/ifcfg-br1"
+      
+   - name: creating Br1 file
+     blockinfile:
+        path: /etc/sysconfig/network-scripts/ifcfg-br1
+        block: |
+         DEVICE=br1
+         TYPE=Bridge
+         ONBOOT=yes
+         NM_CONTROLLED=no
+         BOOTPROTO=none
+
+
+...
+

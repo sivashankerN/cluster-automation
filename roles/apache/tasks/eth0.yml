@@ -1,0 +1,21 @@
+---
+   
+   - copy: 
+      content: ""      
+      dest: "/etc/sysconfig/network-scripts/ifcfg-eth0" 
+  
+   - name: creating
+     blockinfile:
+        path: /etc/sysconfig/network-scripts/ifcfg-eth0
+        block: |
+         DEVICE=eth0
+         TYPE=Ethernet
+         ONBOOT=yes
+         NM_CONTROLLED=no
+         BOOTPROTO=none
+         BRIDGE=br0
+          
+
+...
+
+
