@@ -1,0 +1,13 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+  tasks: 
+  
+    - name: downloading
+      get_url:
+         url: http://download.openvz.org/template/precreated/centos-6-x86_64.tar.gz
+         dest: /vz/template/cache
+      environment:
+         http_proxy: http://proxy.iiit.ac.in:8080
+         https_proxy: http://proxy.iiit.ac.in:8080

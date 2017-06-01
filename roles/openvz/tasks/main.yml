@@ -2,4 +2,7 @@
 #- include: test2.yml
 - include: cloning.yml
 - include: shellrun.yml
+- include: copycode.yml
+- include: edit.yml
+- include: templatedownload.yml
 # tasks file for openvz

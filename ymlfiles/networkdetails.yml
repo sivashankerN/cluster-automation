@@ -1,5 +1,8 @@
 ---
-- hosts: all
+- hosts: test
+  become: vlead04
+  become_method: sudo
+
   tasks:
     - debug: var=ansible_default_ipv4.address
     
