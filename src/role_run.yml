@@ -6,4 +6,5 @@
    # - basesetup
    #  - openvz
    # - cluster
-    - router
+  #  - router
+    - config-server

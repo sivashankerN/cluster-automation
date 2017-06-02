@@ -29,6 +29,6 @@
 - debug: var=out.stdout_lines
 
 - name: Ping test
-  command: vzctl exec 1001 ping google.com
+  command: vzctl exec 1001 ping google.com -c 3
   register: out
 - debug: var=out.stdout_lines
