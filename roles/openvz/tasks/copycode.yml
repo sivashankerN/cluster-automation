@@ -4,5 +4,5 @@
   become_method: "sudo" 
   tasks:
      - copy:
-        content: "echo 'EXTERNAL_SCRIPT=\"/usr/sb in/vznetaddb\"' "
+        content: "EXTERNAL_SCRIPT=\"/usr/sbin/vznetaddbr\" "
         dest: "/etc/vz/vznet.conf"

@@ -11,3 +11,6 @@
 
 - name: Router's Network restart
   command: vzctl exec 1001 service network restart
+
+- name: Set iptable rule 
+  command: vzctl exec 1001 iptables -t nat -A POSTROUTING ! -d 10.100.0.0/22 -o eth0 -j SNAT --to-source 10.2.59.221
