@@ -1,22 +1,43 @@
----
 
-- name: Set root password
-  shell: vzctl set 1002 --userpasswd root:test
 
-- name: copy interface ifcfg-eth0 file
-  copy: src=ifcfg-eth0 dest=/vz/private/1002/etc/sysconfig/network-scripts/
+##  - name: Exporting proxy
+##    command: vzctl exec 1002 export http_proxy="http://proxy.iiit.ac.in:8080" && vzctl exec 1002 export https_proxy="http://proxy.iiit.ac.in:8080" && vzctl exec 1002 yum install openssh -y
+##    register: out
+##  - debug: var=out.stdout_lines
+# - lineinfile:
+#     path: /vz/private/1002/etc/yum.conf
+#     regexp: '^proxy=http://'
+#     line: 'proxy={{ proxy_env.http_proxy }}'
+# - replace:
+ #    path: /vz/private/1002/etc/yum.conf
+ #    regexp: '^proxy=.*'
+ #    replace: 'proxy'
+  # - name: Check proxy
+  #   shell: echo {{proxy_env}}
+  #   register: out
+  # - debug:
+  #    var:  out  
+
+
+ # - name: Exporting proxy
+  #  command: vzctl exec 1002 export https_proxy="http://proxy.iiit.ac.in:8080"
+   # register: out
+ # - debug: var=out.stdout_lines
+
+
+ # - name: Exporting proxy
+  #  command: vzctl exec 1002 echo $http_proxy
+   # register: out
+ # - debug: var=out.stdout_lines
   
-- name: copy interface ifcfg-eth1 file
-  copy: src=ifcfg-eth1 dest=/vz/private/1002/etc/sysconfig/network-scripts/
-
-- name: Router's Network restart
-  command: vzctl exec 1002 service network restart
-  register: out
-- debug: var=out.stdout_lines
-
-- name: ping test
-  command: vzctl exec 1002 ping google.com -c 3
-  register: out
-- debug: var=out.stdout_lines
-
-
+ - name: installing openssh
+   command: vzctl exec 1002 export http_proxy="{{proxy_env.http_proxy}}" && export https_proxy="{{proxy_env.https_proxy}}" && yum install "{{item}}" -y
+   with_items:
+      - openssh-server
+      - openssh-clients  
+      - openssh
+   # command: vzctl exec 1002 yum install openssh -y
+#   environment:
+#        http_proxy: http://proxy.iiit.ac.in:8080
+#        https_proxy: http://proxy.iiit.ac.in:8080
+#  - debug: var=out.stdout_lines
