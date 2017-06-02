@@ -27,3 +27,8 @@
   command: vzctl restart 1001
   register: out
 - debug: var=out.stdout_lines
+
+- name: Ping test
+  command: vzctl exec 1001 ping google.com
+  register: out
+- debug: var=out.stdout_lines
