@@ -8,3 +8,4 @@
    # - cluster
   #  - router
     - config-server
+  #   - ossec-server
