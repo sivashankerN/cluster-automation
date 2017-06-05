@@ -1,4 +1,4 @@
 [localhost]
 127.0.0.1
-[server]
-192.168.28.3
+[config-server]
+10.2.59.222

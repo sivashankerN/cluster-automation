@@ -1,0 +1,5 @@
+---
+- name: copying file to create user
+  copy:
+    src: createuser.yml
+    dest: /vz/private/1002/root/

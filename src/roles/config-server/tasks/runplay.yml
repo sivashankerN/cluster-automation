@@ -1,0 +1,11 @@
+---
+
+- name : Create user vlead
+  command: vzctl set 1002 --userpasswd vlead:vlead
+- name: create directory
+  command: vzctl exec 1002 mkdir /home/vlead/.ssh/ && chmod 600 /home/vlead/.ssh/
+    
+- name: Generate ssh key
+  command: vzctl exec 1002 ssh-keygen  -f /home/vlead/.ssh/id_rsa -N '' && chown -R vlead:vlead /home/vlead/.ssh/
+
+

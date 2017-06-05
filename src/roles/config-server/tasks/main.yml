@@ -28,4 +28,6 @@
   #        - openssh
 #- debug: 
   #   var: out
-- include: installansible.yml
+#- include: installansible.yml
+#- include: path.yml
+- include: runplay.yml
