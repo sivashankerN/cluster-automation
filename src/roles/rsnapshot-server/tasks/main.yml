@@ -1,0 +1,10 @@
+---
+- name: Set root password
+  shell: vzctl set 1010 --userpasswd root:test
+
+- name: copy interface ifcfg-eth1 file
+  copy: src=ifcfg-eth1 dest=/vz/private/1010/etc/sysconfig/network-scripts/
+
+- name: Router's Network restart
+  command: vzctl exec 1010 service network restart
+# tasks file for Rsnapshot
