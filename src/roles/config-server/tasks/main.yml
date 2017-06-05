@@ -17,27 +17,15 @@
   #   register: out
   # - debug:
   #    var:  out  
-
-
- # - name: Exporting proxy
-  #  command: vzctl exec 1002 export https_proxy="http://proxy.iiit.ac.in:8080"
-   # register: out
- # - debug: var=out.stdout_lines
-
-
- # - name: Exporting proxy
-  #  command: vzctl exec 1002 echo $http_proxy
-   # register: out
- # - debug: var=out.stdout_lines
-  
- - name: installing openssh
-   command: vzctl exec 1002 export http_proxy="{{proxy_env.http_proxy}}" && export https_proxy="{{proxy_env.https_proxy}}" && yum install "{{item}}" -y
-   with_items:
-      - openssh-server
-      - openssh-clients  
-      - openssh
-   # command: vzctl exec 1002 yum install openssh -y
-#   environment:
-#        http_proxy: http://proxy.iiit.ac.in:8080
-#        https_proxy: http://proxy.iiit.ac.in:8080
-#  - debug: var=out.stdout_lines
+#- include: test.yml
+#- name: installing openssh
+ # command: vzctl exec 1002 export http_proxy="{{proxy_env.http_proxy}}" && export https_proxy="{{proxy_env.https_proxy}}" && yum install "{{item}}" -y && service sshd start &&  chkconfig sshd on  
+ # command: vzctl exec 1002 {{export_proxy}} && yum install "{{item}}" -y && service sshd start && chkconfig sshd on
+ # register: out  
+#  with_items:
+   #       - openssh-server
+ #         - openssh-clients  
+  #        - openssh
+#- debug: 
+  #   var: out
+- include: installansible.yml
