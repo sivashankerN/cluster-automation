@@ -1,7 +1,0 @@
----
-- hosts: localhost
-  tasks:
-    - name: reboot
-      command: vzctl restart 1001
-      register: out
-    - debug: var=out.stdout_lines
