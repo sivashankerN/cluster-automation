@@ -1,0 +1,10 @@
+#+Title: Requirements of automating the cluster creation 
+#+Author: Systems Team
+
+* Introduction
+  This document contains the requirements of automating the cluster
+  creation.
+* Requirements
+** Req 1
+   - Automate cluster creation using ansible
+   

@@ -5,27 +5,9 @@
   This document is for automating the Virtual Labs cluster setup using
   ansible( Configuration management tool).
 * Requirements 
-  - Automate the cluster setup
+  - [[./req/index.org][Requirements]]
 * Implementation
-** Automate Base machine setup
-*** base-setup role   
-** Automate OpenVZ setup
-*** openvz role
-** Automate Cluster nodes/servers creation
-*** nodes role 
-** Automate Router node configuration
-*** Router role
-** Automate Config-server node configuration
-*** config-server role
-** Automate DNS servers node configuration
-*** dns role
-** Automate Reverse proxy node configuration
-*** reverse-proxy role
-** Automate nagios node configuration
-*** nagios role
-** Automate ADS setup
-*** ads role
-** Automate rsnapshot node configuration
-*** rsnapshot role
-* Plan
+  - [[./imp/index.org][Implementation]]
+
+
   
