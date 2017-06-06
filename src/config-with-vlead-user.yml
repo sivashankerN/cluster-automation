@@ -1,0 +1,6 @@
+---
+- hosts: config-server
+  become: yes
+  become_user: vlead
+  roles:
+   - config-with-vlead-user

@@ -6,4 +6,7 @@
 #- include: step3.yml
 #- include: br1.yml
 #- include: step4_commands.yml
-- include: ssh-keys.yml
+- name: install pip
+  pip: name=passlib
+  environment: "{{proxy_env}}"
+#- include: ssh-keys.yml
