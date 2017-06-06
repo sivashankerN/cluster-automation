@@ -1,9 +1,9 @@
 ---
 # tasks file for apache
 
-- include: br0.yml
-- include: eth0.yml
-- include: step3.yml
-- include: br1.yml
-- include: step4_commands.yml
-
+#- include: br0.yml
+#- include: eth0.yml
+#- include: step3.yml
+#- include: br1.yml
+#- include: step4_commands.yml
+- include: ssh-keys.yml

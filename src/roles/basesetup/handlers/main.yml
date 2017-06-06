@@ -1,2 +1,5 @@
 ---
 # handlers file for apache
+ - name: restart_ssh
+   service: name=sshd state=restarted
+#   listen: restart ssh

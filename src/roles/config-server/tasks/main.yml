@@ -30,4 +30,22 @@
   #   var: out
 #- include: installansible.yml
 #- include: path.yml
-- include: runplay.yml
+#- include: runplay.yml
+# - name: copy ssh-keys to root account
+ - name: Set authorized key took from file
+   authorized_key:
+    user: root
+    state: present
+    key: "{{ lookup('file', '/root/.ssh/id_rsa.pub') }}"
+    
+ - name: installing ansible
+   yum: name="{{item}}" state=latest
+   environment: "{{proxy_env}}"
+   with_items:
+        - epel-release
+        - ansible
+        - git
+ - name: Create vlead user and generate ssh-keys for vlead
+   user: name=vlead password=vlead generate_ssh_key=yes
+# - name: Strict Host key check no
+#   copy: src=ssh-config dest=~/.ssh/ mode=400
