@@ -18,7 +18,7 @@ systems_model_dest: "{{corkscrew_dest}}/systems-model"
 ipaddress:
      hostmachine: 10.2.59.220
      router: 10.2.59.221     
-     config-server: 10.2.59.222
+     config_server: 10.2.59.222
 
 clustername: base7
 

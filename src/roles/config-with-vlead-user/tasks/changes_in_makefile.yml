@@ -1,0 +1,22 @@
+---
+- replace:
+      path: systems-model/makefile
+      regexp: "ROUTER_IP=10.4.14.207"
+      replace: "ROUTER_IP={{ipaddress.router}}"
+
+- replace:
+      path: systems-model/makefile
+      regexp: "CONFIG_SERVER=10.4.14.208"
+      replace: "CONFIG_SERVER={{ipaddress.config_server}}"
+
+
+- replace:
+      path: systems-model/makefile
+      regexp: "CLUSTER=cluster"
+      replace: "CLUSTER={{clustername}}"
+
+
+- replace:
+      path: systems-model/makefile
+      regexp: "SMTP_SMART_HOST= smtp.admin.iiit.ac.in"
+      replace: "SMTP_SMART_HOST=stpi-router.vlabs.ac.in"
