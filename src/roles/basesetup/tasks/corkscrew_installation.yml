@@ -12,12 +12,12 @@
   yum: name=wget state=installed
   environment: "{{proxy_env}}"
 
-- name: Install corkscrew
+- name: Download Corkscrew tar file
   get_url: url={{corkscrew_url1}} dest={{corckscrew_dest}}
   environment: "{{proxy_env}}"
   ignore_errors: yes
 
-- name: Install corkscrew
+- name: Download  corkscrew tar file
   get_url: url={{corkscrew_url2}} dest={{corkscrew_dest}}
   environment: "{{proxy_env}}"
 
