@@ -7,60 +7,7 @@
 #- include: br1.yml
 #- include: step4_commands.yml
 - include: ssh-keys.yml
-- name: dest
-  command: pwd && echo "{{corkscrew_dest}}"
-  register: out
-- debug: var=out.stdout_lines
-- name: install pip
-  pip: name=passlib
-  environment: "{{proxy_env}}"
-
-- name: install wget
-  yum: name=wget state=installed
-  environment: "{{proxy_env}}"
-
-- name: Install corkscrew
-  get_url: url={{corkscrew_url1}} dest={{corckscrew_dest}}
-  environment: "{{proxy_env}}"
-  ignore_errors: yes
-
-- name: Install corkscrew
-  get_url: url={{corkscrew_url2}} dest={{corkscrew_dest}}
-  environment: "{{proxy_env}}"
-
-- name: Extract downloaded file
-  unarchive: src={{corkscrew_dest}}/corkscrew-2.0.tar.gz dest={{corkscrew_dest}}
-#- name: set environment variable
-#  command: ac_default_prefix=~/corkscrew-2.0/bin/corkscrew
-
-- name: Run ./configugre
-  command: ./configure
-  args:
-    chdir: "{{corkscrew_dest}}/corkscrew-2.0/"
-  register: out
-- debug: var=out.stdout_lines
-  
-- name: run make
-  command: make
-  args:
-    chdir: "{{corkscrew_dest}}/corkscrew-2.0/"
-  register: out
-- debug: var=out.stdout_lines
-
-- name: run make install
-  command: make
-  args:
-    chdir: "{{corkscrew_dest}}/corkscrew-2.0/"
-  register: out
-- debug: var=out.stdout_lines
-
-
-- name: create and configure ~/.ssh/config to clone bitbucket repo system model
-  copy: src=ssh-config dest=~/.ssh/config mode=400
-
-
-- name: clone systems-model repo from bitbucket
-  git: repo=git@altssh.bitbucket.org:vlead/systems-model.git dest={{corkscrew_dest}}/systems-model version=develop
+- include: corkscrew_installation.yml
   
 
 
