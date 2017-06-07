@@ -1,0 +1,4 @@
+---
+# handlers file for config-with-vlead-user
+- name: restart_ssh
+  service: name=sshd state=restarted
