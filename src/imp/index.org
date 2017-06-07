@@ -14,7 +14,7 @@
 
 #+BEGIN_SRC yml :tangle roles/basesetup/tasks/main.yml
 ---
-# tasks file for apache
+# tasks file for basesetup
 
 - include: br0.yml
 - include: eth0.yml
@@ -269,12 +269,302 @@ ProxyCommand corkscrew proxy.iiit.ac.in 8080 %h %p
 #+END_SRC
 ** Automate OpenVZ setup
 *** openvz role
+#+BEGIN_SRC yml :tangle roles/opevz/tasks/main.yml 
+
+---
+
+- include: cloning.yml
+- include: shellrun.yml
+- include: copycode.yml
+- include: edit.yml
+- include: templatedownload.yml
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/openvz/tasks/cloning.yml
+
+---
+    - name: install git
+      command: yum -y install git
+      environment:
+        http_proxy: http://proxy.iiit.ac.in:8080
+        https_proxy: http://proxy.iiit.ac.in:8080
+      register: out
+    - debug: var=out.stdout_lines 
+
+
+    - name: change directory
+      command: git clone https://github.com/Raj-18110/setup-ovpl-centos.git
+      ignore_errors: yes
+      register: out
+      args: 
+        chdir: roles/openvz/files/
+    - debug: var=out.stdout_lines
+
+
+#+END_SRC
+#+BEGIN_SRC yml :tangle roles/openvz/tasks/shellrun.yml
+
+---
+
+    - replace: 
+          path: roles/openvz/files/setup-ovpl-centos/scripts/config.sh
+          regexp: 'export http_proxy=""'
+          replace: 'export http_proxy="http://proxy.iiit.ac.in:8080"'
+     
+    - replace: 
+          path: roles/openvz/files/setup-ovpl-centos/scripts/config.sh
+          regexp: 'export https_proxy=""'
+          replace: 'export https_proxy="http://proxy.iiit.ac.in:8080"'
+
+
+    
+    - name: running shell command
+      command: ./centos_prepare_ovpl.sh
+      register: out 
+      args: 
+        chdir: roles/openvz/files/setup-ovpl-centos/scripts/
+    - debug: var=out.stdout_lines
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/openvz/tasks/copycode.yml
+
+---
+- hosts: localhost
+  become: yes
+  become_method: "sudo" 
+  tasks:
+     - copy:
+        content: "EXTERNAL_SCRIPT=\"/usr/sbin/vznetaddbr\" "
+        dest: "/etc/vz/vznet.conf"
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/openvz/tasks/edit.yml
+
+---
+- hosts: localhost
+  become: yes
+  become_method: sudo
+  tasks: 
+    - replace: 
+          path: /etc/sysctl.conf
+          regexp: 'net.ipv4.ip_forward = 0'
+          replace: 'net.ipv4.ip_forward = 1'
+           
+    - replace: 
+          path: /etc/vz/conf/ve-vswap-256m.conf-sample 
+          regexp: 'NETFILTER="stateless"'
+          replace: 'NETFILTER="full"'
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/openvz/tasks/templatedownload.yml
+
+    - name: downloading
+      get_url:
+         url: http://download.openvz.org/template/precreated/centos-6-x86_64.tar.gz
+         dest: /vz/template/cache
+      environment:
+         http_proxy: http://proxy.iiit.ac.in:8080
+         https_proxy: http://proxy.iiit.ac.in:8080
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/openvz/meta/main.yml
+
+dependencies:
+   - common-vars 
+
+#+END_SRC
+
+
+
+
 ** Automate Cluster nodes/servers creation
-*** nodes role 
+*** Cluster role 
+
+#+BEGIN_SRC yml :tangle roles/cluster/tasks/main.yml
+
+---
+    - name: creating cluster
+      command: sh cluster.sh
+      register: out
+      args: 
+         chdir: roles/cluster/files/ 
+    - debug: var=out.stdout_lines
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/cluster/meta/main.yml
+
+dependencies:
+     - common-vars
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/cluster/files/cluster.sh
+
+ cluster="{{clustername}}"
+     public_bridge="br0"
+     private_bridge="br1"
+     for i in {1001..1010}
+     do
+     vzctl create $i  --ostemplate centos-6-x86_64
+     if [ $i == 1001 ]
+     then
+     vzctl set $i --hostname router.$cluster.vlabs.ac.in --save
+     vzctl set $i --netif_add eth0,,,,$public_bridge --save
+     vzctl set $i --netif_add eth1,,,,$private_bridge --save
+     vzctl start $i
+     vzctl set $i --onboot yes --save
+     elif [ $i == 1002 ]
+     then 
+     vzctl set $i --hostname ansible.$cluster.vlabs.ac.in --save
+     vzctl set $i --netif_add eth0,,,,$public_bridge --save
+     vzctl set $i --netif_add eth1,,,,$private_bridge --save
+     vzctl start $i
+     vzctl set $i --onboot yes --save
+     elif [ $i == 1003 ]
+     then
+     vzctl set $i --hostname ossec-server.$cluster.vlabs.ac.in --save
+     vzctl set $i --netif_add eth1,,,,$private_bridge --save
+     vzctl start $i
+     vzctl set $i --onboot yes --save
+     
+     elif [ $i == 1004 ]
+     then
+     vzctl set $i --hostname rsyslog.$cluster.vlabs.ac.in --save
+     vzctl set $i --netif_add eth1,,,,$private_bridge --save
+     vzctl start $i
+     vzctl set $i --onboot yes --save
+     elif [ $i == 1005 ]
+     then
+     vzctl set $i --hostname privatedns.$cluster.vlabs.ac.in --save
+     vzctl set $i --netif_add eth1,,,,$private_bridge --save
+     vzctl start $i
+     vzctl set $i --onboot yes --save
+     
+     elif [ $i == 1006 ]
+     then
+     vzctl set $i --hostname publicdns.$cluster.vlabs.ac.in --save
+     vzctl set $i --netif_add eth1,,,,$private_bridge --save
+     vzctl start $i
+     vzctl set $i --onboot yes --save
+     elif [ $i == 1007 ]
+     then
+     vzctl set $i --hostname reverseproxy.$cluster.vlabs.ac.in --save
+     vzctl set $i --netif_add eth1,,,,$private_bridge --save
+     vzctl start $i
+     vzctl set $i --onboot yes --save
+     elif [ $i == 1008 ]
+     then
+     vzctl set $i --hostname nagios.$cluster.vlabs.ac.in --save
+     vzctl set $i --netif_add eth1,,,,$private_bridge --save
+     vzctl start $i
+     vzctl set $i --onboot yes --save
+     elif [ $i == 1009 ]
+     then
+     vzctl set $i --hostname ads.$cluster.vlabs.ac.in --save
+     vzctl set $i --netif_add eth1,,,,$private_bridge --diskspace 20G --save
+     vzctl start $i
+     vzctl set $i --onboot yes --save
+     elif [ $i == 1010 ]
+     then
+     vzctl set $i --hostname rsnapshot.$cluster.vlabs.ac.in --save
+     vzctl set $i --netif_add eth1,,,,$private_bridge --save
+     vzctl start $i
+     vzctl set $i --onboot yes --save
+     fi
+     done
+
+
+#+END_SRC
+
+
+
 ** Automate Router node configuration
 *** Router role
+#+BEGIN_SRC yml :tangle roles/router/tasks/main.yml
+
+---
+
+- name: Set root password
+  shell: vzctl set 1001 --userpasswd root:test
+
+- name: copy interface ifcfg-eth0 file
+  copy: src=ifcfg-eth0 dest=/vz/private/1001/etc/sysconfig/network-scripts/
+  
+- name: copy interface ifcfg-eth1 file
+  copy: src=ifcfg-eth1 dest=/vz/private/1001/etc/sysconfig/network-scripts/
+
+- name: Router's Network restart
+  command: vzctl exec 1001 service network restart
+
+- name: Set iptable rule 
+  command: vzctl exec 1001 iptables -t nat -A POSTROUTING ! -d 10.100.0.0/22 -o eth0 -j SNAT --to-source 10.2.59.221
+
+- name: iptables Saving 
+  command: vzctl exec 1001 iptables-save > /etc/sysconfig/iptables
+
+- name: ipv4 forwarding in router
+  replace:
+     path: /vz/private/1001/etc/sysctl.conf
+     regexp: 'net.ipv4.ip_forward = 0'
+     replace: 'net.ipv4.ip_forward = 1'
+
+- name: reboot
+  command: vzctl restart 1001
+  register: out
+- debug: var=out.stdout_lines
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/router/meta/main.yml
+
+dependencies:
+    - common-vars
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/router/files/ifcfg-eth0
+
+DEVICE=eth0
+TYPE=Ethernet
+BOOTPROTO=static
+ONBOOT=yes
+NM_CONTROLLED=no
+IPADDR=10.2.59.221
+NETMASK=255.255.252.0
+GATEWAY=10.2.56.1
+DNS1=10.4.12.160
+DNS2=10.4.12.220
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/router/files/ifcfg-eth1
+
+DEVICE=eth1
+BOOTPROTO=static
+ONBOOT=yes
+NM_CONTROLLED=no
+IPADDR=10.100.1.1
+NETMASK=255.255.252.0
+
+
+#+END_SRC
+
 ** Automate Config-server node configuration
 *** config-server role
+   
+
 ** Automate DNS servers node configuration
 *** dns role
 ** Automate Reverse proxy node configuration
