@@ -1,0 +1,9 @@
+Host altssh.bitbucket.org
+User git
+Port 443
+Hostname altssh.bitbucket.org
+TCPKeepAlive yes
+IdentityFile "~/.ssh/id_rsa"
+IdentitiesOnly yes
+ProxyCommand corkscrew proxy.iiit.ac.in 8080 %h %p
+
