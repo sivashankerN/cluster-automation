@@ -11,28 +11,23 @@
 * Implementation
 ** Automate Base machine setup
 *** base-setup role   
-#+BEGIN_SRC yml :tangle roles/basesetup/tasks/eth0.yml
----
-   
-   - copy: 
-      content: ""      
-      dest: "/etc/sysconfig/network-scripts/ifcfg-eth0" 
-  
-   - name: creating
-     blockinfile:
-        path: /etc/sysconfig/network-scripts/ifcfg-eth0
-        block: |
-         DEVICE=eth0
-         TYPE=Ethernet
-         ONBOOT=yes
-         NM_CONTROLLED=no
-         BOOTPROTO=none
-         BRIDGE=br0
-          
 
-...
-    
-#+END_SRC
+#+BEGIN_SRC yml :tangle roles/basesetup/tasks/main.yml
+---
+# tasks file for apache
+
+- include: br0.yml
+- include: eth0.yml
+- include: step3.yml
+- include: br1.yml
+- include: step4_commands.yml
+- include: ssh-keys.yml
+- include: corkscrew_installation.yml
+
+
+#+End_SRC
+
+
 #+BEGIN_SRC yml :tangle roles/basesetup/tasks/br0.yml
 ---
    
@@ -58,10 +53,42 @@
           
 
 ...
+#+END_SRC
 
+#+BEGIN_SRC yml :tangle roles/basesetup/tasks/eth0.yml
+---
+   
+   - copy: 
+      content: ""      
+      dest: "/etc/sysconfig/network-scripts/ifcfg-eth0" 
+  
+   - name: creating
+     blockinfile:
+        path: /etc/sysconfig/network-scripts/ifcfg-eth0
+        block: |
+         DEVICE=eth0
+         TYPE=Ethernet
+         ONBOOT=yes
+         NM_CONTROLLED=no
+         BOOTPROTO=none
+         BRIDGE=br0
+          
 
+...
+    
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/basesetup/tasks/step3.yml
+
+---
+
+  - service:
+       name: network
+       state: restarted
+                        
 
 #+END_SRC
+
 #+BEGIN_SRC yml :tangle roles/basesetup/tasks/br1.yml
 ---
 
@@ -86,21 +113,160 @@
 
 
 #+END_SRC
-#+BEGIN_SRC yml :tangle roles/basesetup/tasks/main.yml
+
+#+BEGIN_SRC yml :tangle roles/basesetup/tasks/step4_commands.yml
+
 ---
-# tasks file for apache
 
-#- include: br0.yml
-#- include: eth0.yml
-#- include: step3.yml
-#- include: br1.yml
-#- include: step4_commands.yml
-- include: ssh-keys.yml
-- include: corkscrew_installation.yml
+  
+  - service: 
+     name: network
+     state: restarted
+
+  - name: Running brctl show and output="brctl show"
+    command: ifconfig
+    register: out
+
+  - debug: var=out.stdout_lines
+
+  - name: Runnig 2nd command
+    command: ifconfig
+    register: out
+  - debug: var=out.stdout_lines 
+ 
+  - name: Manager off
+    command: chkconfig NetworkManager off
+    register: out
+  - debug: var=out.stdout_lines   
+
+  - name: Manager on
+    command: chkconfig network on
+    register: out
+  - debug: var=out.stdout_lines
+
+  - name: Running brctl show command
+    command: brctl show
+    register: out
+
+  - debug: var=out.stdout_lines     
+
+                
 
 
-#+End_SRC
+...
 
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/basesetup/tasks/ssh-keys.yml
+
+---
+- name: ssh-key generate
+  user: name=root generate_ssh_key=yes
+
+- name: Strict host check no
+  lineinfile: path=/etc/ssh/ssh_config regexp="^Strict.*" line="StrictHostKeyChecking no" state=present
+  notify: restart_ssh
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/basesetup/tasks/corkscrew_installation.yml
+- name: dest
+  command: pwd && echo "{{corkscrew_dest}}"
+  register: out
+- debug: var=out.stdout_lines
+- name: install pip
+  pip: name=passlib
+  environment: "{{proxy_env}}"
+
+- name: install wget
+  yum: name=wget state=installed
+  environment: "{{proxy_env}}"
+
+- name: Download Corkscrew tar file
+  get_url: url={{corkscrew_url1}} dest={{corckscrew_dest}}
+  environment: "{{proxy_env}}"
+  ignore_errors: yes
+
+- name: Download  corkscrew tar file
+  get_url: url={{corkscrew_url2}} dest={{corkscrew_dest}}
+  environment: "{{proxy_env}}"
+
+- name: Extract downloaded file
+  unarchive: src={{corkscrew_dest}}/corkscrew-2.0.tar.gz dest={{corkscrew_dest}}
+#- name: set environment variable
+#  command: ac_default_prefix=~/corkscrew-2.0/bin/corkscrew
+
+- name: Run ./configugre
+  command: ./configure
+  args:
+    chdir: "{{corkscrew_dest}}/corkscrew-2.0/"
+  register: out
+- debug: var=out.stdout_lines
+
+- name: run make
+  command: make
+  args:
+    chdir: "{{corkscrew_dest}}/corkscrew-2.0/"
+  register: out
+- debug: var=out.stdout_lines
+
+- name: run make install
+  command: make
+  args:
+    chdir: "{{corkscrew_dest}}/corkscrew-2.0/"
+  register: out
+- debug: var=out.stdout_lines
+
+
+- name: create and configure ~/.ssh/config to clone bitbucket repo system model
+  copy: src=ssh-config dest=~/.ssh/config mode=400
+
+
+- name: clone systems-model repo from bitbucket
+  git: repo="{{systems_model_repo}}" dest="{{systems_model_dest}}" version=develop
+
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/basesetup/vars/main.yml
+
+corkscrew_dest: "/root/"
+corkscrew_url1: http://www.agroman.net/corkscrew/corkscrew-2.0.tar.gz
+corkscrew_url2: http://wiki.kartbuilding.net/corkscrew-2.0.tar.gz
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/basesetup/meta/main.yml
+
+dependencies:
+   - common-vars 
+
+
+#+END_SRC
+#+BEGIN_SRC yml :tangle roles/basesetup/files/ssh-config
+
+Host altssh.bitbucket.org
+User git
+Port 443
+Hostname altssh.bitbucket.org
+TCPKeepAlive yes
+IdentityFile "~/.ssh/id_rsa"
+IdentitiesOnly yes
+ProxyCommand corkscrew proxy.iiit.ac.in 8080 %h %p
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/basesetup/handlers/main.yml
+
+- name: restart_ssh
+  service: name=sshd state=restarted
+
+#+END_SRC
 ** Automate OpenVZ setup
 *** openvz role
 ** Automate Cluster nodes/servers creation
