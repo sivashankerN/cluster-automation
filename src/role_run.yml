@@ -4,6 +4,14 @@
   #become_method: sudo
   roles:
     - basesetup
-   #  - openvz
-   # - cluster
-  #  - router
+    - openvz
+    - cluster
+    - router
+    - public-dns-server
+    - private-dns-server
+    - ossec-server
+    - rsyslog-server
+    - reverse-proxy-server
+    - rsnapshot-server
+    - nagios-server
+    - ads-server

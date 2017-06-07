@@ -18,7 +18,8 @@
 - name: iptables Saving 
   command: vzctl exec 1001 iptables-save > /etc/sysconfig/iptables
 
-- replace: ipv4 forwarding in router
+- name: ipv4 forwarding in router
+  replace:
      path: /vz/private/1001/etc/sysctl.conf
      regexp: 'net.ipv4.ip_forward = 0'
      replace: 'net.ipv4.ip_forward = 1'
@@ -28,7 +29,3 @@
   register: out
 - debug: var=out.stdout_lines
 
-- name: Ping test
-  command: vzctl exec 1001 ping google.com -c 3
-  register: out
-- debug: var=out.stdout_lines

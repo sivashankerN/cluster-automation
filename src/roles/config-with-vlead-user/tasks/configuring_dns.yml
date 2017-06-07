@@ -1,0 +1,8 @@
+---
+ - name: Copy ssh keys
+   shell: sshpass -p "test" ssh-copy-id root@10.100.1.5
+   register: out
+ - debug: var=out.stdout_lines
+
+ 
+
