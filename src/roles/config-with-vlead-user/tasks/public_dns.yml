@@ -1,0 +1,28 @@
+---
+- name: Commenting rsnapshot_client 
+  lineinfile: 
+     path: systems-model/build/{{clustername}}/public_dns.yaml
+     regexp: '- rsnapshot_client'
+     line: '# - rsnapshot_clients'
+  
+
+- name: Commenting ossec_client 
+  lineinfile: 
+     path: systems-model/build/{{clustername}}/public_dns.yaml
+     regexp: '- ossec_client'
+     line: '# - ossec_clients'
+
+- name: Commenting rsnapshot_client 
+  lineinfile: 
+     path: systems-model/build/{{clustername}}/private_dns.yaml
+     regexp: '- rsnapshot_client'
+     line: '# - rsnapshot_clients'
+  
+
+- name: Commenting ossec_client 
+  lineinfile: 
+     path: systems-model/build/{{clustername}}/private_dns.yaml
+     regexp: '- ossec_client'
+     line: '# - ossec_clients'
+
+
