@@ -53,6 +53,7 @@
 
 
 - name: clone systems-model repo from bitbucket
-  git: repo=git@altssh.bitbucket.org:vlead/systems-model.git dest={{corkscrew_dest}}/systems-model version=develop
+  git: repo="{{systems_model_repo}}" dest="{{systems_model_dest}}" version=develop
+
 
 
