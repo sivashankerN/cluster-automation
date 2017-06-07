@@ -1,20 +1,20 @@
 ---
-- hosts: localhost
+#- hosts: localhost
  # become: yes
  # become_method: sudo
-  tasks:
+ # tasks:
 
 #- name: installing Emacs
   #command: ssh root@localhost yum -y install emacs
  # register: out
 #- debug: var=out.stdout_lines
 
-    - name: changing directory
+    - name: Downloading Emacs
       command: "{{item}}"
       register: out
       with_items:
-       - mkdir -p /home/sunny/ansible_practise/test/emacs/lisp
-       - cd  /home/sunny/ansible_practise/test/emacs/lisp
+       - mkdir -p ~/emacs/lisp
+       - cd  ~/emacs/lisp
        - wget http://orgmode.org/org-8.2.10.tar.gz
        - tar zxvf org-8.2.10.tar.gz
        - rm -rf org-8.2.10.tar.gz
