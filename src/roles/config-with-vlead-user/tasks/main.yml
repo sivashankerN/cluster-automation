@@ -17,4 +17,12 @@
 #   register: out
 # - debug: var=out.stdout_lines
 # - include: setupemacs.yml
-  - include: changes_in_makefile.yml
+#  - include: changes_in_makefile.yml
+
+
+ - name: change directory and run make file
+   command: make
+   register: out
+   args: 
+     chdir: ~/systems-model/
+ - debug: var=out.stdout_lines
