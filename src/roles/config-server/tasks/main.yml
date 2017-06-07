@@ -1,37 +1,4 @@
-
-
-##  - name: Exporting proxy
-##    command: vzctl exec 1002 export http_proxy="http://proxy.iiit.ac.in:8080" && vzctl exec 1002 export https_proxy="http://proxy.iiit.ac.in:8080" && vzctl exec 1002 yum install openssh -y
-##    register: out
-##  - debug: var=out.stdout_lines
-# - lineinfile:
-#     path: /vz/private/1002/etc/yum.conf
-#     regexp: '^proxy=http://'
-#     line: 'proxy={{ proxy_env.http_proxy }}'
-# - replace:
- #    path: /vz/private/1002/etc/yum.conf
- #    regexp: '^proxy=.*'
- #    replace: 'proxy'
-  # - name: Check proxy
-  #   shell: echo {{proxy_env}}
-  #   register: out
-  # - debug:
-  #    var:  out  
-#- include: test.yml
-#- name: installing openssh
- # command: vzctl exec 1002 export http_proxy="{{proxy_env.http_proxy}}" && export https_proxy="{{proxy_env.https_proxy}}" && yum install "{{item}}" -y && service sshd start &&  chkconfig sshd on  
- # command: vzctl exec 1002 {{export_proxy}} && yum install "{{item}}" -y && service sshd start && chkconfig sshd on
- # register: out  
-#  with_items:
-   #       - openssh-server
- #         - openssh-clients  
-  #        - openssh
-#- debug: 
-  #   var: out
-#- include: installansible.yml
-#- include: path.yml
-#- include: runplay.yml
-    
+---
 # - name: installing ansible
 #   yum: name="{{item}}" state=latest
 #   environment: "{{proxy_env}}"
@@ -58,5 +25,8 @@
    lineinfile: path=/etc/ssh/sshd_config regexp="^PasswordAuthentication.*" line="PasswordAuthentication yes" state=present
    notify: restart_ssh
 
-# - name: Strict Host key check no
-#   copy: src=ssh-config dest=~/.ssh/ mode=400
+ - name: Copy system-model repo from host-machine to ansible/config-serer container 
+   synchronize: src="{{corkscrew_dest}}/systems-model" dest=/home/vlead/ 
+
+ - name: Update ownership permissions to systems-model repo
+   file: path=/home/vlead/systems-model recurse=true owner=vlead group=vlead 

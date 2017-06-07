@@ -1,6 +1,12 @@
 ---
 # vars file for common
-  proxy_env: 
-     http_proxy: http://proxy.iiit.ac.in:8080 
-     https_proxy: http://proxy.iiit.ac.in:8080
-  vlead_user_password: $6$39KX5f1ud1r3vAy8$cTdTp8CBENusQmS43z1gRbzQsLz1/r.nPrD2A/KruD3CW6wAjth15IdSaF1VkXnzvRqmO/H9LZLNEkfwfkCBs1 
+proxy_env: 
+   http_proxy: http://proxy.iiit.ac.in:8080 
+   https_proxy: http://proxy.iiit.ac.in:8080
+vlead_user_password: $6$39KX5f1ud1r3vAy8$cTdTp8CBENusQmS43z1gRbzQsLz1/r.nPrD2A/KruD3CW6wAjth15IdSaF1VkXnzvRqmO/H9LZLNEkfwfkCBs1 
+
+
+corkscrew_dest: "/root"
+corkscrew_url1: http://www.agroman.net/corkscrew/corkscrew-2.0.tar.gz
+corkscrew_url2: http://wiki.kartbuilding.net/corkscrew-2.0.tar.gz
+
