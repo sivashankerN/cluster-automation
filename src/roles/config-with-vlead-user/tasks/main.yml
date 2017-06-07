@@ -44,4 +44,4 @@
 #    chdir: ~/systems-model/build/{{clustername}}
 # - debug: var=out.stdout_lines
  # - include: set-proxy.yml
- - include: public_dns.yml
+ - include: dns.yml
