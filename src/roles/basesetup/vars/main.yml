@@ -1,2 +1,5 @@
 ---
 # vars file for apache
+corkscrew_dest: "/root/"
+corkscrew_url1: http://www.agroman.net/corkscrew/corkscrew-2.0.tar.gz
+corkscrew_url2: http://wiki.kartbuilding.net/corkscrew-2.0.tar.gz

@@ -26,7 +26,11 @@
    notify: restart_ssh
 
  - name: Copy system-model repo from host-machine to ansible/config-serer container 
-   synchronize: src="{{corkscrew_dest}}/systems-model" dest=/home/vlead/ 
+   synchronize: src="{{systems_model_dest}}" dest=/home/vlead/ 
 
  - name: Update ownership permissions to systems-model repo
    file: path=/home/vlead/systems-model recurse=true owner=vlead group=vlead 
+
+ - name: install emacs
+   yum: name=emacs state=installed
+   environment: "{{proxy_env}}"

@@ -1,0 +1,9 @@
+---
+
+- name: Downloading Emacs
+  file: path=emacs/lisp mode=0755 state=directory
+
+- name: un-tar  downloaded file
+  unarchive: src=http://orgmode.org/org-8.2.10.tar.gz dest=/home/vlead/emacs/lisp/ remote_src=True
+  environment: "{{proxy_env}}"
+
