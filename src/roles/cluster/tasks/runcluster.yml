@@ -1,9 +1,0 @@
----
-    
-
-     - name: creating cluster
-       command: sh cluster.sh
-       register: out
-       args: 
-         chdir: roles/cluster/files/ 
-     - debug: var=out.stdout_lines
