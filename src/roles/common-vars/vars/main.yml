@@ -12,4 +12,19 @@ corkscrew_url2: http://wiki.kartbuilding.net/corkscrew-2.0.tar.gz
 
 systems_model_repo: git@altssh.bitbucket.org:vlead/systems-model.git
 
-systems_model_dest: "{{corkscrew_dest}}/systems-model" 
+systems_model_dest: "{{corkscrew_dest}}/systems-model"
+
+ipaddress:
+     hostmachine: 10.2.59.220
+     router: 10.2.59.221     
+     config-server: 10.2.59.222
+
+clustername: base7
+
+
+dnsaddress:
+      dns1: 10.4.12.160
+      dns2: 10.4.12.220
+
+
+
