@@ -563,12 +563,538 @@ NETMASK=255.255.252.0
 
 ** Automate Config-server node configuration
 *** config-server role
-   
+#+BEGIN_SRC yml :tangle roles/config-server/tasks/main.yml
+
+---
+ - name: installing ansible
+   yum: name="{{item}}" state=latest
+   environment: "{{proxy_env}}"
+   with_items:
+        - epel-release
+        - ansible
+        - git
+ - name: Create vlead user and generate ssh-keys for vlead
+   user: name=vlead password={{vlead_user_password}} generate_ssh_key=yes groups=wheel
+ - name: Replacing wheel
+   lineinfile:
+       path: /etc/sudoers
+       regexp: '^%wheel.*NOPASSWD: ALL.*'
+       line: '%wheel        ALL=(ALL)       NOPASSWD: ALL'
+       state: present
+ - name: Set StrictHostkeyChecking to no
+   lineinfile: path=/etc/ssh/ssh_config regexp="^Strict.*" line="StrictHostKeyChecking no" state=present
+   notify: restart_ssh
+ - name: Set PermitRootLogin to yes
+   lineinfile: path=/etc/ssh/sshd_config regexp="^PermitRoot.*" line="PermitRootLogin yes" state=present
+   notify: restart_ssh
+
+ - name: Set PermitRootLogin to yes
+   lineinfile: path=/etc/ssh/sshd_config regexp="^PasswordAuthentication.*" line="PasswordAuthentication yes" state=present
+   notify: restart_ssh
+
+ - name: Copy system-model repo from host-machine to ansible/config-serer container
+   synchronize: src="{{systems_model_dest}}" dest=/home/vlead/
+
+ - name: Update ownership permissions to systems-model repo
+   file: path=/home/vlead/systems-model recurse=true owner=vlead group=vlead
+
+ - name: install emacs
+   yum: name=emacs state=installed
+   environment: "{{proxy_env}}"
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/config-server/meta/main.yml
+
+dependencies:
+   - common-vars
+
+#+END_SRC   
+
+#+BEGIN_SRC yml :tangle roles/config-server/files/ifcfg-eth0
+
+DEVICE=eth0
+TYPE=Ethernet
+BOOTPROTO=static
+ONBOOT=yes
+NM_CONTROLLED=no
+IPADDR=10.2.59.222
+NETMASK=255.255.252.0
+GATEWAY=10.2.56.1
+DNS1=10.4.12.160
+DNS2=10.4.12.220
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/config-server/files/ifcfg-eth1
+
+DEVICE=eth1
+BOOTPROTO=static
+ONBOOT=yes
+NM_CONTROLLED=no
+IPADDR=10.100.1.2
+NETMASK=255.255.252.0
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/config-server/handlers/main.yml
+
+---
+- name: restart_ssh
+  service: name=sshd state=restarted
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/config-server/vars/main.yml
+
+export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_proxy="{{proxy_env.https_proxy}}"
+
+
+#+END_SRC
+*** Config-with-vlead-user
+
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/main.yml
+
+# - name: Copy ssh keys
+#   shell: sshpass -p "test" ssh-copy-id root@localhost
+#   register: out
+# - debug: var=out.stdout_lines
+# - name: Copy ssh keys
+#   shell: sshpass -p "test" ssh-copy-id root@127.0.0.1
+#   register: out
+# - debug: var=out.stdout_lines
+# - name: Copy ssh keys
+#   shell: sshpass -p "test" ssh-copy-id root@10.100.1.1
+#   register: out
+# - debug: var=out.stdout_lines
+#
+#tasks file for config-with-vlead-user
+# - include: copy-sshkeys.yml
+# - include: setupemacs.yml
+# - include: changes_in_makefile.yml
+#
+#
+# - name: change directory and run make file
+#   command: make
+#   register: out
+#   args: 
+#     chdir: ~/systems-model/
+# - debug: var=out.stdout_lines
+#
+# - name: Copying build file 
+#   command: sudo cp -r build/{{clustername}} /root/
+#   register: out
+#   args:
+#    chdir: ~/systems-model/
+# - debug: var=out.stdout_lines
+#
+# - name: checking syntax of ansible playbook
+#   command: ansible-playbook -i hosts --list-tasks --syntax-check site.yaml
+#   register: out
+#   args:
+#    chdir: ~/systems-model/build/{{clustername}}
+# - debug: var=out.stdout_lines
+ # - include: set-proxy.yml
+ - include: public_dns.yml
+                                                        
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/copy-sshkeys.yml
+
+---
+ - name: Copy ssh keys
+   shell: sshpass -p "test" ssh-copy-id root@localhost
+   register: out
+ - debug: var=out.stdout_lines
+
+ - name: Copy ssh keys
+   shell: sshpass -p "test" ssh-copy-id root@127.0.0.1
+   register: out
+ - debug: var=out.stdout_lines
+
+ - name: Copy ssh keys
+   shell: sshpass -p "test" ssh-copy-id root@10.100.1.1
+   register: out
+ - debug: var=out.stdout_lines
+
+ - name: Copy ssh keys
+   shell: sshpass -p "test" ssh-copy-id root@10.100.1.2
+   register: out
+ - debug: var=out.stdout_lines
+
+ - name: Copy ssh keys
+   shell: sshpass -p "test" ssh-copy-id root@10.100.1.3
+   register: out
+ - debug: var=out.stdout_lines
+
+ - name: Copy ssh keys
+   shell: sshpass -p "test" ssh-copy-id root@10.100.1.4
+   register: out
+ - debug: var=out.stdout_lines
+
+ - name: Copy ssh keys
+   shell: sshpass -p "test" ssh-copy-id root@10.100.1.5
+   register: out
+ - debug: var=out.stdout_lines
+
+ - name: Copy ssh keys
+   shell: sshpass -p "test" ssh-copy-id root@10.100.1.6
+   register: out
+ - debug: var=out.stdout_lines
+
+ - name: Copy ssh keys
+   shell: sshpass -p "test" ssh-copy-id root@10.100.1.7
+   register: out
+ - debug: var=out.stdout_lines
+
+ - name: Copy ssh keys
+   shell: sshpass -p "test" ssh-copy-id root@10.100.1.8
+   register: out
+ - debug: var=out.stdout_lines
+
+ - name: Copy ssh keys
+   shell: sshpass -p "test" ssh-copy-id root@10.100.1.9
+   register: out
+ - debug: var=out.stdout_lines
+
+ - name: Copy ssh keys
+   shell: sshpass -p "test" ssh-copy-id root@10.100.1.10
+   register: out
+ - debug: var=out.stdout_lines
+
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/setupemacs.yml
+
+---
+
+- name: Downloading Emacs
+  file: path=emacs/lisp mode=0755 state=directory
+
+- name: un-tar  downloaded file
+  unarchive: src=http://orgmode.org/org-8.2.10.tar.gz dest=/home/vlead/emacs/lisp/ remote_src=True
+  environment: "{{proxy_env}}"
+
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/changes_in_makefile.yml
+
+---
+- replace:
+      path: systems-model/makefile
+      regexp: "ROUTER_IP=10.4.14.207"
+      replace: "ROUTER_IP={{ipaddress.router}}"
+
+- replace:
+      path: systems-model/makefile
+      regexp: "CONFIG_SERVER=10.4.14.208"
+      replace: "CONFIG_SERVER={{ipaddress.config_server}}"
+
+
+- replace:
+      path: systems-model/makefile
+      regexp: "CLUSTER=cluster"
+      replace: "CLUSTER={{clustername}}"
+
+
+- replace:
+      path: systems-model/makefile
+      regexp: "SMTP_SMART_HOST= smtp.admin.iiit.ac.in"
+      replace: "SMTP_SMART_HOST=stpi-router.vlabs.ac.in"
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/set-proxy.yml
+
+
+- name: Copy set-proxy to ansible container
+  template: src=set-proxy.yml dest=systems-model/build/{{clustername}}/
+
+- name: Run  set-proxy.yml file to set proxy in all other containers
+  command: ansible-playbook -i hosts set-proxy.yml
+  register: out
+  args:
+    chdir: systems-model/build/{{clustername}}/
+- debug: var=out.stdout_lines
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/public_dns.yml
+
+---
+- name: Commenting rsnapshot_client
+  lineinfile:
+     path: systems-model/build/{{clustername}}/public_dns.yaml
+     regexp: '- rsnapshot_client'
+     line: '# - rsnapshot_clients'
+
+
+- name: Commenting ossec_client
+  lineinfile:
+     path: systems-model/build/{{clustername}}/public_dns.yaml
+     regexp: '- ossec_client'
+     line: '# - ossec_clients'
+
+- name: Commenting rsnapshot_client
+  lineinfile:
+     path: systems-model/build/{{clustername}}/private_dns.yaml
+     regexp: '- rsnapshot_client'
+     line: '# - rsnapshot_clients'
+
+
+- name: Commenting ossec_client
+  lineinfile:
+     path: systems-model/build/{{clustername}}/private_dns.yaml
+     regexp: '- ossec_client'
+     line: '# - ossec_clients'
+
+
+- name: Running public_dns playbook
+  command: ansible-playbook -i hosts public_dns.yaml
+  #environment: "{{proxy_env}}"
+  register: out
+  args:
+    chdir: systems-model/build/{{clustername}}/
+- debug:
+    var: out
+
+
+- name: Running private_dns playbook
+  command: ansible-playbook -i hosts private_dns.yaml
+  #environment: "{{proxy_env}}"
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/handlers/main.yml
+
+---
+# handlers file for config-with-vlead-user
+- name: restart_ssh
+  service: name=sshd state=restarted
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/meta/main.yml
+
+dependencies:
+   - common-vars
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/config-with-vlea-user/templates/set-proxy.yml
+
+---
+- hosts: private_dns
+  remote_user: root
+
+  tasks: 
+  - name: Delete proxy if there is any
+    lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
+  - name: set proxy
+    lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
+
+
+- hosts: public_dns
+  remote_user: root
+
+  tasks: 
+   - name: Delete proxy if there is any
+     lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
+   - name: set proxy
+     lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
+
+- hosts: ossec_server
+  remote_user: root
+
+  tasks: 
+
+   - name: Delete proxy if there is any
+     lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
+   - name: set proxy
+     lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
+
+- hosts: rsyslog_server
+  remote_user: root
+
+  tasks: 
+
+   - name: Delete proxy if there is any
+     lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
+   - name: set proxy
+     lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
+
+- hosts: reverseproxy_server 
+  remote_user: root
+
+  tasks: 
+   - name: Delete proxy if there is any
+     lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
+   - name: set proxy
+     lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
+
+
+- hosts: nagios_server 
+  remote_user: root
+
+  tasks: 
+   - name: Delete proxy if there is any
+     lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
+   - name: set proxy
+     lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
+
+
+- hosts: ads_server 
+  remote_user: root
+
+  tasks: 
+   - name: Delete proxy if there is any
+     lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
+   - name: set proxy
+     lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
+
+
+- hosts: rsnapshot_server
+  remote_user: root
+
+  tasks: 
+   - name: Delete proxy if there is any
+     lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
+   - name: set proxy
+     lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
+
+
+#+END_SRC
+
 
 ** Automate DNS servers node configuration
-*** dns role
+*** Public DNS server role
+#+BEGIN_SRC yml :tangle roles/public-dns-server/tasks/main.yml
+
+---
+- name: Set root password
+  command: vzctl set 1006 --userpasswd root:test
+
+- name: copy interface ifcfg-eth1 file
+  copy: src=ifcfg-eth1 dest=/vz/private/1006/etc/sysconfig/network-scripts/
+
+- name: Public-dns-server Network restart
+  command: vzctl exec 1006 service network restart
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/public-dns-server/meta/main.yml
+
+dependencies:
+    - common-vars
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/public-dns-server/files/ifcfg-eth1
+
+DEVICE=eth1
+BOOTPROTO=static
+ONBOOT=yes
+NM_CONTROLLED=no
+IPADDR=10.100.1.6
+GATEWAY=10.100.1.1
+NETMASK=255.255.252.0
+
+
+
+#+END_SRC
+
+*** Private DNS server role
+
+#+BEGIN_SRC yml :tangle roles/private-dns-server/tasks/main.yml
+
+---
+- name: Set root password
+  command: vzctl set 1005 --userpasswd root:test
+
+- name: copy interface ifcfg-eth1 file
+  copy: src=ifcfg-eth1 dest=/vz/private/1005/etc/sysconfig/network-scripts/
+
+- name:  Network restart
+  command: vzctl exec 1005 service network restart
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/private-dns-server/files/ifcfg-eth1
+
+DEVICE=eth1
+BOOTPROTO=static
+ONBOOT=yes
+NM_CONTROLLED=no
+IPADDR=10.100.1.5
+GATEWAY=10.100.1.1
+NETMASK=255.255.252.0
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/private-dns-server/meta/main.yml
+
+dependencies:
+    - common-vars
+
+#+END_SRC
+
+** Automate Ossec server node configuration
+*** ossec server role
+
+#+BEGIN_SRC yml :tangle roles/ossec-server/tasks/main.yml
+
+---
+- name: Set root password
+  command: vzctl set 1003 --userpasswd root:test
+
+- name: copy interface ifcfg-eth1 file
+  copy: src=ifcfg-eth1 dest=/vz/private/1003/etc/sysconfig/network-scripts/
+
+- name: ossec-server Network restart
+  command: vzctl exec 1003 service network restart 
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/ossec-server/meta/main.yml
+
+dependencies:
+   - common-vars
+
+
+#+END_SRC
+
+
+#+BEGIN_SRC yml :tangle roles/ossec-server/files/ifcfg-eth1
+
+DEVICE=eth1
+BOOTPROTO=static
+ONBOOT=yes
+NM_CONTROLLED=no
+IPADDR=10.100.1.3
+GATEWAY=10.100.1.1
+NETMASK=255.255.252.0
+
+
+#+END_SRC
+
+
 ** Automate Reverse proxy node configuration
 *** reverse-proxy role
+
+
 ** Automate nagios node configuration
 *** nagios role
 ** Automate ADS setup
