@@ -16,6 +16,9 @@
 #   shell: sshpass -p "test" ssh-copy-id root@10.100.1.1
 #   register: out
 # - debug: var=out.stdout_lines
+#
+#tasks file for config-with-vlead-user
+# - include: copy-sshkeys.yml
 # - include: setupemacs.yml
 # - include: changes_in_makefile.yml
 #
@@ -40,4 +43,5 @@
 #   args:
 #    chdir: ~/systems-model/build/{{clustername}}
 # - debug: var=out.stdout_lines
+ # - include: set-proxy.yml
  - include: public_dns.yml

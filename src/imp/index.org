@@ -1,5 +1,9 @@
 #+Title: Implementation of automating the cluster creation
 #+Author: Systems Team
+#+SETUPFILE: ../org-templates/level-1.org
+#+TAGS: boilerplate(b)
+#+EXCLUDE_TAGS: boilerplate
+#+OPTIONS: ^:nil
 
 * Introduction
   This document contains the implementation of automation of cluster

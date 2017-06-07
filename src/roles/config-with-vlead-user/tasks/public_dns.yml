@@ -26,3 +26,23 @@
      line: '# - ossec_clients'
 
 
+- name: Running public_dns playbook
+  command: ansible-playbook -i hosts public_dns.yaml
+  #environment: "{{proxy_env}}"
+  register: out
+  args: 
+    chdir: systems-model/build/{{clustername}}/
+- debug: 
+    var: out
+
+
+- name: Running private_dns playbook
+  command: ansible-playbook -i hosts private_dns.yaml
+  #environment: "{{proxy_env}}"
+  register: out
+  args: 
+    chdir: systems-model/build/{{clustername}}/
+- debug: 
+     var: out
+
+
