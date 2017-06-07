@@ -1,0 +1,10 @@
+
+- name: Copy set-proxy to ansible container
+  template: src=set-proxy.yml dest=systems-model/build/{{clustername}}/
+
+- name: Run  set-proxy.yml file to set proxy in all other containers
+  command: ansible-playbook -i hosts set-proxy.yml
+  register: out
+  args: 
+    chdir: systems-model/build/{{clustername}}/
+- debug: var=out.stdout_lines
