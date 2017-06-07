@@ -11,7 +11,7 @@
 * Implementation
 ** Automate Base machine setup
 *** base-setup role   
-#+BEGIN_SRC yml :tangle roles/basesetup/eth0.yml
+#+BEGIN_SRC yml :tangle roles/basesetup/tasks/eth0.yml
 ---
    
    - copy: 
@@ -33,7 +33,7 @@
 ...
     
 #+END_SRC
-#+BEGIN_SRC 
+#+BEGIN_SRC yml :tangle roles/basesetup/tasks/br0.yml
 ---
    
    - copy:  
@@ -62,7 +62,7 @@
 
 
 #+END_SRC
-#+BEGIN_SRC 
+#+BEGIN_SRC yml :tangle roles/basesetup/tasks/br1.yml
 ---
 
 
@@ -86,9 +86,20 @@
 
 
 #+END_SRC
-#+BEGIN_SRC 
+#+BEGIN_SRC yml :tangle roles/basesetup/tasks/main.yml
+---
+# tasks file for apache
 
-#+END_SRC
+#- include: br0.yml
+#- include: eth0.yml
+#- include: step3.yml
+#- include: br1.yml
+#- include: step4_commands.yml
+- include: ssh-keys.yml
+- include: corkscrew_installation.yml
+
+
+#+End_SRC
 
 ** Automate OpenVZ setup
 *** openvz role
