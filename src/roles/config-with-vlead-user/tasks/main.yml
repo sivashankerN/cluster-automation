@@ -43,5 +43,7 @@
 #   args:
 #    chdir: ~/systems-model/build/{{clustername}}
 # - debug: var=out.stdout_lines
- # - include: set-proxy.yml
- - include: dns.yml
+#  - include: set-proxy.yml
+# - include: dns.yml
+ # - include: router.yml
+  - include: ads.yml

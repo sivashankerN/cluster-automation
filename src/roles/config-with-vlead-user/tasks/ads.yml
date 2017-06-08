@@ -1,0 +1,24 @@
+---
+- name: installing git
+  command: ssh root@10.100.1.9 yum install -y git
+  register: out
+- debug: var=out.stdout_lines
+
+- name: Generating sshkeys
+  command: ssh root@10.100.1.9  "ssh-keygen -t rsa -f ~/.ssh/id_rsa.pub| echo no"
+  register: out
+- debug: var=out.stdout_lines
+
+- name: install eple-release and sshpass
+  command: ssh root@10.100.1.9 "{{item}}"
+  with_items:
+   - export http_proxy={{proxy_env.http_proxy}} 
+   - export https_proxy={{proxy_env.https_proxy}} 
+   - yum install -y epel-release
+   - yum install -y sshpass
+- name: Set StrictHostKeyChecking no
+  command: ssh root@10.100.1.9 'sed -i "/^StrictHostKeyChecking.*/d" /etc/ssh/ssh_config && echo StrictHostKeyChecking=no >> /etc/ssh/ssh_config'
+- name: Copying keys
+  command: ssh root@10.100.1.9 'sshpass -p "vlead123" ssh-copy-id root@10.2.59.220'
+  register: out
+- debug: var=out.stdout_lines

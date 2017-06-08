@@ -1,11 +1,11 @@
 ---
-# - name: installing ansible
-#   yum: name="{{item}}" state=latest
-#   environment: "{{proxy_env}}"
-#   with_items:
-#        - epel-release
-#        - ansible
-#        - git
+ - name: installing ansible
+   yum: name="{{item}}" state=latest
+   environment: "{{proxy_env}}"
+   with_items:
+        - epel-release
+        - ansible
+        - git
  - name: Create vlead user and generate ssh-keys for vlead
    user: name=vlead password={{vlead_user_password}} generate_ssh_key=yes groups=wheel
  - name: Replacing wheel
