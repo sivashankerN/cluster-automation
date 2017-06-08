@@ -4,7 +4,11 @@ proxy_env:
    http_proxy: http://proxy.iiit.ac.in:8080 
    https_proxy: http://proxy.iiit.ac.in:8080
 
-vlead_user_password: $6$39KX5f1ud1r3vAy8$cTdTp8CBENusQmS43z1gRbzQsLz1/r.nPrD2A/KruD3CW6wAjth15IdSaF1VkXnzvRqmO/H9LZLNEkfwfkCBs1 
+export_proxy: export http_proxy={{proxy_env.http_proxy}} &&  export https_proxy={{proxy_env.https_proxy}}
+
+
+
+vlead_user_passwor: $6$39KX5f1ud1r3vAy8$cTdTp8CBENusQmS43z1gRbzQsLz1/r.nPrD2A/KruD3CW6wAjth15IdSaF1VkXnzvRqmO/H9LZLNEkfwfkCBs1 
 
 
 corkscrew_dest: "/root"
@@ -27,5 +31,5 @@ dnsaddress:
       dns1: 10.4.12.160
       dns2: 10.4.12.220
 
-
+setup_ovpl_centos: https://github.com/vlead/setup-ovpl-centos.git
 

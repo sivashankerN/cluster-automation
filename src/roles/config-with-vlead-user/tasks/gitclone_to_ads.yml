@@ -1,0 +1,7 @@
+---
+
+- name: git cloning 
+  command: ssh root@10.100.1.9 "{{export_proxy}} && git clone {{setup_ovpl_centos}}"
+  ignore_errors: yes
+  register: out
+- debug: var=out.stdout_lines

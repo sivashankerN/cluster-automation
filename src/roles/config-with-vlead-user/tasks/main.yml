@@ -47,4 +47,5 @@
 # - include: dns.yml
  # - include: router.yml
 #  - include: ads.yml
-   - include: knownhost.yml
+ #  - include: knownhost.yml
+   - include: gitclone_to_ads.yml
