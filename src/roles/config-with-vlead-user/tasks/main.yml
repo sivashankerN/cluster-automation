@@ -46,4 +46,5 @@
 #  - include: set-proxy.yml
 # - include: dns.yml
  # - include: router.yml
-  - include: ads.yml
+#  - include: ads.yml
+   - include: knownhost.yml

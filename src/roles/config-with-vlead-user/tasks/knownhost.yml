@@ -1,0 +1,37 @@
+---
+- name: Get public key from ADS server from root account
+  command: "cat ~/.ssh/id_rsa.pub"
+  register: ssh_keys
+
+- name: check keys
+  debug: msg="{{ ssh_keys.stdout }}"
+  tags:
+   - ssh
+- name: Delopying keys on localhost at vlead 
+  lineinfile: path=~/.ssh/known_hosts regexp="^ansible.{{clustername}}.vlabs.ac.in.*"  line='ansible.{{clustername}}.vlabs.ac.in {{ssh_keys.stdout}}' state=present
+- name: Deploying keys on localhost 
+  lineinfile: path=~/.ssh/known_hosts regexp="^10.100.1.2.*"  line='10.100.1.2 {{ ssh_keys.stdout }}' state=present
+
+- name: Deploying keys on localhost 
+  lineinfile: path=~/.ssh/known_hosts regexp="^ansible.{{clustername}}.virtual-labs.ac.in.*"  line='ansible.{{clustername}}.virtual-labs.ac.in {{ ssh_keys.stdout }}' state=present
+#    - 
+
+#- name: deploy keys on localhost at vlead user
+#  command: echo "{{item}}" >> ~/.ssh/known_hosts
+#  register: out
+#  with_items:
+#    - '10.100.1.2 {{ ssh_keys.stdout }}'
+#    - 'ansible.{{clustername}}.virtual-labs.ac.in {{ ssh_keys.stdout }}'
+#  tags:
+#    - ssh
+#
+#- debug: var=out.stdout_lines
+#- name: deploy keys on localhost at vlead user
+#  known_hosts: name=10.2.59.222 key="{{item}}" path=~/.ssh/known_hosts
+#  with_items:
+#    - 'ansible.{{clustername}}.vlabs.ac.in {{ssh_keys.stdout}}'
+# #   - '10.100.1.2 {{ ssh_keys.stdout }}'
+# #   - 'ansible.{{clustername}}.virtual-labs.ac.in {{ ssh_keys.stdout }}'
+#  tags:
+#    - ssh
+#
