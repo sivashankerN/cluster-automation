@@ -1,10 +1,10 @@
 ---
-- name: Set root password
-  command: vzctl set 1009 --userpasswd root:test
-
-- name: copy interface ifcfg-eth1 file
-  copy: src=ifcfg-eth1 dest=/vz/private/1009/etc/sysconfig/network-scripts/
-
-- name: Network restart
-  command: vzctl exec 1009 service network restart
-
+#- name: Set root password
+#  command: vzctl set 1009 --userpasswd root:test
+#
+#- name: copy interface ifcfg-eth1 file
+#  copy: src=ifcfg-eth1 dest=/vz/private/1009/etc/sysconfig/network-scripts/
+#
+#- name: Network restart
+#  command: vzctl exec 1009 service network restart
+- include: cloning.yml

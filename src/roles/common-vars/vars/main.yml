@@ -31,5 +31,5 @@ dnsaddress:
       dns1: 10.4.12.160
       dns2: 10.4.12.220
 
-setup_ovpl_centos: https://github.com/vlead/setup-ovpl-centos.git
+setup_ovpl_centos: https://github.com/vlead/cluster-setup-ovpl-centos.git
 

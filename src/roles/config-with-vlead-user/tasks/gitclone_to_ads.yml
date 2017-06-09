@@ -1,7 +1,10 @@
 ---
 
 - name: git cloning 
-  command: ssh root@10.100.1.9 "{{export_proxy}} && git clone {{setup_ovpl_centos}}"
+  command: ssh root@10.100.1.9 "{{export_proxy}} && git clone {{setup_ovpl_centos}} && cd cluster-setup-ovpl-centos &&  git checkout cluster-ads"
   ignore_errors: yes
   register: out
 - debug: var=out.stdout_lines
+
+
+
