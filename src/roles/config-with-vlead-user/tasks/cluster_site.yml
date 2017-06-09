@@ -1,0 +1,18 @@
+---
+ - name: Replacing private-dns-ips
+   replace:
+        path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml       
+        regexp: 'private_dns_ips: none'
+        replace: 'private_dns_ips: 10.100.1.5'
+       
+ - name: Replacing private-dns-zone
+   replace:
+        path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml       
+        regexp: 'private_dns_zone: none'
+        replace: 'private_dns_zone: "{{clustername}}.virtual-labs.ac.in {{clustername}}.vlabs.ac.in"'
+
+ - name: Commenting  ossec-server.yaml file in site.yaml
+   replace:
+        path: systems-model/build/{{clustername}}/site.yaml     
+        regexp: '^- include: ossec_server.yaml'
+        replace: '#- include: ossec_server.yaml'
