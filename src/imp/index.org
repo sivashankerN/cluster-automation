@@ -1,3 +1,4 @@
+
 #+Title: Implementation of automating the cluster creation
 #+Author: Systems Team
 #+SETUPFILE: ../org-templates/level-1.org
@@ -269,7 +270,7 @@ ProxyCommand corkscrew proxy.iiit.ac.in 8080 %h %p
 #+END_SRC
 ** Automate OpenVZ setup
 *** openvz role
-#+BEGIN_SRC yml :tangle roles/opevz/tasks/main.yml 
+#+BEGIN_SRC yml :tangle roles/openvz/tasks/main.yml 
 
 ---
 
@@ -1093,14 +1094,40 @@ NETMASK=255.255.252.0
 
 ** Automate Reverse proxy node configuration
 *** reverse-proxy role
+#+BEGIN_SRC yml :tangle roles/reverse-proxyserver/tasks/main.yml
+# tasks file for reverse-proxyserver
+
+---
+- name: Set root password
+  command: vzctl set 1007 --userpasswd root:test
+
+- name: copy interface ifcfg-eth1 file
+  copy: src=ifcfg-eth1 dest=/vz/private/1007/etc/sysconfig/network-scripts/
+
+- name:  Network restart
+  command: vzctl exec 1007 service network restart
+
+#+END_SRC
+#+BEGIN_SRC yml :tangle roles/reverse-proxyserver/files/ifcfg-eth1
+DEVICE=eth1
+BOOTPROTO=static
+ONBOOT=yes
+NM_CONTROLLED=no
+IPADDR=10.100.1.7
+GATEWAY=10.100.1.1
+NETMASK=255.255.252.0
 
 
+#+END_SRC
+#+BEGIN_SRC 
+
+#+END_SRC
 ** Automate nagios node configuration
 *** nagios role
 ** Automate ADS setup
 *** ads role
 ** Automate rsnapshot node configuration
 *** rsnapshot role
-
+    
   
 
