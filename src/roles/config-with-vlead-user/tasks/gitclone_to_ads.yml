@@ -7,4 +7,5 @@
 - debug: var=out.stdout_lines
 
 
-
+- name: Running centos-prepare-ovpl shell
+  command: ssh root@10.100.1.9 "{{export_proxy}} && cd cluster-setup-ovpl-centos/scripts && ./centos_prepare_ovpl.sh"

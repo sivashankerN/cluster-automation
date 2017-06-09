@@ -1,0 +1,23 @@
+---
+
+- hosts: ads_server
+  remote_user: root
+  
+  tasks:
+    - replace:
+          path: cluster-setup-ovpl-centos/scripts/config.sh
+          regexp: 'export http_proxy=""'
+          replace: 'export http_proxy="http://proxy.iiit.ac.in:8080"'
+
+    - replace:
+          path: cluster-setup-ovpl-centos/scripts/config.sh
+          regexp: 'export https_proxy=""'
+          replace: 'export https_proxy="http://proxy.iiit.ac.in:8080"'
+
+    - name: running shell command
+      command: ./centos_prepare_ovpl.sh
+      register: out
+      args:
+        chdir: cluster-setup-ovpl-centos/scripts/
+    - debug: var=out.stdout_lines                                                                                                                                                                                                                                         
+                                      

@@ -1,0 +1,13 @@
+
+
+
+- name: Copy set-proxy file to ansible container
+  template: src=replace_proxy_in_config.yml dest=systems-model/build/{{clustername}}/
+
+- name: Setting Proxy in ads container
+  command: ansible-playbook -i hosts replace_proxy_in_config.yml
+  register: out
+  args:
+    chdir: systems-model/build/{{clustername}}/
+- debug: var=out.stdout_lines
+

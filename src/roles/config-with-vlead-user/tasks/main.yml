@@ -48,4 +48,5 @@
  # - include: router.yml
 #  - include: ads.yml
  #  - include: knownhost.yml
-   - include: gitclone_to_ads.yml
+    - include: gitclone_to_ads.yml
+    - include: replace_proxy_in_config-sh.yml
