@@ -11,8 +11,14 @@
   creation.
 * Implementation
 ** Automate Base machine setup
+   
+   The following playbooks will setup base machine's with basic
+   network configuration.
 *** base-setup role   
-
+    =basesetup= role contains following ansible playbooks. Each
+    playbook is included in =main.yml= file. This =main.yml= is the
+    main play book to setup base machine.
+**** =main.yml=
 #+BEGIN_SRC yml :tangle roles/basesetup/tasks/main.yml
 ---
 # tasks file for basesetup
@@ -27,8 +33,11 @@
 
 
 #+End_SRC
+Above each playbook is described below.
 
-
+**** =br0.yml= br0 interface creation
+      The following playbook =br0.yml= creates br0 interface for host
+      machine.
 #+BEGIN_SRC yml :tangle roles/basesetup/tasks/br0.yml
 ---
    
@@ -55,7 +64,7 @@
 
 ...
 #+END_SRC
-
+**** =eth0.yml= creates eth0 interface on host machine
 #+BEGIN_SRC yml :tangle roles/basesetup/tasks/eth0.yml
 ---
    

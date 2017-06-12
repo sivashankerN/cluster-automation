@@ -13,4 +13,7 @@
   - [[./imp/index.org][Implementation]]
 
 
+* Important links
+  - https://github.com/vlead/cluster-automation 
+  - https://github.com/vlead/cluster-setup-ovpl-centos
   
