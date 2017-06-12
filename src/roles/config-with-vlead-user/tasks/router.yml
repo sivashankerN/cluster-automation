@@ -3,21 +3,21 @@
   replace:
      path: systems-model/build/{{clustername}}/router.yaml
      regexp: '^    - rsnapshot_client'
-     replace: '    # - rsnapshot_clients'
+     replace: '    # - rsnapshot_client'
 
 
 - name: Commenting ossec_client
   replace:
      path: systems-model/build/{{clustername}}/router.yaml
      regexp: '^    - ossec_client'
-     replace: '    # - ossec_clients'
+     replace: '    # - ossec_client'
 
-#- name: Running router playbook
-#  command: ansible-playbook -i hosts router.yaml
-#  #environment: "{{proxy_env}}"
-#  register: out
-#  args:
-#    chdir: systems-model/build/{{clustername}}/
-#- debug:
-#    var: out
+- name: Running router playbook
+  command: ansible-playbook -i hosts router.yaml
+  environment: "{{proxy_env}}"
+  register: out
+  args:
+    chdir: systems-model/build/{{clustername}}/
+- debug:
+    var: out
 

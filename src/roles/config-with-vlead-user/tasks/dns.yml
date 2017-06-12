@@ -3,27 +3,27 @@
   lineinfile: 
      path: systems-model/build/{{clustername}}/public_dns.yaml
      regexp: '- rsnapshot_client'
-     line: '# - rsnapshot_clients'
+     line: '# - rsnapshot_client'
   
 
 - name: Commenting ossec_client 
   lineinfile: 
      path: systems-model/build/{{clustername}}/public_dns.yaml
      regexp: '- ossec_client'
-     line: '# - ossec_clients'
+     line: '# - ossec_client'
 
 - name: Commenting rsnapshot_client 
   lineinfile: 
      path: systems-model/build/{{clustername}}/private_dns.yaml
      regexp: '- rsnapshot_client'
-     line: '# - rsnapshot_clients'
+     line: '# - rsnapshot_client'
   
 
 - name: Commenting ossec_client 
   lineinfile: 
      path: systems-model/build/{{clustername}}/private_dns.yaml
      regexp: '- ossec_client'
-     line: '# - ossec_clients'
+     line: '# - ossec_client'
 
 
 - name: Running public_dns playbook
