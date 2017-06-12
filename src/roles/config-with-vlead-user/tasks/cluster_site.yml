@@ -16,3 +16,6 @@
         path: systems-model/build/{{clustername}}/site.yaml     
         regexp: '^- include: ossec_server.yaml'
         replace: '#- include: ossec_server.yaml'
+ 
+
+ 
