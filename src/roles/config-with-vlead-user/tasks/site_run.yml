@@ -1,0 +1,16 @@
+
+- name: Testing  site yml file using ansible
+  command: ansible-playboook -i hosts --list-tasks --syntax-check site.yaml
+  register: out
+  args:
+     chdir: systems-model/build/{{clustername}}/
+- debug: var=out.stdout_lines
+
+
+
+- name: Running site yml file using ansible
+  command: ansible-playboook -i hosts  site.yaml
+  register: out
+  args:
+     chdir: systems-model/build/{{clustername}}/
+- debug: var=out.stdout_lines
