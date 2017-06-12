@@ -1,0 +1,52 @@
+#+Title: Implementation of base machine setup
+#+Author: Systems Team
+#+SETUPFILE: ../../org-templates/level-2.org
+#+TAGS: boilerplate(b)
+#+EXCLUDE_TAGS: boilerplate
+#+OPTIONS: ^:nil
+
+* Introduction
+  This document describes the implementation/automation of base
+  machine's setup.
+* Implementation
+ 
+** Base machine role
+   This role will setup host machine's network
+** Structure of the role
+   #+BEGIN_SRC 
+roles/
+ basesetup
+ ├── files
+ │ └── ssh-config
+ ├── handlers
+ │ └── main.yml
+ ├── meta
+ │ └── main.yml
+ ├── tasks
+ │ ├── br0.yml
+ │ ├── br1.yml
+ │ ├── corkscrew_installation.yml
+ │ ├── eth0.yml
+ │ ├── main.yml
+ │ ├── ssh-keys.yml
+ │ ├── step3.yml
+ │ └── step4_commands.yml
+ └── vars
+     └── main.yml
+
+   #+END_SRC
+*** Files 
+
+   #+BEGIN_SRC 
+   
+   #+END_SRC
+** OpenVZ role
+   This role will install OpenVZ on host machine
+   
+
+
+
+    
+  
+
+
