@@ -5,6 +5,50 @@
 #+EXCLUDE_TAGS: boilerplate
 #+OPTIONS: ^:nil
 
+* Introduction
+  This document describes the automation of private dns container
+  creation.
+* Implementation
+*** Private DNS server role
+
+#+BEGIN_SRC yml :tangle private-dns-server/tasks/main.yml
+
+---
+- name: Set root password
+  command: vzctl set 1005 --userpasswd root:test
+
+- name: copy interface ifcfg-eth1 file
+  copy: src=ifcfg-eth1 dest=/vz/private/1005/etc/sysconfig/network-scripts/
+
+- name:  Network restart
+  command: vzctl exec 1005 service network restart
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle private-dns-server/files/ifcfg-eth1
+
+DEVICE=eth1
+BOOTPROTO=static
+ONBOOT=yes
+NM_CONTROLLED=no
+IPADDR=10.100.1.5
+GATEWAY=10.100.1.1
+NETMASK=255.255.252.0
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle private-dns-server/meta/main.yml
+
+dependencies:
+    - common-vars
+
+#+END_SRC
+
+    
+  
+
 
 
     

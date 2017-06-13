@@ -9,9 +9,6 @@
   This document describes the implementation/automation of base
   machine's setup.
 * Implementation
- 
-** Base machine role
-   This role will setup host machine's network
 ** Structure of the role
    #+BEGIN_SRC 
 roles/
@@ -35,18 +32,490 @@ roles/
      └── main.yml
 
    #+END_SRC
-*** Files 
 
-   #+BEGIN_SRC 
-   
-   #+END_SRC
-** OpenVZ role
-   This role will install OpenVZ on host machine
-   
+** Base machine role
+   This role will setup host machine's network
+   The following playbooks will setup base machine's with basic
+   network configuration.
+*** base-setup role   
+    =basesetup= role contains following ansible playbooks. Each
+    playbook is included in =main.yml= file. This =main.yml= is the
+    main play book to setup base machine.
+**** =main.yml=
+#+BEGIN_SRC yml :tangle basesetup/tasks/main.yml
+---
+# tasks file for basesetup
 
+- include: br0.yml
+- include: eth0.yml
+- include: step3.yml
+- include: br1.yml
+- include: step4_commands.yml
+- include: ssh-keys.yml
+- include: corkscrew_installation.yml
+
+
+#+End_SRC
+Above each playbook is described below.
+
+**** =br0.yml= br0 interface creation
+      The following playbook =br0.yml= creates br0 interface for host
+      machine.
+#+BEGIN_SRC yml :tangle basesetup/tasks/br0.yml
+---
+   
+   - copy:  
+       content: ""      
+       dest: "/etc/sysconfig/network-scripts/ifcfg-br0"
+   
+      
+   - name: creating br0 bridge
+     blockinfile:
+        path: /etc/sysconfig/network-scripts/ifcfg-br0
+        block: |
+         DEVICE=br0
+         BOOTPROTO=static
+         ONBOOT=yes
+         TYPE=Bridge
+         NM_CONTROLLED=no
+         IPADDR=10.2.59.220
+         NETMASK=255.255.252.0
+         GATEWAY=10.2.56.1
+         DNS1=10.4.12.160
+         DNS2=10.4.12.220
+          
+
+...
+#+END_SRC
+**** =eth0.yml= creates eth0 interface on host machine
+#+BEGIN_SRC yml :tangle basesetup/tasks/eth0.yml
+---
+   
+   - copy: 
+      content: ""      
+      dest: "/etc/sysconfig/network-scripts/ifcfg-eth0" 
+  
+   - name: creating
+     blockinfile:
+        path: /etc/sysconfig/network-scripts/ifcfg-eth0
+        block: |
+         DEVICE=eth0
+         TYPE=Ethernet
+         ONBOOT=yes
+         NM_CONTROLLED=no
+         BOOTPROTO=none
+         BRIDGE=br0
+          
+
+...
+    
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle basesetup/tasks/step3.yml
+
+---
+
+  - service:
+       name: network
+       state: restarted
+                        
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle basesetup/tasks/br1.yml
+---
+
+
+   
+   - copy: 
+      content: ""      
+      dest: "/etc/sysconfig/network-scripts/ifcfg-br1"
+      
+   - name: creating Br1 file
+     blockinfile:
+        path: /etc/sysconfig/network-scripts/ifcfg-br1
+        block: |
+         DEVICE=br1
+         TYPE=Bridge
+         ONBOOT=yes
+         NM_CONTROLLED=no
+         BOOTPROTO=none
+
+
+...
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle basesetup/tasks/step4_commands.yml
+
+---
+
+  
+  - service: 
+     name: network
+     state: restarted
+
+  - name: Running brctl show and output="brctl show"
+    command: ifconfig
+    register: out
+
+  - debug: var=out.stdout_lines
+
+  - name: Runnig 2nd command
+    command: ifconfig
+    register: out
+  - debug: var=out.stdout_lines 
+ 
+  - name: Manager off
+    command: chkconfig NetworkManager off
+    register: out
+  - debug: var=out.stdout_lines   
+
+  - name: Manager on
+    command: chkconfig network on
+    register: out
+  - debug: var=out.stdout_lines
+
+  - name: Running brctl show command
+    command: brctl show
+    register: out
+
+  - debug: var=out.stdout_lines     
+
+                
+
+
+...
+
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle basesetup/tasks/ssh-keys.yml
+
+---
+- name: ssh-key generate
+  user: name=root generate_ssh_key=yes
+
+- name: Strict host check no
+  lineinfile: path=/etc/ssh/ssh_config regexp="^Strict.*" line="StrictHostKeyChecking no" state=present
+  notify: restart_ssh
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle basesetup/tasks/corkscrew_installation.yml
+- name: dest
+  command: pwd && echo "{{corkscrew_dest}}"
+  register: out
+- debug: var=out.stdout_lines
+- name: install pip
+  pip: name=passlib
+  environment: "{{proxy_env}}"
+
+- name: install wget
+  yum: name=wget state=installed
+  environment: "{{proxy_env}}"
+
+- name: Download Corkscrew tar file
+  get_url: url={{corkscrew_url1}} dest={{corckscrew_dest}}
+  environment: "{{proxy_env}}"
+  ignore_errors: yes
+
+- name: Download  corkscrew tar file
+  get_url: url={{corkscrew_url2}} dest={{corkscrew_dest}}
+  environment: "{{proxy_env}}"
+
+- name: Extract downloaded file
+  unarchive: src={{corkscrew_dest}}/corkscrew-2.0.tar.gz dest={{corkscrew_dest}}
+#- name: set environment variable
+#  command: ac_default_prefix=~/corkscrew-2.0/bin/corkscrew
+
+- name: Run ./configugre
+  command: ./configure
+  args:
+    chdir: "{{corkscrew_dest}}/corkscrew-2.0/"
+  register: out
+- debug: var=out.stdout_lines
+
+- name: run make
+  command: make
+  args:
+    chdir: "{{corkscrew_dest}}/corkscrew-2.0/"
+  register: out
+- debug: var=out.stdout_lines
+
+- name: run make install
+  command: make
+  args:
+    chdir: "{{corkscrew_dest}}/corkscrew-2.0/"
+  register: out
+- debug: var=out.stdout_lines
+
+
+- name: create and configure ~/.ssh/config to clone bitbucket repo system model
+  copy: src=ssh-config dest=~/.ssh/config mode=400
+
+
+- name: clone systems-model repo from bitbucket
+  git: repo="{{systems_model_repo}}" dest="{{systems_model_dest}}" version=develop
+
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle basesetup/vars/main.yml
+
+corkscrew_dest: "/root/"
+corkscrew_url1: http://www.agroman.net/corkscrew/corkscrew-2.0.tar.gz
+corkscrew_url2: http://wiki.kartbuilding.net/corkscrew-2.0.tar.gz
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle basesetup/meta/main.yml
+
+dependencies:
+   - common-vars 
+
+
+#+END_SRC
+#+BEGIN_SRC yml :tangle basesetup/files/ssh-config
+
+Host altssh.bitbucket.org
+User git
+Port 443
+Hostname altssh.bitbucket.org
+TCPKeepAlive yes
+IdentityFile "~/.ssh/id_rsa"
+IdentitiesOnly yes
+ProxyCommand corkscrew proxy.iiit.ac.in 8080 %h %p
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle basesetup/handlers/main.yml
+
+- name: restart_ssh
+  service: name=sshd state=restarted
+
+#+END_SRC
+
+** Automate OpenVZ setup
+*** openvz role
+#+BEGIN_SRC yml :tangle openvz/tasks/main.yml 
+
+---
+
+- include: cloning.yml
+- include: shellrun.yml
+- include: copycode.yml
+- include: edit.yml
+- include: templatedownload.yml
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle openvz/tasks/cloning.yml
+
+---
+    - name: install git
+      command: yum -y install git
+      environment:
+        http_proxy: http://proxy.iiit.ac.in:8080
+        https_proxy: http://proxy.iiit.ac.in:8080
+      register: out
+    - debug: var=out.stdout_lines 
+
+
+    - name: change directory
+      command: git clone https://github.com/Raj-18110/setup-ovpl-centos.git
+      ignore_errors: yes
+      register: out
+      args: 
+        chdir: roles/openvz/files/
+    - debug: var=out.stdout_lines
+
+
+#+END_SRC
+#+BEGIN_SRC yml :tangle openvz/tasks/shellrun.yml
+
+---
+
+    - replace: 
+          path: roles/openvz/files/setup-ovpl-centos/scripts/config.sh
+          regexp: 'export http_proxy=""'
+          replace: 'export http_proxy="http://proxy.iiit.ac.in:8080"'
+     
+    - replace: 
+          path: roles/openvz/files/setup-ovpl-centos/scripts/config.sh
+          regexp: 'export https_proxy=""'
+          replace: 'export https_proxy="http://proxy.iiit.ac.in:8080"'
 
 
     
-  
+    - name: running shell command
+      command: ./centos_prepare_ovpl.sh
+      register: out 
+      args: 
+        chdir: roles/openvz/files/setup-ovpl-centos/scripts/
+    - debug: var=out.stdout_lines
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle openvz/tasks/copycode.yml
+
+---
+- hosts: localhost
+  become: yes
+  become_method: "sudo" 
+  tasks:
+     - copy:
+        content: "EXTERNAL_SCRIPT=\"/usr/sbin/vznetaddbr\" "
+        dest: "/etc/vz/vznet.conf"
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle openvz/tasks/edit.yml
+
+---
+- hosts: localhost
+  become: yes
+  become_method: sudo
+  tasks: 
+    - replace: 
+          path: /etc/sysctl.conf
+          regexp: 'net.ipv4.ip_forward = 0'
+          replace: 'net.ipv4.ip_forward = 1'
+           
+    - replace: 
+          path: /etc/vz/conf/ve-vswap-256m.conf-sample 
+          regexp: 'NETFILTER="stateless"'
+          replace: 'NETFILTER="full"'
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle openvz/tasks/templatedownload.yml
+
+    - name: downloading
+      get_url:
+         url: http://download.openvz.org/template/precreated/centos-6-x86_64.tar.gz
+         dest: /vz/template/cache
+      environment:
+         http_proxy: http://proxy.iiit.ac.in:8080
+         https_proxy: http://proxy.iiit.ac.in:8080
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle openvz/meta/main.yml
+
+dependencies:
+   - common-vars 
+
+#+END_SRC
+
+
+** Automate Cluster nodes/servers creation
+*** Cluster role 
+
+#+BEGIN_SRC yml :tangle cluster/tasks/main.yml
+
+---
+    - name: creating cluster
+      command: sh cluster.sh
+      register: out
+      args: 
+         chdir: roles/cluster/files/ 
+    - debug: var=out.stdout_lines
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle cluster/meta/main.yml
+
+dependencies:
+     - common-vars
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle cluster/files/cluster.sh
+
+ cluster="{{clustername}}"
+     public_bridge="br0"
+     private_bridge="br1"
+     for i in {1001..1010}
+     do
+     vzctl create $i  --ostemplate centos-6-x86_64
+     if [ $i == 1001 ]
+     then
+     vzctl set $i --hostname router.$cluster.vlabs.ac.in --save
+     vzctl set $i --netif_add eth0,,,,$public_bridge --save
+     vzctl set $i --netif_add eth1,,,,$private_bridge --save
+     vzctl start $i
+     vzctl set $i --onboot yes --save
+     elif [ $i == 1002 ]
+     then 
+     vzctl set $i --hostname ansible.$cluster.vlabs.ac.in --save
+     vzctl set $i --netif_add eth0,,,,$public_bridge --save
+     vzctl set $i --netif_add eth1,,,,$private_bridge --save
+     vzctl start $i
+     vzctl set $i --onboot yes --save
+     elif [ $i == 1003 ]
+     then
+     vzctl set $i --hostname ossec-server.$cluster.vlabs.ac.in --save
+     vzctl set $i --netif_add eth1,,,,$private_bridge --save
+     vzctl start $i
+     vzctl set $i --onboot yes --save
+     
+     elif [ $i == 1004 ]
+     then
+     vzctl set $i --hostname rsyslog.$cluster.vlabs.ac.in --save
+     vzctl set $i --netif_add eth1,,,,$private_bridge --save
+     vzctl start $i
+     vzctl set $i --onboot yes --save
+     elif [ $i == 1005 ]
+     then
+     vzctl set $i --hostname privatedns.$cluster.vlabs.ac.in --save
+     vzctl set $i --netif_add eth1,,,,$private_bridge --save
+     vzctl start $i
+     vzctl set $i --onboot yes --save
+     
+     elif [ $i == 1006 ]
+     then
+     vzctl set $i --hostname publicdns.$cluster.vlabs.ac.in --save
+     vzctl set $i --netif_add eth1,,,,$private_bridge --save
+     vzctl start $i
+     vzctl set $i --onboot yes --save
+     elif [ $i == 1007 ]
+     then
+     vzctl set $i --hostname reverseproxy.$cluster.vlabs.ac.in --save
+     vzctl set $i --netif_add eth1,,,,$private_bridge --save
+     vzctl start $i
+     vzctl set $i --onboot yes --save
+     elif [ $i == 1008 ]
+     then
+     vzctl set $i --hostname nagios.$cluster.vlabs.ac.in --save
+     vzctl set $i --netif_add eth1,,,,$private_bridge --save
+     vzctl start $i
+     vzctl set $i --onboot yes --save
+     elif [ $i == 1009 ]
+     then
+     vzctl set $i --hostname ads.$cluster.vlabs.ac.in --save
+     vzctl set $i --netif_add eth1,,,,$private_bridge --diskspace 20G --save
+     vzctl start $i
+     vzctl set $i --onboot yes --save
+     elif [ $i == 1010 ]
+     then
+     vzctl set $i --hostname rsnapshot.$cluster.vlabs.ac.in --save
+     vzctl set $i --netif_add eth1,,,,$private_bridge --save
+     vzctl start $i
+     vzctl set $i --onboot yes --save
+     fi
+     done
+
+
+#+END_SRC
 
 

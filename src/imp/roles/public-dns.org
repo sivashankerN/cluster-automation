@@ -5,6 +5,49 @@
 #+EXCLUDE_TAGS: boilerplate
 #+OPTIONS: ^:nil
 
+* Introduction
+  This document describes the automation of public dns container
+  network configuration
+  creation.
+* Implementation
+  
+** Public DNS server role
+#+BEGIN_SRC yml :tangle public-dns-server/tasks/main.yml
+
+---
+- name: Set root password
+  command: vzctl set 1006 --userpasswd root:test
+
+- name: copy interface ifcfg-eth1 file
+  copy: src=ifcfg-eth1 dest=/vz/private/1006/etc/sysconfig/network-scripts/
+
+- name: Public-dns-server Network restart
+  command: vzctl exec 1006 service network restart
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle public-dns-server/meta/main.yml
+
+dependencies:
+    - common-vars
+
+#+END_SRC
+   
+#+BEGIN_SRC yml :tangle public-dns-server/files/ifcfg-eth1
+
+DEVICE=eth1
+BOOTPROTO=static
+ONBOOT=yes
+NM_CONTROLLED=no
+IPADDR=10.100.1.6
+GATEWAY=10.100.1.1
+NETMASK=255.255.252.0
+
+
+
+#+END_SRC
+
 
 
     
