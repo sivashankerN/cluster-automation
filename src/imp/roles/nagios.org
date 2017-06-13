@@ -29,7 +29,7 @@
   
 #+BEGIN_SRC yml :tangle nagios-server/meta/main.yml
 
-dependencies
+dependencies:
     - common-vars
 
 #+END_SRC
