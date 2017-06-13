@@ -1,4 +1,3 @@
-
 #+Title: Common-vars role
 #+Author: Systems Team
 #+SETUPFILE: ../../org-templates/level-2.org

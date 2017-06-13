@@ -5,6 +5,14 @@
 #+EXCLUDE_TAGS: boilerplate
 #+OPTIONS: ^:nil
 
+* Introduction
+  This document contains the implementation of automation of cluster
+  creation.
+* Implementation
+** Automate nagios node configuration
+*** nagios role
+    
+  
 
 
     
