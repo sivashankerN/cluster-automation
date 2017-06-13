@@ -1,0 +1,33 @@
+#+Title: Role Run
+#+Author: Systems Team
+#+SETUPFILE: ../../org-templates/level-2.org
+#+TAGS: boilerplate(b)
+#+EXCLUDE_TAGS: boilerplate
+#+OPTIONS: ^:nil
+
+* Introduction
+ This is first yml file for bridging network
+* Implementation
+#+BEGIN_SRC yml :tangle role_run.yml
+
+---
+- hosts: localhost
+  become: root
+  #become_method: sudo
+  roles:
+    - basesetup
+    - openvz
+    - cluster
+    - router
+    - public-dns-server
+    - private-dns-server
+    - ossec-server
+    - rsyslog-server
+    - reverse-proxy-server
+    - rsnapshot-server
+    - nagios-server
+    - ads-server
+
+
+#+END_SRC
+

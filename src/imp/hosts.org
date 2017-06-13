@@ -1,0 +1,19 @@
+#+Title: hosts
+#+Author: Systems Team
+#+SETUPFILE: ../../org-templates/level-2.org
+#+TAGS: boilerplate(b)
+#+EXCLUDE_TAGS: boilerplate
+#+OPTIONS: ^:nil
+
+* Introduction
+This file contains the ip addresses of host-machine and of all the containers
+* Implementation
+#+BEGIN_SRC :tangle hosts
+
+[localhost]
+127.0.0.1
+[config-server]
+10.2.59.222
+
+
+#+END_SRC
