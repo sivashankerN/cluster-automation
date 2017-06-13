@@ -12,7 +12,7 @@
      replace: 
        path: ovpl/config/config.json
        regexp: '"COOKIE_SECRET.*"'
-       replace: '"COOKIE_SECRET"="jgsjdhgfcjgsdjgfvjhsdfhkjsdgk"'
+       replace: '"COOKIE_SECRET": "jgsjdhgfcjgsdjgfvjhsdfhkjsdgk"'
 
    - name: 
      replace: 
