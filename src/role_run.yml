@@ -14,4 +14,4 @@
     - reverse-proxy-server
     - rsnapshot-server
     - nagios-server
-    - ads-server
+#    - ads-server
