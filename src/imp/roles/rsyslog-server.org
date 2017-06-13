@@ -28,7 +28,7 @@
   
 #+BEGIN_SRC yml :tangle rsyslog-server/meta/main.yml
 
-dependencies
+dependencies:
    - common-vars
 
 #+END_SRC
