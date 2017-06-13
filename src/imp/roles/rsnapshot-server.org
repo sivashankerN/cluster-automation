@@ -28,7 +28,7 @@
 
 #+BEGIN_SRC yml :tangle rsnapshot-server/meta/main.yml
 
-dependencies
+dependencies:
    - common-vars
 
 #+END_SRC
