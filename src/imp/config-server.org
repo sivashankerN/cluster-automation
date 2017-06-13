@@ -1,0 +1,26 @@
+#+Title: Config-server
+#+Author: Systems Team
+#+SETUPFILE: ../../org-templates/level-2.org
+#+TAGS: boilerplate(b)
+#+EXCLUDE_TAGS: boilerplate
+#+OPTIONS: ^:nil
+
+* Introduction
+* Implementation
+
+#+BEGIN_SRC yml :tangle config-server.yml
+
+---
+- hosts: config-server
+  become_user: root
+
+  roles:
+    - config-server
+  tasks:
+   - name: ping test
+     command: ping google.com -c 3
+     register: out
+   - debug: var=out.stdout_line
+
+
+#+END_SRC

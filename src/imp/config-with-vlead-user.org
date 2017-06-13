@@ -1,0 +1,21 @@
+#+Title: Config-with-vlead-user
+#+Author: Systems Team
+#+SETUPFILE: ../../org-templates/level-2.org
+#+TAGS: boilerplate(b)
+#+EXCLUDE_TAGS: boilerplate
+#+OPTIONS: ^:nil
+
+* Introduction
+This configures all other containers from vlead user created in ansible machine/container
+* Implementation
+#+BEGIN_SRC yml :tangle config-with-vlead-user.yml
+
+---
+- hosts: config-server
+  become: yes
+  become_user: vlead
+  roles:
+   - config-with-vlead-user
+
+
+#+END_SRC
