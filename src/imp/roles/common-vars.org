@@ -5,8 +5,49 @@
 #+EXCLUDE_TAGS: boilerplate
 #+OPTIONS: ^:nil
 
+* Introduction
+  This role contains all the variables that are used in other playbooks
+* Implementation
+** common-vars role
+#+BEGIN_SRC yml :tangle common-vars/vars/main.yml
+
+---
+# vars file for common
+proxy_env: 
+   http_proxy: http://proxy.iiit.ac.in:8080 
+   https_proxy: http://proxy.iiit.ac.in:8080
+
+export_proxy: export http_proxy={{proxy_env.http_proxy}} &&  export https_proxy={{proxy_env.https_proxy}}
 
 
-    
+
+vlead_user_passwor: $6$39KX5f1ud1r3vAy8$cTdTp8CBENusQmS43z1gRbzQsLz1/r.nPrD2A/KruD3CW6wAjth15IdSaF1VkXnzvRqmO/H9LZLNEkfwfkCBs1 
+
+
+corkscrew_dest: "/root"
+corkscrew_url1: http://www.agroman.net/corkscrew/corkscrew-2.0.tar.gz
+corkscrew_url2: http://wiki.kartbuilding.net/corkscrew-2.0.tar.gz
+
+systems_model_repo: git@altssh.bitbucket.org:vlead/systems-model.git
+
+systems_model_dest: "{{corkscrew_dest}}/systems-model"
+
+ipaddress:
+     hostmachine: 10.2.59.220
+     router: 10.2.59.221     
+     config_server: 10.2.59.222
+
+clustername: base7
+
+
+dnsaddress:
+      dns1: 10.4.12.160
+      dns2: 10.4.12.220
+
+setup_ovpl_centos: https://github.com/vlead/cluster-setup-ovpl-centos.git
+
+  
+#+END_SRC 
+
   
 
