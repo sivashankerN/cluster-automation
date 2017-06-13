@@ -46,10 +46,11 @@
 #  - include: set-proxy.yml
 # - include: dns.yml
   # - include: router.yml
-#  - include: ads.yml
+  - include: ads.yml
  #  - include: knownhost.yml
-   # - include: gitclone_to_ads.yml
+#    - include: gitclone_to_ads.yml
    # - include: replace_proxy_in_config-sh.yml
-    # - include: cluster_site.yml
+   #  - include: cluster_site.yml
     # - include: site_modify.yml
-     - include: site_run.yml
+  #  - include: site_run.yml
+#     - include: ads-setup.yml

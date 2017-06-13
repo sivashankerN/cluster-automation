@@ -29,15 +29,24 @@
 - debug: var=out.stdout_lines
 
 - name: check keys
-  debug: msg="{{ ssh_keys.stdout }}"
+  debug: msg= "{{ ssh_keys.stdout }}"
   tags:
    - ssh
 
 - name: deploy keys on localhost at vlead user
-  authorized_key: user=vlead key="{{ item }}"
+  authorized_key: user=vlead key= "{{ item }}"
   delegate_to: "{{ipaddress.config_server}}"
   with_items:
     - 'command="hooks.sh",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty {{ ssh_keys.stdout }}'
   tags:
     - ssh
 
+- name: Copy template
+  template: src=ads-setup.yml dest=systems-model/build/{{clustername}}/
+
+- name: run ads_setup 
+  command: ansible-playbook -i hosts ads-setup.yml 
+  register: out
+  args: 
+    chdir: systems-model/build/{{clustername}}/
+- debug: var=out.stdout_lines  

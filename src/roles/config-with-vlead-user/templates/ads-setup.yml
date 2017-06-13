@@ -1,0 +1,124 @@
+---
+- hosts: ads_server
+  remote_user: root
+  
+  tasks:
+   - name: Copy file
+     command: cp sample_config.json config.json 
+     args: 
+       chdir: ovpl/config/
+   - name: COOKIE UPDATE
+   #  command: 'sed -i "s/COOKIE_SECRET.*/COOKIE_SECRET\"=\"jgsjdhgfcjgsdjgfvjhsdfhkjsdgk\"/g" ovpl/config/config.json'
+     replace: 
+       path: ovpl/config/config.json
+       regexp: '"COOKIE_SECRET.*"'
+       replace: '"COOKIE_SECRET"="jgsjdhgfcjgsdjgfvjhsdfhkjsdgk"'
+
+   - name: 
+     replace: 
+      path: ovpl/config/config.json
+      regexp: '"ADAPTER_TO_USE" : {"POOLID" : 1, "ADAPTERID" : 2}'
+      replace: '"ADAPTER_TO_USE" : {"POOLID" : 1, "ADAPTERID" : 3}'
+
+
+   - name: Copy base_config.py
+     command: cp sample_base_config.py base_config.py
+     args: 
+       chdir: ovpl/config/adapters/
+   - name: set BASE_IP_ADDRESS
+     lineinfile: 
+       path: ovpl/config/adapters/base_config.py
+       regexp: "^BASE_IP_ADDRESS =.*"
+       line: 'BASE_IP_ADDRESS = "root@{{ipaddress.hostmachine}}"'
+       state: present
+   - name: ADS_ON_CONTAINER to true
+     lineinfile: 
+        path: ovpl/config/adapters/base_config.py
+        regexp: "^ADS_ON_CONTAINER =.*"
+        line: "ADS_ON_CONTAINER = True"
+        state: present
+
+   - name: Set ADS_SERVER_VM_ID to CTID of container running ADS
+     lineinfile: 
+      path: ovpl/config/adapters/base_config.py
+      regexp: "^ADS_SERVER_VM_ID*"
+      line: 'ADS_SERVER_VM_ID = "1009"'
+      state: present
+   - name: Set SUBNET
+     lineinfile: 
+       path: ovpl/config/adapters/base_config.py
+       regexp: "SUBNET = .*" 
+       line: 'SUBNET = ["10.100.0.0/16"]'
+       state: present
+   - name: Set host name
+     lineinfile: 
+      path: ovpl/config/adapters/base_config.py
+      regexp: "HOST_NAME = .*"
+      line: 'HOST_NAME = "{{clustername}}.vlabs.ac.in"'
+      state: present
+   - name: Set SERVICE_HOST 
+     lineinfile: 
+      path: ovpl/config/adapters/base_config.py
+      regexp: "^SERVICE_HOST = .*"
+      line: 'SERVICE_HOST = "vlead@ansible.{{clustername}}.vlabs.ac.in"'
+      state: present
+
+   - name: Settings for centos_bridged_adapter
+     command: cp sample_centos_bridged_config.py centos_bridged_config.py 
+     args: 
+      chdir: ovpl/config/adapters/
+
+   - name: SUBNET Bridge
+     lineinfile:
+      path: ovpl/config/adapters/centos_bridged_config.py
+      regexp: "SUBNET_BRIDGE = .*"  
+      line: 'SUBNET_BRIDGE = "br1"'
+      state: present
+  
+   - name: Install dependencies
+     yum: name=epel-release state=installed
+   - name: Install dependencies
+     yum: name=mod_wsgi state=installed
+   - name: Install dependencies
+     yum: name=python-pip state=installed
+   - name: Install 
+     shell: '{{export_proxy}} &&  python setup.py install'
+     register: result
+     args:
+       chdir: ~/ovpl/src/ads-web-app/
+   - debug: var=result.stdout_lines
+     
+  
+   - name: Rsync files
+     command: cp -r ~/ovpl/src/ads-web-app /var/www/html/
+     
+   - name: Start manage_service &
+     shell: ./manage_services.sh
+     args: 
+      chdir: ovpl/
+           
+   - name: Google keys
+     replace:
+        path: /var/www/html/ads-web-app/config.py
+        regexp: "CONSUMER_KEY.*"
+        replace: 'CONSUMER_KEY = "{{consumer_key}}"'
+   - name: Google secrete
+     replace:
+        path: /var/www/html/ads-web-app/config.py
+        regexp: "CONSUMER_SECRET.*"
+        replace: 'CONSUMER_SECRET = "{{consumer_secret}}"'
+
+   - name : Replace ADS_SECRET_KEY
+     lineinfile:
+        path:  /var/www/html/ads-web-app/config.py
+        regexp: "^ADS_SECRET_KEY.*"
+        line: 'ADS_SECRET_KEY = "placethekeyhere"'
+        state: present
+
+   - name : Replace APP_URL
+     lineinfile:
+        path:  /var/www/html/ads-web-app/config.py
+        regexp: "^APP_URL .*"
+        line: 'APP_URL = "http://ads.{{clustername}}.virtual-labs.ac.in:8080"'
+        state: present
+
