@@ -19,7 +19,7 @@
   - [[./roles/reverse-proxy-awstats.org][Reverse-proxy]]
   - [[./roles/nagios.org][nagios]]
   - [[./roles/rsnapshot-server.org][rsnapshot]]
-   
+  - [[./roles/config-with-vlead-user.org][Configure cluster with vlead user]] 
     
   
 
