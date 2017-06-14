@@ -1,117 +1,113 @@
 
-# - name: Checking directory
-#   command: pwd
-#   register: out
-# - debug: var=out.stdout_lines
- - name: commenting  ossec-client from ossec-server
+ - name: commenting  ossec-client in ossec-server
    replace: 
       path: systems-model/build/{{clustername}}/ossec_server.yaml
       regexp: '^    - ossec_client'
       replace: '    # - ossec_client'
  
- - name: Uncommenting rsnapshot-client from ossec-server 
+ - name: Uncommenting rsnapshot-client in ossec-server 
    replace: 
       path: systems-model/build/{{clustername}}/ossec_server.yaml
       regexp: '^    # - rsnapshot_client'
       replace: '    - rsnapshot_client'
  
- - name: commenting ossec-client from config-server
+ - name: commenting ossec-client in config-server
    replace: 
       path: systems-model/build/{{clustername}}/config_server.yaml
       regexp: '^    - ossec_client'
       replace: '    # - ossec_client'
  
- - name: Uncommenting rsnapshot-client from config-server 
+ - name: Uncommenting rsnapshot-client in config-server 
    replace: 
       path: systems-model/build/{{clustername}}/config_server.yaml
       regexp: '^    # - rsnapshot_client'
       replace: '    - rsnapshot_client'
 
  
- - name: commenting oseec-client from nagios-server
+ - name: commenting oseec-client in nagios-server
    replace: 
       path: systems-model/build/{{clustername}}/nagios_server.yaml
       regexp: '^    - ossec_client'
       replace: '    # - ossec_client'
  
- - name: Uncommenting rsnapshot-client from nagios-server
+ - name: Uncommenting rsnapshot-client in nagios-server
    replace: 
       path: systems-model/build/{{clustername}}/nagios_server.yaml
       regexp: '^    # - rsnapshot_client'
       replace: '    - rsnapshot_client'
 
 
- - name: commenting oseec-client from public-dns-server
+ - name: commenting oseec-client in public-dns-server
    replace: 
       path: systems-model/build/{{clustername}}/public_dns.yaml
       regexp: '^    - ossec_client'
       replace: '    # - ossec_client'
  
- - name: Uncommenting rsnapshot-client from public-dns-server
+ - name: Uncommenting rsnapshot-client in public-dns-server
    replace: 
       path: systems-model/build/{{clustername}}/public_dns.yaml
       regexp: '^    # - rsnapshot_client'
       replace: '    - rsnapshot_client'
 
- - name: commenting oseec-client from reverseproxy-server
+ - name: commenting oseec-client in reverseproxy-server
    replace: 
       path: systems-model/build/{{clustername}}/reverseproxy_server.yaml
       regexp: '^    - ossec_client'
       replace: '    # - ossec_client'
  
- - name: Uncommenting rsnapshot-client from reverseproxy-server
+ - name: Uncommenting rsnapshot-client in reverseproxy-server
    replace: 
       path: systems-model/build/{{clustername}}/reverseproxy_server.yaml
       regexp: '^    # - rsnapshot_client'
       replace: '    - rsnapshot_client'
 
 
- - name: commenting oseec-client from router
+ - name: commenting oseec-client in router
    replace: 
       path: systems-model/build/{{clustername}}/router.yaml
       regexp: '^    - ossec_client'
       replace: '    # - ossec_client'
  
- - name: Uncommenting rsnapshot-client from router
+ - name: Uncommenting rsnapshot-client in router
    replace: 
       path: systems-model/build/{{clustername}}/router.yaml
       regexp: '^    # - rsnapshot_client'
       replace: '    - rsnapshot_client'
 
 
- - name: commenting oseec-client from private-dns-server
+ - name: commenting oseec-client in private-dns-server
    replace: 
       path: systems-model/build/{{clustername}}/private_dns.yaml
       regexp: '^    - ossec_client'
       replace: '    # - ossec_client'
  
- - name: Uncommenting rsnapshot-client from private-dns-server
+ - name: Uncommenting rsnapshot-client in private-dns-server
    replace: 
       path: systems-model/build/{{clustername}}/private_dns.yaml
       regexp: '^    # - rsnapshot_client'
       replace: '    - rsnapshot_client'
 
 
- - name: commenting oseec-client from rsnapshot-server
+ - name: commenting oseec-client in rsnapshot-server
    replace: 
       path: systems-model/build/{{clustername}}/rsnapshot_server.yaml
       regexp: '^    - ossec_client'
       replace: '    # - ossec_client'
  
- - name: Uncommenting rsnapshot-client from rsnapshot-server
+ - name: Uncommenting rsnapshot-client in rsnapshot-server
    replace: 
       path: systems-model/build/{{clustername}}/rsnapshot_server.yaml
       regexp: '^    # - rsnapshot_client'
       replace: '    - rsnapshot_client'
 
 
- - name: commenting oseec-client from rsyslog-server
+ - name: commenting oseec-client in rsyslog-server
    replace: 
       path: systems-model/build/{{clustername}}/rsyslog_server.yaml
       regexp: '^    - ossec_client'
       replace: '    # - ossec_client'
  
- - name: Uncommenting rsnapshot-client from rsyslog-server
+ - name: Uncommenting rsnapshot-client in rsyslog-server
    replace: 
       path: systems-model/build/{{clustername}}/rsyslog_server.yaml
       regexp: '^    # - rsnapshot_client'
