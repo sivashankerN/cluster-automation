@@ -38,6 +38,13 @@
    args:
     chdir: ~/systems-model/build/{{clustername}}
  - debug: var=out.stdout_lines
+ - name: Changing proxy-port of system-model
+   lineinfile:
+        path: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml 
+        regexp: '^proxy_port:.*'
+        line: 'proxy_port: {{proxy_port}}'
+        state: present
+
  - include: set-proxy.yml
  - include: dns-servers.yml
  - include: router.yml
