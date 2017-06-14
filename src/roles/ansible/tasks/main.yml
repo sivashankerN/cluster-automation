@@ -1,0 +1,14 @@
+---
+# tasks file for ansible
+- name: Set root password
+  shell: vzctl set 1002 --userpasswd root:{{vlead_user_password}}
+
+- name: copy interface ifcfg-eth0 file
+  template: src=ifcfg-eth0 dest=/vz/private/1002/etc/sysconfig/network-scripts/
+
+- name: copy interface ifcfg-eth1 file
+  template: src=ifcfg-eth1 dest=/vz/private/1002/etc/sysconfig/network-scripts/
+
+- name: Config-server Network restart
+  command: vzctl exec 1002 service network restart
+
