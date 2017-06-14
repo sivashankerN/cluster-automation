@@ -1,56 +1,51 @@
 ---
-# tasks file for config-with-vlead-user
-# - name: test 
-#   command: pwd
-#   register: out
-# - debug: var=out.stdout_lines
-# - name: Copy ssh keys
-#   shell: sshpass -p "test" ssh-copy-id root@localhost
-#   register: out
-# - debug: var=out.stdout_lines
-# - name: Copy ssh keys
-#   shell: sshpass -p "test" ssh-copy-id root@127.0.0.1
-#   register: out
-# - debug: var=out.stdout_lines
-# - name: Copy ssh keys
-#   shell: sshpass -p "test" ssh-copy-id root@10.100.1.1
-#   register: out
-# - debug: var=out.stdout_lines
-#
-#tasks file for config-with-vlead-user
-# - include: copy-sshkeys.yml
-# - include: setupemacs.yml
-# - include: changes_in_makefile.yml
-#
-#
-# - name: change directory and run make file
-#   command: make
-#   register: out
-#   args: 
-#     chdir: ~/systems-model/
-# - debug: var=out.stdout_lines
-#
-# - name: Copying build file 
-#   command: sudo cp -r build/{{clustername}} /root/
-#   register: out
-#   args:
-#    chdir: ~/systems-model/
-# - debug: var=out.stdout_lines
-#
-# - name: checking syntax of ansible playbook
-#   command: ansible-playbook -i hosts --list-tasks --syntax-check site.yaml
-#   register: out
-#   args:
-#    chdir: ~/systems-model/build/{{clustername}}
-# - debug: var=out.stdout_lines
-#  - include: set-proxy.yml
-# - include: dns.yml
-  # - include: router.yml
-  - include: ads.yml
- #  - include: knownhost.yml
-#    - include: gitclone_to_ads.yml
-   # - include: replace_proxy_in_config-sh.yml
-   #  - include: cluster_site.yml
-    # - include: site_modify.yml
-  #  - include: site_run.yml
-#     - include: ads-setup.yml
+# #tasks file for config-with-vlead-user
+ - name: Copy ssh keys
+   shell: sshpass -p {{vlead_user_password}} ssh-copy-id root@localhost
+   register: out
+ - debug: var=out.stdout_lines
+ - name: Copy ssh keys
+   shell: sshpass -p {{vlead_user_password}} ssh-copy-id root@127.0.0.1
+   register: out
+ - debug: var=out.stdout_lines
+ - name: Copy ssh keys
+   shell: sshpass -p {{vlead_user_password}} ssh-copy-id root@10.100.1.1
+   register: out
+ - debug: var=out.stdout_lines
+
+ - include: copy-sshkeys.yml
+ - include: setupemacs.yml
+ - include: changes_in_makefile.yml
+
+
+ - name: change directory and run make file
+   command: make
+   register: out
+   args: 
+     chdir: ~/systems-model/
+ - debug: var=out.stdout_lines
+
+ - name: Copying build file --Backup 
+   command: sudo cp -r build/{{clustername}} /root/
+   register: out
+   args:
+    chdir: ~/systems-model/
+ - debug: var=out.stdout_lines
+
+ - name: checking syntax of ansible playbook
+   command: ansible-playbook -i hosts --list-tasks --syntax-check site.yaml
+   register: out
+   args:
+    chdir: ~/systems-model/build/{{clustername}}
+ - debug: var=out.stdout_lines
+ - include: set-proxy.yml
+ - include: dns-servers.yml
+ - include: router.yml
+ - include: ads.yml
+ - include: knownhost.yml
+ - include: gitclone_to_ads.yml
+ - include: replace_proxy_in_config-sh.yml
+ - include: cluster_site.yml
+ - include: site_modify.yml
+ - include: site_run.yml
+ - include: ads-setup.yml
