@@ -1,7 +1,0 @@
----
- - name: installing ansible
-   command: vzctl exec 1002 "{{export_proxy}}" &&  yum -y install "{{item}}"  
-   with_items:
-        - epel-release
-        - ansible
-        - git

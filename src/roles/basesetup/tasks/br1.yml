@@ -1,20 +1,40 @@
 ---
 
-
    
-   - copy: 
-      content: ""      
-      dest: "/etc/sysconfig/network-scripts/ifcfg-br1"
+  - copy: 
+     content: ""      
+     dest: "/etc/sysconfig/network-scripts/ifcfg-br1"
       
-   - name: creating Br1 file
-     blockinfile:
-        path: /etc/sysconfig/network-scripts/ifcfg-br1
-        block: |
-         DEVICE=br1
-         TYPE=Bridge
-         ONBOOT=yes
-         NM_CONTROLLED=no
-         BOOTPROTO=none
+  - name: creating Br1 file
+    blockinfile:
+       path: /etc/sysconfig/network-scripts/ifcfg-br1
+       block: |
+        DEVICE=br1
+        TYPE=Bridge
+        ONBOOT=yes
+        NM_CONTROLLED=no
+        BOOTPROTO=none
+
+  - service:
+     name: network
+     state: restarted
+
+
+  - name: Manager off
+    command: chkconfig NetworkManager off
+    register: out
+  - debug: var=out.stdout_lines
+
+  - name: Manager on
+    command: chkconfig network on
+    register: out
+  - debug: var=out.stdout_lines
+
+  - name: Running brctl show command
+    command: brctl show
+    register: out
+  - debug: var=out.stdout_lines
+
 
 
 ...

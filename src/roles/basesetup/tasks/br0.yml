@@ -15,10 +15,15 @@
          TYPE=Bridge
          NM_CONTROLLED=no
          IPADDR={{ipaddress.hostmachine}}
-         NETMASK=255.255.252.0
-         GATEWAY=10.2.56.1
+         NETMASK={{net_mask}}
+         GATEWAY={{internet_gateway}}
          DNS1={{dnsaddress.dns1}}
          DNS2={{dnsaddress.dns2}}
+
+    - name: Netwwork restart
+      service: name=network state=restarted 
+
+
           
 
 ...

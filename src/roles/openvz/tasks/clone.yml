@@ -1,0 +1,17 @@
+---
+    - name: install git
+      yum: name=git state=installed
+      environment: "{{proxy_env}}"
+      register: out
+    - debug: var=out.stdout_lines 
+
+
+    - name: change directory to 
+      git: 
+         repo: "{{setup_ovpl_centos}}"
+         dest: roles/openvz/files/
+         version: master
+      ignore_errors: yes
+      register: out
+    - debug: var=out.stdout_lines
+      

@@ -1,4 +1,4 @@
-  cluster="base7"
+  cluster="{{clustername}}"
      public_bridge="br0"
      private_bridge="br1"
      for i in {1001..1010}

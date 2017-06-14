@@ -1,19 +1,19 @@
 ---
 
 - name: Set root password
-  shell: vzctl set 1001 --userpasswd root:test
+  command: vzctl set 1001 --userpasswd root:{{vlead_user_password}}
 
 - name: copy interface ifcfg-eth0 file
-  copy: src=ifcfg-eth0 dest=/vz/private/1001/etc/sysconfig/network-scripts/
+  template: src=ifcfg-eth0 dest=/vz/private/1001/etc/sysconfig/network-scripts/
   
 - name: copy interface ifcfg-eth1 file
-  copy: src=ifcfg-eth1 dest=/vz/private/1001/etc/sysconfig/network-scripts/
+  template: src=ifcfg-eth1 dest=/vz/private/1001/etc/sysconfig/network-scripts/
 
 - name: Router's Network restart
   command: vzctl exec 1001 service network restart
 
 - name: Set iptable rule 
-  command: vzctl exec 1001 iptables -t nat -A POSTROUTING ! -d 10.100.0.0/22 -o eth0 -j SNAT --to-source 10.2.59.221
+  command: vzctl exec 1001 iptables -t nat -A POSTROUTING ! -d {{subnet}} -o eth0 -j SNAT --to-source {{ipaddress.router}}
 
 - name: iptables Saving 
   command: vzctl exec 1001 iptables-save > /etc/sysconfig/iptables

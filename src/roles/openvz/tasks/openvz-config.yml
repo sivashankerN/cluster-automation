@@ -1,0 +1,15 @@
+---
+    - replace: 
+          path: /etc/sysctl.conf
+          regexp: 'net.ipv4.ip_forward = 0'
+          replace: 'net.ipv4.ip_forward = 1'
+           
+    - replace: 
+          path: /etc/vz/conf/ve-vswap-256m.conf-sample 
+          regexp: 'NETFILTER="stateless"'
+          replace: 'NETFILTER="full"'
+
+    - copy:
+       content: "EXTERNAL_SCRIPT=\"/usr/sbin/vznetaddbr\" "
+       dest: "/etc/vz/vznet.conf"
+

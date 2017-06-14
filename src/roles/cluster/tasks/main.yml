@@ -1,9 +1,14 @@
 ---
-    
+    - name: Download CentOS-6 template
+      get_url:
+         url: "{{centos-template}}" 
+         dest: /vz/template/cache
+      ignore_errors: yes
+      environment: {{proxy_env}}    
 
-     - name: creating cluster
-       command: sh cluster.sh
-       register: out
-       args: 
-         chdir: roles/cluster/files/ 
-     - debug: var=out.stdout_lines
+    - name: creating cluster containers
+      command: sh cluster.sh
+      register: out
+      args: 
+        chdir: roles/cluster/templates/
+    - debug: var=out.stdout_lines

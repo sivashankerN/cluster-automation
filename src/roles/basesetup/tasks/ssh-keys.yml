@@ -5,6 +5,5 @@
 - name: Strict host check no
   lineinfile: path=/etc/ssh/ssh_config regexp="^Strict.*" line="StrictHostKeyChecking no" state=present
   notify: restart_ssh
-#- name: restart ssh service
 
 

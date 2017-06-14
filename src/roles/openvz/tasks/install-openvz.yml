@@ -3,12 +3,12 @@
     - replace: 
           path: roles/openvz/files/setup-ovpl-centos/scripts/config.sh
           regexp: 'export http_proxy=""'
-          replace: 'export http_proxy="http://proxy.iiit.ac.in:8080"'
+          replace: 'export http_proxy="{{proxy_env.http_proxy}}"'
      
     - replace: 
           path: roles/openvz/files/setup-ovpl-centos/scripts/config.sh
           regexp: 'export https_proxy=""'
-          replace: 'export https_proxy="http://proxy.iiit.ac.in:8080"'
+          replace: 'export https_proxy="{{proxy_env.https_proxy}}"'
 
 
     

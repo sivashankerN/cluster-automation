@@ -4,8 +4,3 @@
 
   roles:
     - config-server
-#  tasks:
-#   - name: ping test
-#     command: ping google.com -c 3
-#     register: out
-#   - debug: var=out.stdout_line

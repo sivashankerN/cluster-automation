@@ -1,11 +1,12 @@
 ---
- - name: installing ansible
+ - name: installing ansible and other required packages
    yum: name="{{item}}" state=latest
    environment: "{{proxy_env}}"
    with_items:
         - epel-release
         - ansible
         - git
+        - emacs
  - name: Create vlead user and generate ssh-keys for vlead
    user: name=vlead password={{vlead_user_password}} generate_ssh_key=yes groups=wheel
  - name: Replacing wheel
@@ -31,6 +32,3 @@
  - name: Update ownership permissions to systems-model repo
    file: path=/home/vlead/systems-model recurse=true owner=vlead group=vlead 
 
- - name: install emacs
-   yum: name=emacs state=installed
-   environment: "{{proxy_env}}"

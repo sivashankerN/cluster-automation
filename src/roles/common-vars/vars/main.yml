@@ -8,12 +8,14 @@ export_proxy: export http_proxy={{proxy_env.http_proxy}} &&  export https_proxy=
 
 
 
-vlead_user_passwor: $6$39KX5f1ud1r3vAy8$cTdTp8CBENusQmS43z1gRbzQsLz1/r.nPrD2A/KruD3CW6wAjth15IdSaF1VkXnzvRqmO/H9LZLNEkfwfkCBs1 
+vlead_user_password: $6$39KX5f1ud1r3vAy8$cTdTp8CBENusQmS43z1gRbzQsLz1/r.nPrD2A/KruD3CW6wAjth15IdSaF1VkXnzvRqmO/H9LZLNEkfwfkCBs1 
 
 
 corkscrew_dest: "/root"
 corkscrew_url1: http://www.agroman.net/corkscrew/corkscrew-2.0.tar.gz
 corkscrew_url2: http://wiki.kartbuilding.net/corkscrew-2.0.tar.gz
+
+centos_template: http://download.openvz.org/template/precreated/centos-6-x86_64.tar.gz
 
 systems_model_repo: git@altssh.bitbucket.org:vlead/systems-model.git
 
@@ -30,6 +32,12 @@ clustername: base7
 dnsaddress:
       dns1: 10.4.12.160
       dns2: 10.4.12.220
+
+subnet: 10.100.0.0/22
+internet_gateway: 10.2.56.1
+net_mask: 255.255.252.0
+
+
 
 setup_ovpl_centos: https://github.com/vlead/cluster-setup-ovpl-centos.git
 

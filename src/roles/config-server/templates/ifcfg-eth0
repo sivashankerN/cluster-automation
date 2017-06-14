@@ -1,0 +1,10 @@
+DEVICE=eth0
+TYPE=Ethernet
+BOOTPROTO=static
+ONBOOT=yes
+NM_CONTROLLED=no
+IPADDR={{ipaddress.config_server}}
+NETMASK={{net_mask}}
+GATEWAY={{internet_gateway}}
+DNS1={{dnsaddress.dns1}}
+DNS2={{dnsaddress.dns2}}

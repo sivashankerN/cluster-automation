@@ -23,8 +23,6 @@
 
 - name: Extract downloaded file
   unarchive: src={{corkscrew_dest}}/corkscrew-2.0.tar.gz dest={{corkscrew_dest}}
-#- name: set environment variable
-#  command: ac_default_prefix=~/corkscrew-2.0/bin/corkscrew
 
 - name: Run ./configugre
   command: ./configure

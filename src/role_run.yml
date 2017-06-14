@@ -1,7 +1,6 @@
 ---
 - hosts: localhost
   become: root
-  #become_method: sudo
   roles:
     - basesetup
     - openvz
