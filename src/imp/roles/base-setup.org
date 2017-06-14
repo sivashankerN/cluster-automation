@@ -9,6 +9,7 @@
   This document describes the implementation/automation of base
   machine's setup.
 * Implementation
+
 ** Structure of the role
    #+BEGIN_SRC 
 roles/
@@ -33,14 +34,14 @@ roles/
 
    #+END_SRC
 
-** Base machine role
-   This role will setup host machine's network
+** Bridge-Network
+   This role will setup host machine's network by bridging the network.
    The following playbooks will setup base machine's with basic
    network configuration.
 *** base-setup role   
     =basesetup= role contains following ansible playbooks. Each
     playbook is included in =main.yml= file. This =main.yml= is the
-    main play book to setup base machine.
+    main play book to setup base machine.This playbook runs other playbooks included in it in a sequential order 
 **** =main.yml=
 #+BEGIN_SRC yml :tangle basesetup/tasks/main.yml
 ---
@@ -49,19 +50,20 @@ roles/
 - include: br0.yml
 - include: eth0.yml
 - include: step3.yml
-- include: br1.yml
+- include: br1.ym
 - include: step4_commands.yml
 - include: ssh-keys.yml
 - include: corkscrew_installation.yml
 
 
 #+End_SRC
-Above each playbook is described below.
+Above included playbooks  are  described clearly below.
 
 **** =br0.yml= br0 interface creation
-      The following playbook =br0.yml= creates br0 interface for host
-      machine.
+    -  The following playbook =br0.yml= creates br0 interface for host
+      machine.It copies the block part descirbed in the file to destination specified in path.If the file mentioned in path already contains data then it is erased and new data is included in that file as mentioned below 
 #+BEGIN_SRC yml :tangle basesetup/tasks/br0.yml
+
 ---
    
    - copy:  
@@ -78,16 +80,21 @@ Above each playbook is described below.
          ONBOOT=yes
          TYPE=Bridge
          NM_CONTROLLED=no
-         IPADDR=10.2.59.220
-         NETMASK=255.255.252.0
-         GATEWAY=10.2.56.1
-         DNS1=10.4.12.160
-         DNS2=10.4.12.220
-          
+         IPADDR={{ipaddress.hostmachine}}
+         NETMASK={{net_mask}}
+         GATEWAY={{internet_gateway}}
+         DNS1={{dnsaddress.dns1}}
+         DNS2={{dnsaddress.dns2}}
+
+    - name: Netwwork restart
+      service: name=network state=restarted 
 
 ...
+  
 #+END_SRC
-**** =eth0.yml= creates eth0 interface on host machine
+
+**** =eth0.yml= creates eth0 interface on host machine.
+ Similar to above file,this also does the same work.Copies the content to ifcfg-eth0 file.If it is empty just copies else it makes it empty and then copies code.
 #+BEGIN_SRC yml :tangle basesetup/tasks/eth0.yml
 ---
    
@@ -111,66 +118,36 @@ Above each playbook is described below.
     
 #+END_SRC
 
-#+BEGIN_SRC yml :tangle basesetup/tasks/step3.yml
-
----
-
-  - service:
-       name: network
-       state: restarted
-                        
-
-#+END_SRC
-
+**** =br1.yml= Creates br1 interface on host machine and restart network
+Copies the content in block part to the path mentioned.Then network restart and shuts networkmanager off and restarts.
 #+BEGIN_SRC yml :tangle basesetup/tasks/br1.yml
----
 
+---
 
    
-   - copy: 
-      content: ""      
-      dest: "/etc/sysconfig/network-scripts/ifcfg-br1"
+  - copy: 
+     content: ""      
+     dest: "/etc/sysconfig/network-scripts/ifcfg-br1"
       
-   - name: creating Br1 file
-     blockinfile:
-        path: /etc/sysconfig/network-scripts/ifcfg-br1
-        block: |
-         DEVICE=br1
-         TYPE=Bridge
-         ONBOOT=yes
-         NM_CONTROLLED=no
-         BOOTPROTO=none
+  - name: creating Br1 file
+    blockinfile:
+       path: /etc/sysconfig/network-scripts/ifcfg-br1
+       block: |
+        DEVICE=br1
+        TYPE=Bridge
+        ONBOOT=yes
+        NM_CONTROLLED=no
+        BOOTPROTO=none
 
-
-...
-
-
-#+END_SRC
-
-#+BEGIN_SRC yml :tangle basesetup/tasks/step4_commands.yml
-
----
-
-  
-  - service: 
+  - service:
      name: network
      state: restarted
 
-  - name: Running brctl show and output="brctl show"
-    command: ifconfig
-    register: out
 
-  - debug: var=out.stdout_lines
-
-  - name: Runnig 2nd command
-    command: ifconfig
-    register: out
-  - debug: var=out.stdout_lines 
- 
   - name: Manager off
     command: chkconfig NetworkManager off
     register: out
-  - debug: var=out.stdout_lines   
+  - debug: var=out.stdout_lines
 
   - name: Manager on
     command: chkconfig network on
@@ -180,18 +157,14 @@ Above each playbook is described below.
   - name: Running brctl show command
     command: brctl show
     register: out
+  - debug: var=out.stdout_lines
 
-  - debug: var=out.stdout_lines     
-
-                
 
 
 ...
-
-
-
 #+END_SRC
 
+****  =ssh-keys.yml= Generates ssh-keys in host machine and modifies ssh_Config file to change stricthostkeychecking to no
 #+BEGIN_SRC yml :tangle basesetup/tasks/ssh-keys.yml
 
 ---
@@ -204,6 +177,8 @@ Above each playbook is described below.
 
 
 #+END_SRC
+
+**** =corkscrew_installation.yml= To install corkscrew and its dependencies
 
 #+BEGIN_SRC yml :tangle basesetup/tasks/corkscrew_installation.yml
 - name: dest
@@ -265,15 +240,7 @@ Above each playbook is described below.
 
 #+END_SRC
 
-#+BEGIN_SRC yml :tangle basesetup/vars/main.yml
-
-corkscrew_dest: "/root/"
-corkscrew_url1: http://www.agroman.net/corkscrew/corkscrew-2.0.tar.gz
-corkscrew_url2: http://wiki.kartbuilding.net/corkscrew-2.0.tar.gz
-
-
-#+END_SRC
-
+**** =main.yml= Meta is to use other roles variables in local role.
 #+BEGIN_SRC yml :tangle basesetup/meta/main.yml
 
 dependencies:
@@ -281,6 +248,7 @@ dependencies:
 
 
 #+END_SRC
+**** =ssh-config= This file contains all the data needed to clone a repository from bitbucket
 #+BEGIN_SRC yml :tangle basesetup/files/ssh-config
 
 Host altssh.bitbucket.org
@@ -294,6 +262,8 @@ ProxyCommand corkscrew proxy.iiit.ac.in 8080 %h %p
 
 #+END_SRC
 
+**** =main.yml= Handlers comes into play when there is a notify statement in task files
+
 #+BEGIN_SRC yml :tangle basesetup/handlers/main.yml
 
 - name: restart_ssh
@@ -301,55 +271,62 @@ ProxyCommand corkscrew proxy.iiit.ac.in 8080 %h %p
 
 #+END_SRC
 
-** Automate OpenVZ setup
+
+** Virtualization using openvz
 *** openvz role
+
+**** =main.yml=
 #+BEGIN_SRC yml :tangle openvz/tasks/main.yml 
 
----
 
-- include: cloning.yml
-- include: shellrun.yml
-- include: copycode.yml
-- include: edit.yml
-- include: templatedownload.yml
+---
+# tasks file for openvz
+- include: clone.yml
+- include: install-openvz.yml
+- include: openvz-config.yml
+
 
 #+END_SRC
 
-#+BEGIN_SRC yml :tangle openvz/tasks/cloning.yml
+**** =clone.yml=
+
+#+BEGIN_SRC yml :tangle openvz/tasks/clone.yml
 
 ---
     - name: install git
-      command: yum -y install git
-      environment:
-        http_proxy: http://proxy.iiit.ac.in:8080
-        https_proxy: http://proxy.iiit.ac.in:8080
+      yum: name=git state=installed
+      environment: "{{proxy_env}}"
       register: out
     - debug: var=out.stdout_lines 
 
 
-    - name: change directory
-      command: git clone https://github.com/Raj-18110/setup-ovpl-centos.git
+    - name: change directory to 
+      git: 
+         repo: "{{setup_ovpl_centos}}"
+         dest: roles/openvz/files/
+         version: master
       ignore_errors: yes
       register: out
-      args: 
-        chdir: roles/openvz/files/
     - debug: var=out.stdout_lines
-
+      
 
 #+END_SRC
-#+BEGIN_SRC yml :tangle openvz/tasks/shellrun.yml
+
+**** =install-openvz=
+
+#+BEGIN_SRC yml :tangle openvz/tasks/install-openvz.yml
 
 ---
 
     - replace: 
           path: roles/openvz/files/setup-ovpl-centos/scripts/config.sh
           regexp: 'export http_proxy=""'
-          replace: 'export http_proxy="http://proxy.iiit.ac.in:8080"'
+          replace: 'export http_proxy="{{proxy_env.http_proxy}}"'
      
     - replace: 
           path: roles/openvz/files/setup-ovpl-centos/scripts/config.sh
           regexp: 'export https_proxy=""'
-          replace: 'export https_proxy="http://proxy.iiit.ac.in:8080"'
+          replace: 'export https_proxy="{{proxy_env.https_proxy}}"'
 
 
     
@@ -363,26 +340,11 @@ ProxyCommand corkscrew proxy.iiit.ac.in 8080 %h %p
 
 #+END_SRC
 
-#+BEGIN_SRC yml :tangle openvz/tasks/copycode.yml
+**** =openvz-config.yml=
+
+#+BEGIN_SRC yml :tangle openvz/tasks/openvz-config.yml
 
 ---
-- hosts: localhost
-  become: yes
-  become_method: "sudo" 
-  tasks:
-     - copy:
-        content: "EXTERNAL_SCRIPT=\"/usr/sbin/vznetaddbr\" "
-        dest: "/etc/vz/vznet.conf"
-
-#+END_SRC
-
-#+BEGIN_SRC yml :tangle openvz/tasks/edit.yml
-
----
-- hosts: localhost
-  become: yes
-  become_method: sudo
-  tasks: 
     - replace: 
           path: /etc/sysctl.conf
           regexp: 'net.ipv4.ip_forward = 0'
@@ -393,21 +355,16 @@ ProxyCommand corkscrew proxy.iiit.ac.in 8080 %h %p
           regexp: 'NETFILTER="stateless"'
           replace: 'NETFILTER="full"'
 
+    - copy:
+       content: "EXTERNAL_SCRIPT=\"/usr/sbin/vznetaddbr\" "
+       dest: "/etc/vz/vznet.conf"
 
-#+END_SRC
 
-#+BEGIN_SRC yml :tangle openvz/tasks/templatedownload.yml
-
-    - name: downloading
-      get_url:
-         url: http://download.openvz.org/template/precreated/centos-6-x86_64.tar.gz
-         dest: /vz/template/cache
-      environment:
-         http_proxy: http://proxy.iiit.ac.in:8080
-         https_proxy: http://proxy.iiit.ac.in:8080
 
 
 #+END_SRC
+
+**** =main.yml=
 
 #+BEGIN_SRC yml :tangle openvz/meta/main.yml
 
@@ -417,21 +374,29 @@ dependencies:
 #+END_SRC
 
 
-** Automate Cluster nodes/servers creation
+** Cluster nodes/servers creation
 *** Cluster role 
-
+**** =main.yml=
 #+BEGIN_SRC yml :tangle cluster/tasks/main.yml
-
 ---
-    - name: creating cluster
+    - name: Download CentOS-6 template
+      get_url:
+         url: "{{centos-template}}" 
+         dest: /vz/template/cache
+      ignore_errors: yes
+      environment: {{proxy_env}}    
+
+    - name: creating cluster containers
       command: sh cluster.sh
       register: out
       args: 
-         chdir: roles/cluster/files/ 
+        chdir: roles/cluster/templates/
     - debug: var=out.stdout_lines
 
 
 #+END_SRC
+
+**** =main.yml=
 
 #+BEGIN_SRC yml :tangle cluster/meta/main.yml
 
@@ -440,7 +405,9 @@ dependencies:
 
 #+END_SRC
 
-#+BEGIN_SRC yml :tangle cluster/files/cluster.sh
+**** =cluster.sh=
+
+#+BEGIN_SRC yml :tangle cluster/templates/cluster.sh
 
  cluster="{{clustername}}"
      public_bridge="br0"
@@ -517,5 +484,7 @@ dependencies:
 
 
 #+END_SRC
+
+
 
 
