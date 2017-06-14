@@ -37,7 +37,7 @@ subnet: 10.100.0.0/22
 internet_gateway: 10.2.56.1
 net_mask: 255.255.252.0
 
-
+smtp_smart_host: stpi-router.vlabs.ac.in
 
 setup_ovpl_centos: https://github.com/vlead/cluster-setup-ovpl-centos.git
 
