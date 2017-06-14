@@ -10,16 +10,17 @@
   This document contains the implementation of automation of cluster
   creation.
 * Implementation
-  - [[./roles/base-setup.org][Base machine setup]]
-  - [[./roles/config-server.org][config-server]]
-  - [[./roles/ossec-server.org][ossec-server]]
-  - [[./roles/rsyslog-server.org][rsyslog-servver]]
-  - [[./roles/private-dns.org][private-dns]]
-  - [[./roles/public-dns.org][public-dns]]
-  - [[./roles/reverse-proxy-awstats.org][Reverse-proxy]]
-  - [[./roles/nagios.org][nagios]]
-  - [[./roles/rsnapshot-server.org][rsnapshot]]
-  - [[./roles/config-with-vlead-user.org][Configure cluster with vlead user]] 
+  - [[./base-setup.org][Base machine setup]]
+  - [[./ansible-server.org][Ansible-server]]
+  - [[./ossec-server.org][ossec-server]]
+  - [[./rsyslog-server.org][rsyslog-server]]
+  - [[./private-dns.org][private-dns]]
+  - [[./public-dns.org][public-dns]]
+  - [[./reverse-proxy-awstats.org][Reverse-proxy]]
+  - [[./nagios.org][nagios]]
+  - [[./rsnapshot-server.org][rsnapshot]]
+  - [[./ads.org][ADS service]]
+  - [[./config-with-vlead-user.org][Configure cluster with vlead user]] 
     
   
 

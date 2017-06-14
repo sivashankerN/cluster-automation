@@ -1,4 +1,4 @@
-#+Title: Rsnapshot role
+#+Title: Rsnapshot
 #+Author: Systems Team
 #+SETUPFILE: ../../org-templates/level-2.org
 #+TAGS: boilerplate(b)

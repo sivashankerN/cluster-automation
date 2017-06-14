@@ -1,4 +1,4 @@
-#+Title: config-server role
+#+Title: Ansible-server 
 #+Author: Systems Team
 #+SETUPFILE: ../../org-templates/level-2.org
 #+TAGS: boilerplate(b)

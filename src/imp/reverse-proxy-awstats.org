@@ -1,4 +1,4 @@
-#+Title: Reverse-proxy and AWStast role
+#+Title: Reverse-proxy and AWStasts
 #+Author: Systems Team
 #+SETUPFILE: ../../org-templates/level-2.org
 #+TAGS: boilerplate(b)

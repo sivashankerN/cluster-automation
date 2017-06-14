@@ -1,4 +1,4 @@
-#+Title: Rsyslog role
+#+Title: Rsyslog Server
 #+Author: Systems Team
 #+SETUPFILE: ../../org-templates/level-2.org
 #+TAGS: boilerplate(b)

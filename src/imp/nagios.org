@@ -1,4 +1,4 @@
-#+Title: Nagios role
+#+Title: Nagios
 #+Author: Systems Team
 #+SETUPFILE: ../../org-templates/level-2.org
 #+TAGS: boilerplate(b)
