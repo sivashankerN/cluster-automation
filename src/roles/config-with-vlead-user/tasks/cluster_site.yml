@@ -3,7 +3,8 @@
    replace:
         path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml       
         regexp: 'private_dns_ips: none'
-        replace: 'private_dns_ips: 10.100.1.5'
+        replace: 'private_dns_ips: 
+                         - 10.100.1.5'
        
  - name: Replacing private-dns-zone
    replace:

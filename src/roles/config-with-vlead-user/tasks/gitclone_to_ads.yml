@@ -12,8 +12,15 @@
 #  register: out  
 #- debug: var=out.stdout_lines
 
-- name: Creating Required new files
-  command: ssh root@10.100.1.9 "cd ovpl/config && cp sample_config.json config.json && cp sample_authorized_users.py authorized_users.py && cd adapters && cp sample_centos_bridged_config.py centos_bridged_config.py && cp sample_base_config.py base_config.py && cd .. "
-  register: out
-- debug: var=out.stdout_lines
+#- name: Creating Required new files
+#  command: ssh root@10.100.1.9 "cd ovpl/config && cp sample_config.json config.json && cp sample_authorized_users.py authorized_users.py && cd adapters && cp sample_centos_bridged_config.py centos_bridged_config.py && cp sample_base_config.py base_config.py && cd .. "
+#  register: out
+#- debug: var=out.stdout_lines
+- name: Setup ADS, Copy config.json file
+  command: ssh root@10.100.1.9 "cd ovpl/config/ && cp sample_config.json config.json "
+
+- name: Setup ADS, Set COOKIE SECRETE 
+  command: ssh root@10.100.1.9 'sed -i "s/COOKIE_SECRET.*/COOKIE_SECRET\"=\"jgsjdhgfcjgsdjgfvjhsdfhkjsdgk\"/g" ovpl/config/config.json'
+
+
 
