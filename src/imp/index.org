@@ -10,6 +10,7 @@
   This document contains the implementation of automation of cluster
   creation.
 * Implementation
+  - [[./spec/index.org][Cluster Specifications]]
   - [[./base-setup.org][Base machine setup]]
   - [[./ansible-server.org][Ansible-server]]
   - [[./ossec-server.org][ossec-server]]

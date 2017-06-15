@@ -1,0 +1,36 @@
+#+Title:  Specifications of Virtual Labs cluster automation
+#+Author: Systems Team
+#+SETUPFILE: ../../org-templates/level-2.org
+#+TAGS: boilerplate(b)
+#+EXCLUDE_TAGS: boilerplate
+#+OPTIONS: ^:nil
+
+* Introduction
+  This document captures the specification of Virtual-Labs cluster
+  automation.
+* Specifications
+  - Automation scripts sets up Virtual Labs cluster for us with
+    minimal steps.
+  - The automation scripts can be run in any machine with minimum
+    requirements as follows.
+    #+BEGIN_EXAMPLE
+    Operating System: CentOS-6.x   - Used CentOS-6.9
+    RAM: 4GB RAM
+    Cpus: 2
+    Disk Space: 100 GB to 150 GB
+    #+END_EXAMPLE
+  - Scripts are tested on following systems specs
+    #+BEGIN_SRC
+    Processor : Intel(R) Core(TM) i7-3770 , CPU with 3.40GHz (Model : intel-db75en) 
+    RAM : 16 GB 
+    No.of Cores (4 CPUs): 8
+    Disk Space: 100GB
+    #+END_SRC
+  - Any linux(CentOS) user, can run the scripts to setup the
+    cluster. *Internet is needed to setup cluster*.
+  - Virtual-Labs cluster will be setup with our domain name
+    =*{{clustername}}.vlabs.ac.in=.
+
+    Here *** means, subdomain in =vlabs.ac.in=. example
+    =cse01.vlabs.ac.in=
+    
