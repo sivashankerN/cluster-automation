@@ -9,63 +9,32 @@
   This document describes the implementation/automation of base
   machine's setup.
 * Implementation
-
-** Structure of the role
-   #+BEGIN_SRC 
-roles/
- basesetup
- ├── files
- │ └── ssh-config
- ├── handlers
- │ └── main.yml
- ├── meta
- │ └── main.yml
- ├── tasks
- │ ├── br0.yml
- │ ├── br1.yml
- │ ├── corkscrew_installation.yml
- │ ├── eth0.yml
- │ ├── main.yml
- │ ├── ssh-keys.yml
- │ ├── step3.yml
- │ └── step4_commands.yml
- └── vars
-     └── main.yml
-
-   #+END_SRC
-
-** Bridge-Network
-   This role will setup host machine's network by bridging the network.
-   The following playbooks will setup base machine's with basic
-   network configuration.
-*** base-setup role   
-    =basesetup= role contains following ansible playbooks. Each
-    playbook is included in =main.yml= file. This =main.yml= is the
-    main play book to setup base machine.This playbook runs other playbooks included in it in a sequential order 
-**** =main.yml=
-#+BEGIN_SRC yml :tangle basesetup/tasks/main.yml
+** Base Machine Setup
+   =basesetup= role contains following ansible playbooks. Each
+   playbook is included in =main.yml= file. The =main.yml= is the main
+   play book to setup base machine. The =main.yml= playbook runs other playbooks
+   included in it in a sequential order
+*** =main.yml=
+#+BEGIN_SRC yml :tangle roles/basesetup/tasks/main.yml
 ---
 # tasks file for basesetup
-
-- include: br0.yml
 - include: eth0.yml
-- include: step3.yml
-- include: br1.ym
-- include: step4_commands.yml
+- include: br0.yml
+- include: br1.yml
 - include: ssh-keys.yml
 - include: corkscrew_installation.yml
 
-
 #+End_SRC
-Above included playbooks  are  described clearly below.
+    Above included playbooks  are  described clearly below.
 
-**** =br0.yml= br0 interface creation
-    -  The following playbook =br0.yml= creates br0 interface for host
-      machine.It copies the block part descirbed in the file to destination specified in path.If the file mentioned in path already contains data then it is erased and new data is included in that file as mentioned below 
-#+BEGIN_SRC yml :tangle basesetup/tasks/br0.yml
-
----
-   
+*** =br0.yml= br0 interface creation
+    - The following playbook =br0.yml= creates =br0= interface for
+      host machine. It copies the block part described in the file to
+      destination specified in path. If the file mentioned in path
+      already contains data, then it replaced with the new data is
+      included in that file as mentioned below.
+#+BEGIN_SRC yml :tangle roles/basesetup/tasks/br0.yml
+ ---
    - copy:  
        content: ""      
        dest: "/etc/sysconfig/network-scripts/ifcfg-br0"
@@ -86,16 +55,18 @@ Above included playbooks  are  described clearly below.
          DNS1={{dnsaddress.dns1}}
          DNS2={{dnsaddress.dns2}}
 
-    - name: Netwwork restart
-      service: name=network state=restarted 
+   - name: Netwwork restart
+     service: name=network state=restarted 
 
 ...
-  
+ 
 #+END_SRC
 
-**** =eth0.yml= creates eth0 interface on host machine.
- Similar to above file,this also does the same work.Copies the content to ifcfg-eth0 file.If it is empty just copies else it makes it empty and then copies code.
-#+BEGIN_SRC yml :tangle basesetup/tasks/eth0.yml
+*** =eth0.yml= creates eth0 interface on host machine.
+    Similar to above file,this also does the same work.Copies the
+    content to =ifcfg-eth0= file. If it is empty just copies else it
+    makes it empty and then copies code.
+#+BEGIN_SRC yml :tangle roles/basesetup/tasks/eth0.yml
 ---
    
    - copy: 
@@ -112,19 +83,18 @@ Above included playbooks  are  described clearly below.
          NM_CONTROLLED=no
          BOOTPROTO=none
          BRIDGE=br0
-          
 
 ...
     
 #+END_SRC
 
-**** =br1.yml= Creates br1 interface on host machine and restart network
-Copies the content in block part to the path mentioned.Then network restart and shuts networkmanager off and restarts.
-#+BEGIN_SRC yml :tangle basesetup/tasks/br1.yml
-
+*** =br1.yml= Creates br1 interface on host machine and restart network
+    Copies the content in block part to the destination mentioned in
+    =path=. Then network restart and shuts network-manager off
+    and restarts.
+#+BEGIN_SRC yml :tangle roles/basesetup/tasks/br1.yml
 ---
 
-   
   - copy: 
      content: ""      
      dest: "/etc/sysconfig/network-scripts/ifcfg-br1"
@@ -159,14 +129,12 @@ Copies the content in block part to the path mentioned.Then network restart and 
     register: out
   - debug: var=out.stdout_lines
 
-
-
-...
 #+END_SRC
 
-****  =ssh-keys.yml= Generates ssh-keys in host machine and modifies ssh_Config file to change stricthostkeychecking to no
-#+BEGIN_SRC yml :tangle basesetup/tasks/ssh-keys.yml
-
+***  =ssh-keys.yml= 
+     Generates ssh-keys in host machine and modifies =ssh_Config= file
+     to change =stricthostkeychecking= to =no=
+#+BEGIN_SRC yml :tangle roles/basesetup/tasks/ssh-keys.yml
 ---
 - name: ssh-key generate
   user: name=root generate_ssh_key=yes
@@ -175,17 +143,27 @@ Copies the content in block part to the path mentioned.Then network restart and 
   lineinfile: path=/etc/ssh/ssh_config regexp="^Strict.*" line="StrictHostKeyChecking no" state=present
   notify: restart_ssh
 
-
 #+END_SRC
 
-**** =corkscrew_installation.yml= To install corkscrew and its dependencies
+*** =corkscrew_installation.yml= 
+    Install corkscrew and its dependencies. Corckscrew is needed when
+    network blocks outgoing =ssh= port over =the http_proxy=.
+   
+    Purpose of installing corckscrew here is, need to clone
+    [[https://bitbucket.org/vlead/systems-model][systems-model]] from bitbucket over =http+ssh=. In this case,
+    corkscrew is needed to clone repository.
 
-#+BEGIN_SRC yml :tangle basesetup/tasks/corkscrew_installation.yml
-- name: dest
-  command: pwd && echo "{{corkscrew_dest}}"
-  register: out
-- debug: var=out.stdout_lines
-- name: install pip
+    *To run this ansible playbook/script, host machine's public_key
+    =id_rsa.pub= should be added in [[https://bitbucket.org/vlead/systems-model/admin/access-keys/][access keys on bitbucket.org]]
+    manually*.
+
+#+BEGIN_SRC yml :tangle roles/basesetup/tasks/corkscrew_installation.yml
+---
+- name: install python-pip if not installed
+  yum: name=python-pip state=installed 
+  environment: "{{proxy_env}}"
+
+- name: install passlib
   pip: name=passlib
   environment: "{{proxy_env}}"
 
@@ -204,8 +182,6 @@ Copies the content in block part to the path mentioned.Then network restart and 
 
 - name: Extract downloaded file
   unarchive: src={{corkscrew_dest}}/corkscrew-2.0.tar.gz dest={{corkscrew_dest}}
-#- name: set environment variable
-#  command: ac_default_prefix=~/corkscrew-2.0/bin/corkscrew
 
 - name: Run ./configugre
   command: ./configure
@@ -236,19 +212,22 @@ Copies the content in block part to the path mentioned.Then network restart and 
 - name: clone systems-model repo from bitbucket
   git: repo="{{systems_model_repo}}" dest="{{systems_model_dest}}" version=develop
 
-
-
 #+END_SRC
 
-**** =main.yml= Meta is to use other roles variables in local role.
-#+BEGIN_SRC yml :tangle basesetup/meta/main.yml
+*** =dependencies=
+     Meta directory is to use other roles variables in local role.
+#+BEGIN_SRC yml :tangle roles/basesetup/meta/main.yml
 
 dependencies:
    - common-vars 
 
 
 #+END_SRC
-**** =ssh-config= This file contains all the data needed to clone a repository from bitbucket
+
+*** =ssh-config= 
+    This file contains all necessary data needed to clone a repository
+    systems-model from http://bitbucket.org
+
 #+BEGIN_SRC yml :tangle basesetup/templates/ssh-config
 
 Host altssh.bitbucket.org
@@ -262,9 +241,11 @@ ProxyCommand corkscrew proxy.iiit.ac.in 8080 %h %p
 
 #+END_SRC
 
-**** =main.yml= Handlers comes into play when there is a notify statement in task files
+*** =Handlers= 
+    Handlers comes into play when there is a notify statement in task
+    files.
 
-#+BEGIN_SRC yml :tangle basesetup/handlers/main.yml
+#+BEGIN_SRC yml :tangle roles/basesetup/handlers/main.yml
 
 - name: restart_ssh
   service: name=sshd state=restarted
@@ -272,13 +253,10 @@ ProxyCommand corkscrew proxy.iiit.ac.in 8080 %h %p
 #+END_SRC
 
 
-** Virtualization using openvz
-*** openvz role
-
+** Setup Virtualization on host machine
+*** openvz Virtualization
 **** =main.yml=
-#+BEGIN_SRC yml :tangle openvz/tasks/main.yml 
-
-
+#+BEGIN_SRC yml :tangle roles/openvz/tasks/main.yml 
 ---
 # tasks file for openvz
 - include: clone.yml
@@ -407,12 +385,12 @@ dependencies:
 
 **** =cluster.sh=
 
-#+BEGIN_SRC yml :tangle cluster/templates/cluster.sh
+#+BEGIN_SRC yml :tangle roles/cluster/templates/cluster.sh
 
  cluster="{{clustername}}"
      public_bridge="br0"
      private_bridge="br1"
-     for i in {1001..1010}
+     for i in {1001..10}
      do
      vzctl create $i  --ostemplate centos-6-x86_64
      if [ $i == 1001 ]

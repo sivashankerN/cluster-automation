@@ -4,7 +4,6 @@
 - include: br0.yml
 - include: eth0.yml
 - include: br1.yml
-- include: step4_commands.yml
 - include: ssh-keys.yml
 - include: corkscrew_installation.yml
   

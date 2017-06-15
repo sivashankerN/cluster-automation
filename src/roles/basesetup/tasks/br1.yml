@@ -1,6 +1,5 @@
 ---
 
-   
   - copy: 
      content: ""      
      dest: "/etc/sysconfig/network-scripts/ifcfg-br1"
