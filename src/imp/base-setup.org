@@ -249,7 +249,7 @@ dependencies:
 
 #+END_SRC
 **** =ssh-config= This file contains all the data needed to clone a repository from bitbucket
-#+BEGIN_SRC yml :tangle basesetup/files/ssh-config
+#+BEGIN_SRC yml :tangle basesetup/templates/ssh-config
 
 Host altssh.bitbucket.org
 User git
