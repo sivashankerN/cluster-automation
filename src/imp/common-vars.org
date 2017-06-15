@@ -1,16 +1,102 @@
-#+Title: Common-vars role
-#+Author: Systems Team
-#+SETUPFILE: ../org-templates/level-1.org
-#+TAGS: boilerplate(b)
-#+EXCLUDE_TAGS: boilerplate
+#+Title: Common Vars Role
+#+Date: June 15, 2017. Tuesday
+#+PROPERTY: session *scratch*
+#+PROPERTY: results output
+#+PROPERTY: exports code
 #+OPTIONS: ^:nil
+#+SETUPFILE: org-templates/level-0.org
 
 * Introduction
-  This role contains all the variables that are used in other playbooks
-* Implementation
-** common-vars role
-#+BEGIN_SRC yml :tangle common-vars/vars/main.yml
+  The document describes the requirements, design and implementation
+  of the "common_vars" ansible role. "common_vars" role defines common
+  variables used in various other ansible roles.
+  
+  In ansible we can define variables in the =role/vars/main.yml=
+  file. The variables used by a role are mentioned in this file. Some
+  variables are common across several roles. When the value of such a
+  common variable changes, it has to be changed in the
+  =role/vars/main.yml= file of all the roles. To avoid this
+  redundancy, such common variables are defined in the "common-vars"
+  role. This allows us to update the variables value at a single
+  location i.e. =common-vars/vars/main.yml= file, and all the roles
+  then use the updated value.
 
+* Requirements
+  The functional requirements of the common-vars role are mentioned in
+  the following sections.
+
+** Functional Requirements
+   Define variables used by various other ansible roles.
+
+* Implementation
+** Structure of the scripts
+   The implementation of this system is in terms of a collection of
+   ansible scripts that configure the machine. These scripts are
+   organized in the following way:
+
+#+BEGIN_EXAMPLE
+|-code
+|   
+|   |-- roles
+|   |   |-- common-vars
+|   |   |   `-- vars
+|   |   |   |   `-- main.yml
+#+END_EXAMPLE
+  
+     
+   =roles/common-vars/vars/main.yml= file defines the variables used
+   by various other ansible playbooks. Variables value in ansible
+   playbook is imported from this common_vars file.
+
+** Common Variables
+*** Variable Description
+
+|------+---------------------+-------------------------+-------------------------------------------------------------------------+---|
+| S.no | Variable            | Variable Name           | Description                                                             |   |
+|------+---------------------+-------------------------+-------------------------------------------------------------------------+---|
+|   1. | Proxy Environment   | proxy_env               | Defines the proxy configuration in case direct access                   |   |
+|      |                     |                         | to internet is not available                                            |   |
+|------+---------------------+-------------------------+-------------------------------------------------------------------------+---|
+|   2. | HTTP Proxy          | http_proxy              | Defines url of proxy server used by nodes to connect to                 |   |
+|      |                     |                         | http service for internet access                                        |   |
+|------+---------------------+-------------------------+-------------------------------------------------------------------------+---|
+|   3. | HTTPS Proxy         | https_proxy             | Defines url of proxy server used by nodes to connect to https           |   |
+|      |                     |                         | service for internet access                                             |   |
+|------+---------------------+-------------------------+-------------------------------------------------------------------------+---|
+|   4. | Ansible Server IP   | ipaddress.config_server | Defines the  ip-address of ansible server                               |   |
+|------+---------------------+-------------------------+-------------------------------------------------------------------------+---|
+|   5. | SMTP Smart host     | smtp_smart_host         | Defines the SMTP smart host via which various servers can send          |   |
+|------+---------------------+-------------------------+-------------------------------------------------------------------------+---|
+|   6. | Local Subnet        | subnet                  | Defines the subnet of the network                                       |   |
+|------+---------------------+-------------------------+-------------------------------------------------------------------------+---|
+|   7. | Router Interface IP | ipaddress.router        | Defines the interface of router node                                    |   |
+|------+---------------------+-------------------------+-------------------------------------------------------------------------+---|
+|   8. | Nagios Server IP    | nagios_server_ips       | Defines the ip address of nagios server                                 |   |
+|------+---------------------+-------------------------+-------------------------------------------------------------------------+---|
+|   9. | Cluster Name        | {{clustername}}         | Defines the cluster name                                                |   |
+|------+---------------------+-------------------------+-------------------------------------------------------------------------+---|
+|      | Dns                 | dnsaddress.dns1         | Defines dns of network                                                  |   |
+|  10. |                     | dnsaddress.dns2         |                                                                         |   |
+|------+---------------------+-------------------------+-------------------------------------------------------------------------+---|
+|  11. | Internet Gateway    | internet_gateway        | Defines the gateway of network                                          |   |
+|------+---------------------+-------------------------+-------------------------------------------------------------------------+---|
+|  12. | Proxy port number   | proxy_port              | Defines the port number through which internet works                    |   |
+|------+---------------------+-------------------------+-------------------------------------------------------------------------+---|
+|  13. | centos template     | centos_template         | Defines the link/url from which latest template of centos is downloaded |   |
+|------+---------------------+-------------------------+-------------------------------------------------------------------------+---|
+|  14. | system-model-repo   | systems_model_repo      | Defines the url of bitbucket from which system-model is cloned          |   |
+|------+---------------------+-------------------------+-------------------------------------------------------------------------+---|
+|  15. |                     |                         |                                                                         |   |
+|------+---------------------+-------------------------+-------------------------------------------------------------------------+---|
+
+
+** Generate yml files of common_vars role
+   Generate common-vars role ".yml" file with all the variables defined.
+   
+*** Variables for Cluster setup
+Variables for cluster are defined in the following section
+
+#+BEGIN_SRC yml :tangle roles/common-vars/vars/main.yml
 ---
 # vars file for common
 proxy_env: 
@@ -21,12 +107,14 @@ export_proxy: export http_proxy={{proxy_env.http_proxy}} &&  export https_proxy=
 
 
 
-vlead_user_passwor: $6$39KX5f1ud1r3vAy8$cTdTp8CBENusQmS43z1gRbzQsLz1/r.nPrD2A/KruD3CW6wAjth15IdSaF1VkXnzvRqmO/H9LZLNEkfwfkCBs1 
+vlead_user_password: $6$39KX5f1ud1r3vAy8$cTdTp8CBENusQmS43z1gRbzQsLz1/r.nPrD2A/KruD3CW6wAjth15IdSaF1VkXnzvRqmO/H9LZLNEkfwfkCBs1 
 
 
 corkscrew_dest: "/root"
 corkscrew_url1: http://www.agroman.net/corkscrew/corkscrew-2.0.tar.gz
 corkscrew_url2: http://wiki.kartbuilding.net/corkscrew-2.0.tar.gz
+
+centos_template: http://download.openvz.org/template/precreated/centos-6-x86_64.tar.gz
 
 systems_model_repo: git@altssh.bitbucket.org:vlead/systems-model.git
 
@@ -44,10 +132,20 @@ dnsaddress:
       dns1: 10.4.12.160
       dns2: 10.4.12.220
 
+subnet: 10.100.0.0/22
+internet_gateway: 10.2.56.1
+net_mask: 255.255.252.0
+
+proxy_port: 8080
+
+smtp_smart_host: stpi-router.vlabs.ac.in
+
 setup_ovpl_centos: https://github.com/vlead/cluster-setup-ovpl-centos.git
 
-  
-#+END_SRC 
+consumer_key: "949417609070-6sj9jiumei4k858v2vh39m1e2i8ngvrs.apps.googleusercontent.com"
+consumer_secret: "m15wAK1ln46LevbvuiRqenOh"
 
-  
+ 
+#+END_SRC
+
 
