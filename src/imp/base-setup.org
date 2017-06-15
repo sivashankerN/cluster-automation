@@ -159,9 +159,8 @@
 
 #+BEGIN_SRC yml :tangle roles/basesetup/tasks/corkscrew_installation.yml
 ---
-- name: install python-pip if not installed
-  yum: name=python-pip state=installed 
-  environment: "{{proxy_env}}"
+- name: Install python-pip
+  yum: name=python-pip state=installed
 
 - name: install passlib
   pip: name=passlib
@@ -206,7 +205,7 @@
 
 
 - name: create and configure ~/.ssh/config to clone bitbucket repo system model
-  copy: src=ssh-config dest=~/.ssh/config mode=400
+  template: src=ssh-config dest=~/.ssh/config mode=400
 
 
 - name: clone systems-model repo from bitbucket
@@ -229,7 +228,6 @@ dependencies:
     systems-model from http://bitbucket.org
 
 #+BEGIN_SRC yml :tangle basesetup/templates/ssh-config
-
 Host altssh.bitbucket.org
 User git
 Port 443
@@ -237,7 +235,7 @@ Hostname altssh.bitbucket.org
 TCPKeepAlive yes
 IdentityFile "~/.ssh/id_rsa"
 IdentitiesOnly yes
-ProxyCommand corkscrew proxy.iiit.ac.in 8080 %h %p
+ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
 
 #+END_SRC
 
@@ -254,8 +252,11 @@ ProxyCommand corkscrew proxy.iiit.ac.in 8080 %h %p
 
 
 ** Setup Virtualization on host machine
-*** openvz Virtualization
+*** OpenVZ Virtualization
 **** =main.yml=
+     =main.yml= contains various included playbooks which are needed
+     for OpenVZ virtualization setup. Purpose of each included
+     playbook is described below the =main.yml= file.
 #+BEGIN_SRC yml :tangle roles/openvz/tasks/main.yml 
 ---
 # tasks file for openvz
@@ -267,8 +268,12 @@ ProxyCommand corkscrew proxy.iiit.ac.in 8080 %h %p
 #+END_SRC
 
 **** =clone.yml=
-
-#+BEGIN_SRC yml :tangle openvz/tasks/clone.yml
+    - This script =clone.yml= installs =git=. 
+    - Clones [[./https://github.com/vlead/cluster-setup-ovpl-centos][cluster-setup-ovpl-centos]] repository from
+      http://github.com and saves it in destination mentioned in
+      =dest= parameter. 
+ 
+#+BEGIN_SRC yml :tangle roles/openvz/tasks/clone.yml
 
 ---
     - name: install git
@@ -291,8 +296,14 @@ ProxyCommand corkscrew proxy.iiit.ac.in 8080 %h %p
 #+END_SRC
 
 **** =install-openvz=
+     Following script does 
+     - Exports network proxy through a =proxy_env.http_proxy=
+       variable. It is defined in [[./common-vars.org][common-vars]] file.
+     - Installs =OpenVZ= through a shell script called
+       =./centos_prepare_ovpl.sh=
+     
 
-#+BEGIN_SRC yml :tangle openvz/tasks/install-openvz.yml
+#+BEGIN_SRC yml :tangle roles/openvz/tasks/install-openvz.yml
 
 ---
 
@@ -319,9 +330,12 @@ ProxyCommand corkscrew proxy.iiit.ac.in 8080 %h %p
 #+END_SRC
 
 **** =openvz-config.yml=
-
-#+BEGIN_SRC yml :tangle openvz/tasks/openvz-config.yml
-
+     Following script does 
+     - Sets to =net.ipv4.ip_forward = 1= to enable packet forwarding for
+       IPv4
+     - Sets to =NETFILTER="full"= to Restrict access to
+       netfilter/iptables modules for a container
+#+BEGIN_SRC yml :tangle roles/openvz/tasks/openvz-config.yml
 ---
     - replace: 
           path: /etc/sysctl.conf
@@ -337,14 +351,12 @@ ProxyCommand corkscrew proxy.iiit.ac.in 8080 %h %p
        content: "EXTERNAL_SCRIPT=\"/usr/sbin/vznetaddbr\" "
        dest: "/etc/vz/vznet.conf"
 
-
-
-
 #+END_SRC
 
-**** =main.yml=
-
-#+BEGIN_SRC yml :tangle openvz/meta/main.yml
+**** =Dependencies=
+      Dependencies are required when taking variables from other
+      roles.
+#+BEGIN_SRC yml :tangle roles/openvz/meta/main.yml
 
 dependencies:
    - common-vars 

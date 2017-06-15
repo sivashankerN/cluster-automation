@@ -12,6 +12,8 @@
 * Implementation
   - [[./spec/index.org][Cluster Specifications]]
   - [[./base-setup.org][Base machine setup]]
+  - [[./cluster.org][Create cluster containers]]
+  - [[./router.org][Router]]
   - [[./ansible-server.org][Ansible-server]]
   - [[./ossec-server.org][ossec-server]]
   - [[./rsyslog-server.org][rsyslog-server]]
