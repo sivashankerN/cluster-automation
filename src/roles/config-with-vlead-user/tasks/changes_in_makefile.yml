@@ -19,4 +19,4 @@
 - replace:
       path: systems-model/makefile
       regexp: "SMTP_SMART_HOST= smtp.admin.iiit.ac.in"
-      replace: "SMTP_SMART_HOST=stpi-router.vlabs.ac.in"
+      replace: "SMTP_SMART_HOST={{smtp_smart_host}}"
