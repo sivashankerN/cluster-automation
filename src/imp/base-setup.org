@@ -250,7 +250,6 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
 
 #+END_SRC
 
-
 ** Setup Virtualization on host machine
 *** OpenVZ Virtualization
 **** =main.yml=

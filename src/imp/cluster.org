@@ -11,14 +11,11 @@
 * Implementation
 
 #+BEGIN_SRC yml :tangle cluster.yml
-
 ---
-- include: role_run.yml
-- include: config-ip.yml
+- include: servers-network-configuration.yml
 - include: copy-ssh-key-to-config-server.yml
 - include: config-server.yml
 - include: config-with-vlead-user.yml
-
 
 
 #+END_SRC

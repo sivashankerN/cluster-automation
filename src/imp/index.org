@@ -12,7 +12,7 @@
 * Implementation
   - [[./spec/index.org][Cluster Specifications]]
   - [[./base-setup.org][Base machine setup]]
-  - [[./cluster.org][Create cluster containers]]
+  - [[./create-cluster-containers.org][Create cluster containers]]
   - [[./router.org][Router]]
   - [[./ansible-server.org][Ansible-server]]
   - [[./ossec-server.org][ossec-server]]
@@ -24,6 +24,6 @@
   - [[./rsnapshot-server.org][rsnapshot]]
   - [[./ads.org][ADS service]]
   - [[./config-with-vlead-user.org][Configure cluster with vlead user]] 
-    
+  - [[./cluster.org][Main cluster setup file]]
   
 
