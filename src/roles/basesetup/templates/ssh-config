@@ -5,5 +5,5 @@ Hostname altssh.bitbucket.org
 TCPKeepAlive yes
 IdentityFile "~/.ssh/id_rsa"
 IdentitiesOnly yes
-ProxyCommand corkscrew proxy.iiit.ac.in 8080 %h %p
+ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
 
