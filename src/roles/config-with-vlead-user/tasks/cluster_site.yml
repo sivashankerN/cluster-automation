@@ -1,10 +1,13 @@
 ---
+ - name: Backup main.yml
+   shell: 'cp main.yml backup-main-$(date +%d-%b-%Y).yml'
+   args:
+     chdir: systems-model/build/{{clustername}}/roles/common_vars/vars/ 
  - name: Replacing private-dns-ips
    replace:
         path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml       
         regexp: 'private_dns_ips: none'
-        replace: 'private_dns_ips: 
-                         - 10.100.1.5'
+        replace: 'private_dns_ips: \n\t - 10.100.1.5'
        
  - name: Replacing private-dns-zone
    replace:
