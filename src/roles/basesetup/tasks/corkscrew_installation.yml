@@ -47,7 +47,7 @@
 
 
 - name: create and configure ~/.ssh/config to clone bitbucket repo system model
-  copy: src=ssh-config dest=~/.ssh/config mode=400
+  template: src=ssh-config dest=~/.ssh/config mode=400
 
 
 - name: clone systems-model repo from bitbucket
