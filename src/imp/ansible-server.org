@@ -6,7 +6,7 @@
 #+OPTIONS: ^:nil
 
 * Introduction
-  This document contains the configuration of other contains using ansible   
+  This document contains the configuration of other contains using ansible and also network configuration of ansible  
 * Implementation
 **  Config-server node configuration
 *** Ansible 
@@ -27,7 +27,7 @@
   command: vzctl exec 1002 service network restart
 #+END_SRC
 
-**** =ifcfg-eth0=
+**** =ifcfg-eth0 template=
 #+BEGIN_SRC yml :tangle ansible/templates/ifcfg-eth0
 
 
@@ -65,23 +65,25 @@ dependencies:
 #+end_src
       
 *** config-server
+**** =main=
 #+BEGIN_SRC yml :tangle config-server/tasks/main.yml
 
 ---
- - name: installing ansible
+ - name: installing ansible and other required packages
    yum: name="{{item}}" state=latest
    environment: "{{proxy_env}}"
    with_items:
         - epel-release
         - ansible
         - git
+        - emacs
  - name: Create vlead user and generate ssh-keys for vlead
    user: name=vlead password={{vlead_user_password}} generate_ssh_key=yes groups=wheel
  - name: Replacing wheel
-   lineinfile:
-       path: /etc/sudoers
-       regexp: '^%wheel.*NOPASSWD: ALL.*'
-       line: '%wheel        ALL=(ALL)       NOPASSWD: ALL'
+   lineinfile: 
+       path: /etc/sudoers 
+       regexp: '^%wheel.*NOPASSWD: ALL.*'  
+       line: '%wheel        ALL=(ALL)       NOPASSWD: ALL' 
        state: present
  - name: Set StrictHostkeyChecking to no
    lineinfile: path=/etc/ssh/ssh_config regexp="^Strict.*" line="StrictHostKeyChecking no" state=present
@@ -94,19 +96,18 @@ dependencies:
    lineinfile: path=/etc/ssh/sshd_config regexp="^PasswordAuthentication.*" line="PasswordAuthentication yes" state=present
    notify: restart_ssh
 
- - name: Copy system-model repo from host-machine to ansible/config-serer container
-   synchronize: src="{{systems_model_dest}}" dest=/home/vlead/
+ - name: Copy system-model repo from host-machine to ansible/config-serer container 
+   synchronize: src="{{systems_model_dest}}" dest=/home/vlead/ 
 
  - name: Update ownership permissions to systems-model repo
-   file: path=/home/vlead/systems-model recurse=true owner=vlead group=vlead
+   file: path=/home/vlead/systems-model recurse=true owner=vlead group=vlead 
 
- - name: install emacs
-   yum: name=emacs state=installed
-   environment: "{{proxy_env}}"
+
 
 
 #+END_SRC
 
+**** =dependencies=
 #+BEGIN_SRC yml :tangle config-server/meta/main.yml
 
 dependencies:
@@ -114,34 +115,7 @@ dependencies:
 
 #+END_SRC   
 
-#+BEGIN_SRC yml :tangle config-server/files/ifcfg-eth0
-
-DEVICE=eth0
-TYPE=Ethernet
-BOOTPROTO=static
-ONBOOT=yes
-NM_CONTROLLED=no
-IPADDR=10.2.59.222
-NETMASK=255.255.252.0
-GATEWAY=10.2.56.1
-DNS1=10.4.12.160
-DNS2=10.4.12.220
-
-
-#+END_SRC
-
-#+BEGIN_SRC yml :tangle config-server/files/ifcfg-eth1
-
-DEVICE=eth1
-BOOTPROTO=static
-ONBOOT=yes
-NM_CONTROLLED=no
-IPADDR=10.100.1.2
-NETMASK=255.255.252.0
-
-
-#+END_SRC
-
+**** =handlers=
 #+BEGIN_SRC yml :tangle config-server/handlers/main.yml
 
 ---
@@ -150,6 +124,8 @@ NETMASK=255.255.252.0
 
 #+END_SRC
 
+**** =variables=
+
 #+BEGIN_SRC yml :tangle config-server/vars/main.yml
 
 export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_proxy="{{proxy_env.https_proxy}}"
@@ -157,120 +133,141 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 
 #+END_SRC
 *** Config-with-vlead-user
-
+**** =main=
 #+BEGIN_SRC yml :tangle config-with-vlead-user/tasks/main.yml
 
-# - name: Copy ssh keys
-#   shell: sshpass -p "test" ssh-copy-id root@localhost
-#   register: out
-# - debug: var=out.stdout_lines
-# - name: Copy ssh keys
-#   shell: sshpass -p "test" ssh-copy-id root@127.0.0.1
-#   register: out
-# - debug: var=out.stdout_lines
-# - name: Copy ssh keys
-#   shell: sshpass -p "test" ssh-copy-id root@10.100.1.1
-#   register: out
-# - debug: var=out.stdout_lines
-#
-#tasks file for config-with-vlead-user
-# - include: copy-sshkeys.yml
-# - include: setupemacs.yml
-# - include: changes_in_makefile.yml
-#
-#
-# - name: change directory and run make file
-#   command: make
-#   register: out
-#   args: 
-#     chdir: ~/systems-model/
-# - debug: var=out.stdout_lines
-#
-# - name: Copying build file 
-#   command: sudo cp -r build/{{clustername}} /root/
-#   register: out
-#   args:
-#    chdir: ~/systems-model/
-# - debug: var=out.stdout_lines
-#
-# - name: checking syntax of ansible playbook
-#   command: ansible-playbook -i hosts --list-tasks --syntax-check site.yaml
-#   register: out
-#   args:
-#    chdir: ~/systems-model/build/{{clustername}}
-# - debug: var=out.stdout_lines
- # - include: set-proxy.yml
- - include: public_dns.yml
+---
+ #tasks file for config-with-vlead-user
+ - name: Copy ssh keys
+   shell: sshpass -p {{vlead_user_password}} ssh-copy-id root@localhost
+   register: out
+ - debug: var=out.stdout_lines
+ - name: Copy ssh keys
+   shell: sshpass -p {{vlead_user_password}} ssh-copy-id root@127.0.0.1
+   register: out
+ - debug: var=out.stdout_lines
+ - name: Copy ssh keys
+   shell: sshpass -p {{vlead_user_password}} ssh-copy-id root@10.100.1.1
+   register: out
+ - debug: var=out.stdout_lines
+
+ - include: copy-sshkeys.yml
+ - include: setupemacs.yml
+ - include: changes_in_makefile.yml
+
+
+ - name: change directory and run make file
+   command: make
+   register: out
+   args: 
+     chdir: ~/systems-model/
+ - debug: var=out.stdout_lines
+
+ - name: Copying build file --Backup 
+   command: sudo cp -r build/{{clustername}} /root/
+   register: out
+   args:
+    chdir: ~/systems-model/
+ - debug: var=out.stdout_lines
+
+ - name: checking syntax of ansible playbook
+   command: ansible-playbook -i hosts --list-tasks --syntax-check site.yaml
+   register: out
+   args:
+    chdir: ~/systems-model/build/{{clustername}}
+ - debug: var=out.stdout_lines
+ - name: Changing proxy-port of system-model
+   lineinfile:
+        path: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml 
+        regexp: '^proxy_port:.*'
+        line: 'proxy_port: {{proxy_port}}'
+        state: present
+
+ - include: set-proxy.yml
+ - include: dns-servers.yml
+ - include: router.yml
+ - include: ads.yml
+ - include: knownhost.yml
+ - include: cluster_site.yml
+ - include: site_modify.yml
+ - include: site_run.yml
+
                                                         
 
 #+END_SRC
 
+**** =copy-sshkeys=
+
 #+BEGIN_SRC yml :tangle config-with-vlead-user/tasks/copy-sshkeys.yml
+
 
 ---
  - name: Copy ssh keys
-   shell: sshpass -p "test" ssh-copy-id root@localhost
+   shell: sshpass -p "{{vlead_user_password}}" ssh-copy-id root@localhost
+   register: out
+ - debug: var=out.stdout_lines
+ 
+ - name: Copy ssh keys
+   shell: sshpass -p "{{vlead_user_password}}" ssh-copy-id root@127.0.0.1
    register: out
  - debug: var=out.stdout_lines
 
  - name: Copy ssh keys
-   shell: sshpass -p "test" ssh-copy-id root@127.0.0.1
+   shell: sshpass -p "{{vlead_user_password}}" ssh-copy-id root@10.100.1.1
    register: out
  - debug: var=out.stdout_lines
 
  - name: Copy ssh keys
-   shell: sshpass -p "test" ssh-copy-id root@10.100.1.1
+   shell: sshpass -p "{{vlead_user_password}}" ssh-copy-id root@10.100.1.2
+   register: out
+ - debug: var=out.stdout_lines
+ 
+ - name: Copy ssh keys
+   shell: sshpass -p "{{vlead_user_password}}" ssh-copy-id root@10.100.1.3
+   register: out
+ - debug: var=out.stdout_lines
+ 
+ - name: Copy ssh keys
+   shell: sshpass -p "{{vlead_user_password}}" ssh-copy-id root@10.100.1.4
    register: out
  - debug: var=out.stdout_lines
 
  - name: Copy ssh keys
-   shell: sshpass -p "test" ssh-copy-id root@10.100.1.2
+   shell: sshpass -p "{{vlead_user_password}}" ssh-copy-id root@10.100.1.5
+   register: out
+ - debug: var=out.stdout_lines
+ 
+ - name: Copy ssh keys
+   shell: sshpass -p "{{vlead_user_password}}" ssh-copy-id root@10.100.1.6
    register: out
  - debug: var=out.stdout_lines
 
  - name: Copy ssh keys
-   shell: sshpass -p "test" ssh-copy-id root@10.100.1.3
+   shell: sshpass -p "{{vlead_user_password}}" ssh-copy-id root@10.100.1.7
    register: out
  - debug: var=out.stdout_lines
 
  - name: Copy ssh keys
-   shell: sshpass -p "test" ssh-copy-id root@10.100.1.4
+   shell: sshpass -p "{{vlead_user_password}}" ssh-copy-id root@10.100.1.8
    register: out
  - debug: var=out.stdout_lines
 
  - name: Copy ssh keys
-   shell: sshpass -p "test" ssh-copy-id root@10.100.1.5
+   shell: sshpass -p "{{vlead_user_password}}" ssh-copy-id root@10.100.1.9
    register: out
  - debug: var=out.stdout_lines
 
  - name: Copy ssh keys
-   shell: sshpass -p "test" ssh-copy-id root@10.100.1.6
+   shell: sshpass -p "{{vlead_user_password}}" ssh-copy-id root@10.100.1.10
    register: out
  - debug: var=out.stdout_lines
 
- - name: Copy ssh keys
-   shell: sshpass -p "test" ssh-copy-id root@10.100.1.7
-   register: out
- - debug: var=out.stdout_lines
-
- - name: Copy ssh keys
-   shell: sshpass -p "test" ssh-copy-id root@10.100.1.8
-   register: out
- - debug: var=out.stdout_lines
-
- - name: Copy ssh keys
-   shell: sshpass -p "test" ssh-copy-id root@10.100.1.9
-   register: out
- - debug: var=out.stdout_lines
-
- - name: Copy ssh keys
-   shell: sshpass -p "test" ssh-copy-id root@10.100.1.10
-   register: out
- - debug: var=out.stdout_lines
 
 
 
 #+END_SRC
+
+**** =setupemacs=
 
 #+BEGIN_SRC yml :tangle config-with-vlead-user/tasks/setupemacs.yml
 
@@ -280,12 +277,12 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
   file: path=emacs/lisp mode=0755 state=directory
 
 - name: un-tar  downloaded file
-  unarchive: src=http://orgmode.org/org-8.2.10.tar.gz dest=/home/vlead/emacs/lisp/ remote_src=True
+  unarchive: src={{org_link}} dest=/home/vlead/emacs/lisp/ remote_src=True
   environment: "{{proxy_env}}"
 
-
-
 #+END_SRC
+
+**** =change-in-makefile=
 
 #+BEGIN_SRC yml :tangle config-with-vlead-user/tasks/changes_in_makefile.yml
 
@@ -310,12 +307,16 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 - replace:
       path: systems-model/makefile
       regexp: "SMTP_SMART_HOST= smtp.admin.iiit.ac.in"
-      replace: "SMTP_SMART_HOST=stpi-router.vlabs.ac.in"
+      replace: "SMTP_SMART_HOST={{smtp_smart_host}}"
+
 
 
 #+END_SRC
 
+**** =set-proxy=
+
 #+BEGIN_SRC yml :tangle config-with-vlead-user/tasks/set-proxy.yml
+
 
 
 - name: Copy set-proxy to ansible container
@@ -324,45 +325,88 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 - name: Run  set-proxy.yml file to set proxy in all other containers
   command: ansible-playbook -i hosts set-proxy.yml
   register: out
-  args:
+  args: 
     chdir: systems-model/build/{{clustername}}/
 - debug: var=out.stdout_lines
 
+
 #+END_SRC
 
-#+BEGIN_SRC yml :tangle config-with-vlead-user/tasks/public_dns.yml
+**** =dns-server=
+
+#+BEGIN_SRC yml :tangle config-with-vlead-user/tasks/dns-servers.yml
 
 ---
-- name: Commenting rsnapshot_client
-  lineinfile:
+- name: Commenting rsnapshot_client 
+  lineinfile: 
      path: systems-model/build/{{clustername}}/public_dns.yaml
-     regexp: '- rsnapshot_client'
-     line: '# - rsnapshot_clients'
+     regexp: '^    - rsnapshot_client'
+     line: '    # - rsnapshot_client'
+  
 
-
-- name: Commenting ossec_client
-  lineinfile:
+- name: Commenting ossec_client 
+  lineinfile: 
      path: systems-model/build/{{clustername}}/public_dns.yaml
-     regexp: '- ossec_client'
-     line: '# - ossec_clients'
+     regexp: '^    - ossec_client'
+     line: '    # - ossec_client'
 
-- name: Commenting rsnapshot_client
-  lineinfile:
+- name: Commenting rsnapshot_client 
+  lineinfile: 
      path: systems-model/build/{{clustername}}/private_dns.yaml
-     regexp: '- rsnapshot_client'
-     line: '# - rsnapshot_clients'
+     regexp: '^    - rsnapshot_client'
+     line: '    # - rsnapshot_client'
+  
 
-
-- name: Commenting ossec_client
-  lineinfile:
+- name: Commenting ossec_client 
+  lineinfile: 
      path: systems-model/build/{{clustername}}/private_dns.yaml
-     regexp: '- ossec_client'
-     line: '# - ossec_clients'
+     regexp: '^    - ossec_client'
+     line: '    # - ossec_client'
 
 
 - name: Running public_dns playbook
   command: ansible-playbook -i hosts public_dns.yaml
   #environment: "{{proxy_env}}"
+  register: out
+  args: 
+    chdir: systems-model/build/{{clustername}}/
+- debug: 
+    var: out
+
+
+- name: Running private_dns playbook
+  command: ansible-playbook -i hosts private_dns.yaml
+  #environment: "{{proxy_env}}"
+  register: out
+  args: 
+    chdir: systems-model/build/{{clustername}}/
+- debug: 
+     var: out
+
+
+#+END_SRC
+
+**** =Router=
+
+#+begin_src yml :tangle config-with-vlead-user/tasks/router.yml
+
+---
+- name: Commenting rsnapshot_client
+  replace:
+     path: systems-model/build/{{clustername}}/router.yaml
+     regexp: '^    - rsnapshot_client'
+     replace: '    # - rsnapshot_client'
+
+
+- name: Commenting ossec_client
+  replace:
+     path: systems-model/build/{{clustername}}/router.yaml
+     regexp: '^    - ossec_client'
+     replace: '    # - ossec_client'
+
+- name: Running router playbook
+  command: ansible-playbook -i hosts router.yaml
+  environment: "{{proxy_env}}"
   register: out
   args:
     chdir: systems-model/build/{{clustername}}/
@@ -370,11 +414,270 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
     var: out
 
 
-- name: Running private_dns playbook
-  command: ansible-playbook -i hosts private_dns.yaml
-  #environment: "{{proxy_env}}"
 
-#+END_SRC
+#+end_src
+
+**** =ADS=
+
+#+begin_src yml :tangle config-with-vlead-user/tasks/ads.yml  
+
+---
+- name: installing git
+  command: ssh root@10.100.1.9 yum install -y git
+  register: out
+- debug: var=out.stdout_lines
+
+- name: Generating sshkeys
+  command: ssh root@10.100.1.9  "ssh-keygen -t rsa -f ~/.ssh/id_rsa| echo no"
+  register: out
+- debug: var=out.stdout_lines
+
+- name: Get public key from ADS server from root account
+  command: ssh root@10.100.1.9 "cat ~/.ssh/id_rsa.pub"
+  register: ssh_keys
+
+- name: install eple-release and sshpass
+  command: ssh root@10.100.1.9 "{{item}}"
+  with_items:
+   - export http_proxy={{proxy_env.http_proxy}} 
+   - export https_proxy={{proxy_env.https_proxy}} 
+   - yum install -y epel-release
+   - yum install -y sshpass
+- name: Set StrictHostKeyChecking no
+  command: ssh root@10.100.1.9 'sed -i "/^StrictHostKeyChecking.*/d" /etc/ssh/ssh_config && echo StrictHostKeyChecking=no >> /etc/ssh/ssh_config'
+
+- name: Copying keys
+  command: ssh root@10.100.1.9 'sshpass -p "vlead123" ssh-copy-id root@"{{ipaddress.hostmachine}}"'
+  register: out
+- debug: var=out.stdout_lines
+
+- name: check keys
+  debug: msg= "{{ ssh_keys.stdout }}"
+  tags:
+   - ssh
+
+- name: deploy keys on localhost at vlead user
+  authorized_key: user=vlead key= "{{ item }}"
+  delegate_to: "{{ipaddress.config_server}}"
+  with_items:
+    - 'command="hooks.sh",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty {{ ssh_keys.stdout }}'
+  tags:
+    - ssh
+
+- name: Copy template
+  template: src=ads-setup.yml dest=systems-model/build/{{clustername}}/
+
+- name: run ads_setup 
+  command: ansible-playbook -i hosts ads-setup.yml 
+  register: out
+  args: 
+    chdir: systems-model/build/{{clustername}}/
+- debug: var=out.stdout_lines  
+
+#+end_src
+
+**** =knownhost=
+
+#+begin_src yml :tangle config-with-vlead-user/tasks/knownhost.yml
+
+---
+- name: Get public key from ADS server from root account
+  command: "cat ~/.ssh/id_rsa.pub"
+  register: ssh_keys
+
+- name: check keys
+  debug: msg="{{ ssh_keys.stdout }}"
+  tags:
+   - ssh
+- name: Delopying keys on localhost at vlead 
+  lineinfile: path=~/.ssh/known_hosts regexp="^ansible.{{clustername}}.vlabs.ac.in.*"  line='ansible.{{clustername}}.vlabs.ac.in {{ssh_keys.stdout}}' state=present
+ 
+- name: Deploying keys on localhost 
+  lineinfile: path=~/.ssh/known_hosts regexp="^10.100.1.2.*"  line='10.100.1.2 {{ ssh_keys.stdout }}' state=present
+
+- name: Deploying keys on localhost 
+  lineinfile: path=~/.ssh/known_hosts regexp="^ansible.{{clustername}}.virtual-labs.ac.in.*"  line='ansible.{{clustername}}.virtual-labs.ac.in {{ ssh_keys.stdout }}' state=present
+
+
+#+end_src
+
+**** =cluster-site=
+
+#+begin_src yml :tangle config-with-vlead-user/tasks/cluster_site.yml
+
+---
+ - name: Backup main.yml
+   shell: 'cp main.yml backup-main-$(date +%d-%b-%Y).yml'
+   args:
+     chdir: systems-model/build/{{clustername}}/roles/common_vars/vars/ 
+ - name: Replacing private-dns-ips
+   replace:
+        path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml       
+        regexp: 'private_dns_ips: none'
+        replace: 'private_dns_ips: \n\t - 10.100.1.5'
+       
+ - name: Replacing private-dns-zone
+   replace:
+        path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml       
+        regexp: 'private_dns_zone: none'
+        replace: 'private_dns_zone: "{{clustername}}.virtual-labs.ac.in {{clustername}}.vlabs.ac.in"'
+
+ - name: Commenting  ossec-server.yaml file in site.yaml
+   replace:
+        path: systems-model/build/{{clustername}}/site.yaml     
+        regexp: '^- include: ossec_server.yaml'
+        replace: '#- include: ossec_server.yaml'
+ 
+ 
+#+end_src
+
+**** =site-modify=
+#+begin_src yml :tangle roles/config-with-vlead-user/tasks/site_modify.yml
+
+
+ - name: commenting  ossec-client in ossec-server
+   replace: 
+      path: systems-model/build/{{clustername}}/ossec_server.yaml
+      regexp: '^    - ossec_client'
+      replace: '    # - ossec_client'
+ 
+ - name: Uncommenting rsnapshot-client in ossec-server 
+   replace: 
+      path: systems-model/build/{{clustername}}/ossec_server.yaml
+      regexp: '^    # - rsnapshot_client'
+      replace: '    - rsnapshot_client'
+ 
+ - name: commenting ossec-client in config-server
+   replace: 
+      path: systems-model/build/{{clustername}}/config_server.yaml
+      regexp: '^    - ossec_client'
+      replace: '    # - ossec_client'
+ 
+ - name: Uncommenting rsnapshot-client in config-server 
+   replace: 
+      path: systems-model/build/{{clustername}}/config_server.yaml
+      regexp: '^    # - rsnapshot_client'
+      replace: '    - rsnapshot_client'
+
+ 
+ - name: commenting oseec-client in nagios-server
+   replace: 
+      path: systems-model/build/{{clustername}}/nagios_server.yaml
+      regexp: '^    - ossec_client'
+      replace: '    # - ossec_client'
+ 
+ - name: Uncommenting rsnapshot-client in nagios-server
+   replace: 
+      path: systems-model/build/{{clustername}}/nagios_server.yaml
+      regexp: '^    # - rsnapshot_client'
+      replace: '    - rsnapshot_client'
+
+
+ - name: commenting oseec-client in public-dns-server
+   replace: 
+      path: systems-model/build/{{clustername}}/public_dns.yaml
+      regexp: '^    - ossec_client'
+      replace: '    # - ossec_client'
+ 
+ - name: Uncommenting rsnapshot-client in public-dns-server
+   replace: 
+      path: systems-model/build/{{clustername}}/public_dns.yaml
+      regexp: '^    # - rsnapshot_client'
+      replace: '    - rsnapshot_client'
+
+ - name: commenting oseec-client in reverseproxy-server
+   replace: 
+      path: systems-model/build/{{clustername}}/reverseproxy_server.yaml
+      regexp: '^    - ossec_client'
+      replace: '    # - ossec_client'
+ 
+ - name: Uncommenting rsnapshot-client in reverseproxy-server
+   replace: 
+      path: systems-model/build/{{clustername}}/reverseproxy_server.yaml
+      regexp: '^    # - rsnapshot_client'
+      replace: '    - rsnapshot_client'
+
+
+ - name: commenting oseec-client in router
+   replace: 
+      path: systems-model/build/{{clustername}}/router.yaml
+      regexp: '^    - ossec_client'
+      replace: '    # - ossec_client'
+ 
+ - name: Uncommenting rsnapshot-client in router
+   replace: 
+      path: systems-model/build/{{clustername}}/router.yaml
+      regexp: '^    # - rsnapshot_client'
+      replace: '    - rsnapshot_client'
+
+
+ - name: commenting oseec-client in private-dns-server
+   replace: 
+      path: systems-model/build/{{clustername}}/private_dns.yaml
+      regexp: '^    - ossec_client'
+      replace: '    # - ossec_client'
+ 
+ - name: Uncommenting rsnapshot-client in private-dns-server
+   replace: 
+      path: systems-model/build/{{clustername}}/private_dns.yaml
+      regexp: '^    # - rsnapshot_client'
+      replace: '    - rsnapshot_client'
+
+
+ - name: commenting oseec-client in rsnapshot-server
+   replace: 
+      path: systems-model/build/{{clustername}}/rsnapshot_server.yaml
+      regexp: '^    - ossec_client'
+      replace: '    # - ossec_client'
+ 
+ - name: Uncommenting rsnapshot-client in rsnapshot-server
+   replace: 
+      path: systems-model/build/{{clustername}}/rsnapshot_server.yaml
+      regexp: '^    # - rsnapshot_client'
+      replace: '    - rsnapshot_client'
+
+
+ - name: commenting oseec-client in rsyslog-server
+   replace: 
+      path: systems-model/build/{{clustername}}/rsyslog_server.yaml
+      regexp: '^    - ossec_client'
+      replace: '    # - ossec_client'
+ 
+ - name: Uncommenting rsnapshot-client in rsyslog-server
+   replace: 
+      path: systems-model/build/{{clustername}}/rsyslog_server.yaml
+      regexp: '^    # - rsnapshot_client'
+      replace: '    - rsnapshot_client'
+
+
+#+end_src
+
+**** =site-run=
+
+#+begin_src yml :tangle roles/config-with-vlead-user/tasks/site_run.yml
+
+
+- name: Testing  site yml file using ansible
+  command: ansible-playbook -i hosts --list-tasks --syntax-check site.yaml
+  register: out
+  args:
+     chdir: systems-model/build/{{clustername}}/
+- debug: var=out.stdout_lines
+
+
+
+- name: Running site yml file using ansible
+  command: ansible-playbook -i hosts  site.yaml
+  register: out
+  args:
+     chdir: systems-model/build/{{clustername}}/
+- debug: var=out.stdout_lines
+
+
+#+end_src
+
+
+**** =handlers=
 
 #+BEGIN_SRC yml :tangle config-with-vlead-user/handlers/main.yml
 
@@ -386,6 +689,8 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 
 #+END_SRC
 
+**** =dependencies=
+
 #+BEGIN_SRC yml :tangle config-with-vlead-user/meta/main.yml
 
 dependencies:
@@ -393,9 +698,21 @@ dependencies:
 
 #+END_SRC
 
+**** =set-proxy template=
+
 #+BEGIN_SRC yml :tangle config-with-vlea-user/templates/set-proxy.yml
 
 ---
+
+- hosts: router
+  remote_user: root
+
+  tasks: 
+  - name: Delete proxy if there is any
+    lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
+  - name: set proxy
+    lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
+
 - hosts: private_dns
   remote_user: root
 
@@ -475,9 +792,152 @@ dependencies:
      lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
 
 
+
 #+END_SRC
 
+**** =ads-setup=
 
+#+begin_src yml :tangle roles/config-with-vlead-user/templates/ads-setup.yml
+
+---
+- hosts: ads_server
+  remote_user: root
+  
+  tasks:
+   - name: git cloning 
+     command: "{{export_proxy}} && git clone {{setup_ovpl_centos}} && cd cluster-setup-ovpl-centos &&  git checkout cluster-ads"
+     ignore_errors: yes
+     register: out
+   - debug: var=out.stdout_lines
+
+
+   - name: Running centos-prepare-ovpl shell
+     command: "{{export_proxy}} && cd cluster-setup-ovpl-centos/scripts && ./centos_prepare_ovpl.sh"
+     register: out  
+   - debug: var=out.stdout_lines
+
+   - name: Copy file
+     command: cp sample_config.json config.json 
+     args: 
+       chdir: ovpl/config/
+   - name: COOKIE UPDATE
+   #  command: 'sed -i "s/COOKIE_SECRET.*/COOKIE_SECRET\"=\"jgsjdhgfcjgsdjgfvjhsdfhkjsdgk\"/g" ovpl/config/config.json'
+     replace: 
+       path: ovpl/config/config.json
+       regexp: '"COOKIE_SECRET.*"'
+       replace: '"COOKIE_SECRET": "jgsjdhgfcjgsdjgfvjhsdfhkjsdgk"'
+
+   - name: 
+     replace: 
+      path: ovpl/config/config.json
+      regexp: '"ADAPTER_TO_USE" : {"POOLID" : 1, "ADAPTERID" : 2}'
+      replace: '"ADAPTER_TO_USE" : {"POOLID" : 1, "ADAPTERID" : 3}'
+
+
+   - name: Copy base_config.py
+     command: cp sample_base_config.py base_config.py
+     args: 
+       chdir: ovpl/config/adapters/
+   - name: set BASE_IP_ADDRESS
+     lineinfile: 
+       path: ovpl/config/adapters/base_config.py
+       regexp: "^BASE_IP_ADDRESS =.*"
+       line: 'BASE_IP_ADDRESS = "root@{{ipaddress.hostmachine}}"'
+       state: present
+   - name: ADS_ON_CONTAINER to true
+     lineinfile: 
+        path: ovpl/config/adapters/base_config.py
+        regexp: "^ADS_ON_CONTAINER =.*"
+        line: "ADS_ON_CONTAINER = True"
+        state: present
+
+   - name: Set ADS_SERVER_VM_ID to CTID of container running ADS
+     lineinfile: 
+      path: ovpl/config/adapters/base_config.py
+      regexp: "^ADS_SERVER_VM_ID*"
+      line: 'ADS_SERVER_VM_ID = "1009"'
+      state: present
+   - name: Set SUBNET
+     lineinfile: 
+       path: ovpl/config/adapters/base_config.py
+       regexp: "SUBNET = .*" 
+       line: 'SUBNET = ["10.100.0.0/16"]'
+       state: present
+   - name: Set host name
+     lineinfile: 
+      path: ovpl/config/adapters/base_config.py
+      regexp: "HOST_NAME = .*"
+      line: 'HOST_NAME = "{{clustername}}.vlabs.ac.in"'
+      state: present
+   - name: Set SERVICE_HOST 
+     lineinfile: 
+      path: ovpl/config/adapters/base_config.py
+      regexp: "^SERVICE_HOST = .*"
+      line: 'SERVICE_HOST = "vlead@ansible.{{clustername}}.vlabs.ac.in"'
+      state: present
+
+   - name: Settings for centos_bridged_adapter
+     command: cp sample_centos_bridged_config.py centos_bridged_config.py 
+     args: 
+      chdir: ovpl/config/adapters/
+
+   - name: SUBNET Bridge
+     lineinfile:
+      path: ovpl/config/adapters/centos_bridged_config.py
+      regexp: "SUBNET_BRIDGE = .*"  
+      line: 'SUBNET_BRIDGE = "br1"'
+      state: present
+  
+   - name: Install dependencies
+     yum: name=epel-release state=installed
+   - name: Install dependencies
+     yum: name=mod_wsgi state=installed
+   - name: Install dependencies
+     yum: name=python-pip state=installed
+   - name: Install 
+     shell: '{{export_proxy}} &&  python setup.py install'
+     register: result
+     args:
+       chdir: ~/ovpl/src/ads-web-app/
+   - debug: var=result.stdout_lines
+     
+  
+   - name: Rsync files
+     command: cp -r ~/ovpl/src/ads-web-app /var/www/html/
+     
+   - name: Start manage_service &
+     shell: ./manage_services.sh
+     args: 
+      chdir: ovpl/
+           
+   - name: Google keys
+     replace:
+        path: /var/www/html/ads-web-app/config.py
+        regexp: "CONSUMER_KEY.*"
+        replace: 'CONSUMER_KEY = "{{consumer_key}}"'
+   - name: Google secrete
+     replace:
+        path: /var/www/html/ads-web-app/config.py
+        regexp: "CONSUMER_SECRET.*"
+        replace: 'CONSUMER_SECRET = "{{consumer_secret}}"'
+
+   - name : Replace ADS_SECRET_KEY
+     lineinfile:
+        path:  /var/www/html/ads-web-app/config.py
+        regexp: "^ADS_SECRET_KEY.*"
+        line: 'ADS_SECRET_KEY = "placethekeyhere"'
+        state: present
+
+   - name : Replace APP_URL
+     lineinfile:
+        path:  /var/www/html/ads-web-app/config.py
+        regexp: "^APP_URL .*"
+        line: 'APP_URL = "http://ads.{{clustername}}.virtual-labs.ac.in:8080"'
+        state: present
+
+
+
+#+end_src
     
   
 
