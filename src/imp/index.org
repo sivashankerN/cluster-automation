@@ -23,7 +23,5 @@
   - [[./nagios.org][nagios]]
   - [[./rsnapshot-server.org][rsnapshot]]
   - [[./ads.org][ADS service]]
-  - [[./config-with-vlead-user.org][Configure cluster with vlead user]] 
-  - [[./cluster.org][Main cluster setup file]]
-  
+  - [[./main.org][Main playbook]]
 
