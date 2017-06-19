@@ -6,9 +6,10 @@
 #+OPTIONS: ^:nil
 
 * Introduction
+ This document describes the network configuration of rsyslog-server
 * Implementation
 ** Rsyslog configuration
-*** rsyslog role
+*** rsyslog 
 
 #+BEGIN_SRC yml :tangle rsyslog-server/tasks/main.yml
 

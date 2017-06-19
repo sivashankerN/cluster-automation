@@ -6,16 +6,17 @@
 #+OPTIONS: ^:nil
 
 * Introduction
-  This document describes the automation of ossec-server creation.
+  This document describes the network creation of  ossec-server.
 * Implementation
 ** Automate Ossec server node configuration
-*** ossec server role
+*** ossec server 
+**** =main=
 
 #+BEGIN_SRC yml :tangle ossec-server/tasks/main.yml
 
 ---
 - name: Set root password
-  command: vzctl set 1003 --userpasswd root:test
+  command: vzctl set 1003 --userpasswd root:{{vlead_user_password}}
 
 - name: copy interface ifcfg-eth1 file
   copy: src=ifcfg-eth1 dest=/vz/private/1003/etc/sysconfig/network-scripts/
@@ -25,6 +26,8 @@
 
 #+END_SRC
 
+**** =dependencies=
+
 #+BEGIN_SRC yml :tangle ossec-server/meta/main.yml
 
 dependencies:
@@ -33,8 +36,11 @@ dependencies:
 
 #+END_SRC
 
+**** =ifcfg-eth1=
 
-#+BEGIN_SRC yml :tangle ossec-server/files/ifcfg-eth1
+
+#+BEGIN_SRC yml :tangle ossec-server/templates/ifcfg-eth1
+
 
 DEVICE=eth1
 BOOTPROTO=static
@@ -42,7 +48,7 @@ ONBOOT=yes
 NM_CONTROLLED=no
 IPADDR=10.100.1.3
 GATEWAY=10.100.1.1
-NETMASK=255.255.252.0
+NETMASK={{net_mask}}
 
 
 #+END_SRC
