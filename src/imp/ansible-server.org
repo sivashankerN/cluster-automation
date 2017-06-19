@@ -44,6 +44,7 @@ DNS2={{dnsaddress.dns2}}
 
 #+END_SRC
 
+**** =ifcfg-eth1 template=
 #+begin_src yml :tangle ansible/templates/ifcfg-eth1
 
 DEVICE=eth1
