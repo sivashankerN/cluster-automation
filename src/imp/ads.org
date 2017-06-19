@@ -6,25 +6,27 @@
 #+OPTIONS: ^:nil
 
 * Introduction
-This role configures ads server
+This document descirbes the configuration of ads-server
 * Implementation
 ** ADS role configuration
-*** ADS role
+*** ADS 
+**** =main=
 #+BEGIN_SRC yml :tangle ads-server/tasks/main.yml
 
 ---
 - name: Set root password
-  command: vzctl set 1009 --userpasswd root:test
+  command: vzctl set 1009 --userpasswd root:{{vlead_user_password}}
 
 - name: copy interface ifcfg-eth1 file
   copy: src=ifcfg-eth1 dest=/vz/private/1009/etc/sysconfig/network-scripts/
 
 - name: Network restart
   command: vzctl exec 1009 service network restart
-- include: cloning.yml
+
 
 #+END_SRC
 
+**** =dependencies=
 
 #+BEGIN_SRC yml :tangle ads-server/meta/main.yml
 
@@ -33,7 +35,9 @@ dependencies:
 
 #+END_SRC
 
-#+BEGIN_SRC yml :tangle ads-server/files/ifcfg-eth1
+**** =ifcfg-eth1=
+
+#+BEGIN_SRC yml :tangle ads-server/templates/ifcfg-eth1
 
 DEVICE=eth1
 BOOTPROTO=static
@@ -41,7 +45,7 @@ ONBOOT=yes
 NM_CONTROLLED=no
 IPADDR=10.100.1.9
 GATEWAY=10.100.1.1
-NETMASK=255.255.252.0
+NETMASK={{net_mask}}
 
 #+END_SRC
 

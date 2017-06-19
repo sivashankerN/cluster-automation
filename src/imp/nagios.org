@@ -6,16 +6,16 @@
 #+OPTIONS: ^:nil
 
 * Introduction
-  This document contains the implementation of automation of cluster
-  creation.
+  This document contains the network configuration of nagios server
 * Implementation
 ** Automate nagios node configuration
-*** nagios role
+*** nagios 
+**** =main=
 #+BEGIN_SRC yml :tangle nagios-server/tasks/main.yml
 
 ---
 - name: Set root password
-  command: vzctl set 1008 --userpasswd root:test
+  command: vzctl set 1008 --userpasswd root:{{vlead_user_password}}
 
 - name: copy interface ifcfg-eth1 file
   copy: src=ifcfg-eth1 dest=/vz/private/1008/etc/sysconfig/network-scripts/
@@ -23,10 +23,11 @@
 - name: Network restart
   command: vzctl exec 1008 service network restart
 # tasks file for nagios-server
-
-
 #+END_SRC    
-  
+
+
+
+**** =dependencies=  
 #+BEGIN_SRC yml :tangle nagios-server/meta/main.yml
 
 dependencies:
@@ -34,7 +35,7 @@ dependencies:
 
 #+END_SRC
 
-#+BEGIN_SRC yml :tangle nagios-server/files/ifcfg-eth1
+#+BEGIN_SRC yml :tangle nagios-server/templates/ifcfg-eth1
 
 DEVICE=eth1
 BOOTPROTO=static
@@ -42,7 +43,7 @@ ONBOOT=yes
 NM_CONTROLLED=no
 IPADDR=10.100.1.8
 GATEWAY=10.100.1.1
-NETMASK=255.255.252.0
+NETMASK={{net_mask}}
 
 
 #+END_SRC

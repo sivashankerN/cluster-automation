@@ -12,13 +12,14 @@
 * Implementation
    
 ** Automate Reverse proxy node configuration
-*** reverse-proxy role
-#+BEGIN_SRC yml :tangle reverse-proxyserver/tasks/main.yml
+*** reverse-proxy 
+**** =main=
+#+BEGIN_SRC yml :tangle reverse-proxy-server/tasks/main.yml
 # tasks file for reverse-proxyserver
 
 ---
 - name: Set root password
-  command: vzctl set 1007 --userpasswd root:test
+  command: vzctl set 1007 --userpasswd root:{{vlead_user_password}}
 
 - name: copy interface ifcfg-eth1 file
   copy: src=ifcfg-eth1 dest=/vz/private/1007/etc/sysconfig/network-scripts/
@@ -27,15 +28,26 @@
   command: vzctl exec 1007 service network restart
 
 #+END_SRC
-#+BEGIN_SRC yml :tangle reverse-proxyserver/files/ifcfg-eth1
+
+**** =dependencies=
+#+begin_src yml :tangle reverse-proxy-server/meta/main.yml
+
+
+dependencies:
+     - common-vars
+
+#+end_src
+
+**** =ficfg-eth1=
+#+BEGIN_SRC yml :tangle reverse-proxyserver/templates/ifcfg-eth1
+
 DEVICE=eth1
 BOOTPROTO=static
 ONBOOT=yes
 NM_CONTROLLED=no
 IPADDR=10.100.1.7
 GATEWAY=10.100.1.1
-NETMASK=255.255.252.0
-
+NETMASK={{net_mask}}
 
 #+END_SRC
 
