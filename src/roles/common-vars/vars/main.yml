@@ -10,6 +10,7 @@ export_proxy: export http_proxy={{proxy_env.http_proxy}} &&  export https_proxy=
 
 vlead_user_password: $6$39KX5f1ud1r3vAy8$cTdTp8CBENusQmS43z1gRbzQsLz1/r.nPrD2A/KruD3CW6wAjth15IdSaF1VkXnzvRqmO/H9LZLNEkfwfkCBs1 
 
+org_link: http://orgmode.org/org-8.2.10.tar.gz 
 
 corkscrew_proxy: proxy.iiit.ac.in
 corkscrew_dest: "/root"
@@ -28,7 +29,6 @@ ipaddress:
      config_server: 10.2.59.222
 
 clustername: base7
-
 
 dnsaddress:
       dns1: 10.4.12.160
