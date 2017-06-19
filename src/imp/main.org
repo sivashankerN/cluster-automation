@@ -1,0 +1,88 @@
+#+Title: Main
+#+Author: Systems Team
+#+SETUPFILE: ../org-templates/level-1.org
+#+TAGS: boilerplate(b)
+#+EXCLUDE_TAGS: boilerplate
+#+OPTIONS: ^:nil
+
+
+* Introduction
+This document contains the initial scripts that are used to run  all the playbooks in a sequential order
+* Implementation
+** =cluster=
+#+begin_src yml :tangle cluster.yml
+
+---
+- include: servers-network-configuration.yml
+- include: copy-ssh-key-to-config-server.yml
+- include: config-server.yml
+- include: config-with-vlead-user.yml
+
+#+end_src
+
+** =network-configuration=
+#+begin_src yml :tangle servers-network-configuration.yml
+
+---
+- hosts: localhost
+  become: root
+  roles:
+    - basesetup
+    - openvz
+    - cluster
+    - router
+    - ansible
+    - public-dns-server
+    - private-dns-server
+    - ossec-server
+    - rsyslog-server
+    - reverse-proxy-server
+    - rsnapshot-server
+    - nagios-server
+    - ads-server
+
+
+#+end_src
+
+** =copy-sshkeys=
+#+begin_src yml :tangle copy-ssh-keys-to-config-server.yml
+
+---
+- hosts: localhost
+  become_user: root
+  
+  tasks:
+   - name: Copy public key
+     shell: echo yes | sshpass -p {{vlead_user_password}} ssh-copy-id -i .ssh/id_rsa.pub root@10.2.59.222
+     register: out
+   - debug: var=out.stdout_lines
+
+
+#+end_src
+     
+** =config-server=
+#+begin_src yml :tangle config-server.yml
+
+---
+- hosts: config-server
+  become_user: root
+
+  roles:
+    - config-server
+
+
+#+end_src
+
+** =config-with-vlead-user=
+
+#+begin_src yml :tangle config-with-vlead-user.yml
+
+---
+- hosts: config-server
+  become: yes
+  become_user: vlead
+  roles:
+   - config-with-vlead-user
+
+
+#+end_src
