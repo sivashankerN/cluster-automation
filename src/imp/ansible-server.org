@@ -11,7 +11,7 @@
 **  Config-server node configuration
 *** Ansible 
 **** =main=
-#+BEGIN_SRC yml :tangle ansible/tasks/main.yml
+#+BEGIN_SRC yml :tangle roles/ansible/tasks/main.yml
 ---
 # tasks file for ansible
 - name: Set root password
@@ -28,7 +28,7 @@
 #+END_SRC
 
 **** =ifcfg-eth0 template=
-#+BEGIN_SRC yml :tangle ansible/templates/ifcfg-eth0
+#+BEGIN_SRC yml :tangle roles/ansible/templates/ifcfg-eth0
 
 
 DEVICE=eth0
@@ -45,7 +45,7 @@ DNS2={{dnsaddress.dns2}}
 #+END_SRC
 
 **** =ifcfg-eth1 template=
-#+begin_src yml :tangle ansible/templates/ifcfg-eth1
+#+begin_src yml :tangle roles/ansible/templates/ifcfg-eth1
 
 DEVICE=eth1
 BOOTPROTO=static
@@ -58,7 +58,7 @@ NETMASK={{net_mask}}
 #+end_src
 
 **** =dependencies=
-#+begin_src yml :tangle ansible/meta/main.yml
+#+begin_src yml :tangle roles/ansible/meta/main.yml
 
 dependencies:
     - common-vars
@@ -67,7 +67,7 @@ dependencies:
       
 *** config-server
 **** =main=
-#+BEGIN_SRC yml :tangle config-server/tasks/main.yml
+#+BEGIN_SRC yml :tangle roles/config-server/tasks/main.yml
 
 ---
  - name: installing ansible and other required packages
@@ -109,7 +109,7 @@ dependencies:
 #+END_SRC
 
 **** =dependencies=
-#+BEGIN_SRC yml :tangle config-server/meta/main.yml
+#+BEGIN_SRC yml :tangle roles/config-server/meta/main.yml
 
 dependencies:
    - common-vars
@@ -117,7 +117,7 @@ dependencies:
 #+END_SRC   
 
 **** =handlers=
-#+BEGIN_SRC yml :tangle config-server/handlers/main.yml
+#+BEGIN_SRC yml :tangle roles/config-server/handlers/main.yml
 
 ---
 - name: restart_ssh
@@ -127,7 +127,7 @@ dependencies:
 
 **** =variables=
 
-#+BEGIN_SRC yml :tangle config-server/vars/main.yml
+#+BEGIN_SRC yml :tangle roles/config-server/vars/main.yml
 
 export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_proxy="{{proxy_env.https_proxy}}"
 
@@ -135,7 +135,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 #+END_SRC
 *** Config-with-vlead-user
 **** =main=
-#+BEGIN_SRC yml :tangle config-with-vlead-user/tasks/main.yml
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/main.yml
 
 ---
  #tasks file for config-with-vlead-user
@@ -199,7 +199,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 
 **** =copy-sshkeys=
 
-#+BEGIN_SRC yml :tangle config-with-vlead-user/tasks/copy-sshkeys.yml
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/copy-sshkeys.yml
 
 
 ---
@@ -270,7 +270,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 
 **** =setupemacs=
 
-#+BEGIN_SRC yml :tangle config-with-vlead-user/tasks/setupemacs.yml
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/setupemacs.yml
 
 ---
 
@@ -285,7 +285,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 
 **** =change-in-makefile=
 
-#+BEGIN_SRC yml :tangle config-with-vlead-user/tasks/changes_in_makefile.yml
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/changes_in_makefile.yml
 
 ---
 - replace:
@@ -316,7 +316,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 
 **** =set-proxy=
 
-#+BEGIN_SRC yml :tangle config-with-vlead-user/tasks/set-proxy.yml
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/set-proxy.yml
 
 
 
@@ -335,7 +335,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 
 **** =dns-server=
 
-#+BEGIN_SRC yml :tangle config-with-vlead-user/tasks/dns-servers.yml
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/dns-servers.yml
 
 ---
 - name: Commenting rsnapshot_client 
@@ -389,7 +389,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 
 **** =Router=
 
-#+begin_src yml :tangle config-with-vlead-user/tasks/router.yml
+#+begin_src yml :tangle roles/config-with-vlead-user/tasks/router.yml
 
 ---
 - name: Commenting rsnapshot_client
@@ -420,7 +420,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 
 **** =ADS=
 
-#+begin_src yml :tangle config-with-vlead-user/tasks/ads.yml  
+#+begin_src yml :tangle roles/config-with-vlead-user/tasks/ads.yml  
 
 ---
 - name: installing git
@@ -479,7 +479,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 
 **** =knownhost=
 
-#+begin_src yml :tangle config-with-vlead-user/tasks/knownhost.yml
+#+begin_src yml :tangle roles/config-with-vlead-user/tasks/knownhost.yml
 
 ---
 - name: Get public key from ADS server from root account
@@ -504,7 +504,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 
 **** =cluster-site=
 
-#+begin_src yml :tangle config-with-vlead-user/tasks/cluster_site.yml
+#+begin_src yml :tangle roles/config-with-vlead-user/tasks/cluster_site.yml
 
 ---
  - name: Backup main.yml
@@ -677,10 +677,9 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 
 #+end_src
 
-
 **** =handlers=
 
-#+BEGIN_SRC yml :tangle config-with-vlead-user/handlers/main.yml
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/handlers/main.yml
 
 ---
 # handlers file for config-with-vlead-user
@@ -692,7 +691,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 
 **** =dependencies=
 
-#+BEGIN_SRC yml :tangle config-with-vlead-user/meta/main.yml
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/meta/main.yml
 
 dependencies:
    - common-vars
@@ -701,7 +700,7 @@ dependencies:
 
 **** =set-proxy template=
 
-#+BEGIN_SRC yml :tangle config-with-vlea-user/templates/set-proxy.yml
+#+BEGIN_SRC yml :tangle roles/config-with-vlea-user/templates/set-proxy.yml
 
 ---
 

@@ -12,7 +12,7 @@
 *** ossec server 
 **** =main=
 
-#+BEGIN_SRC yml :tangle ossec-server/tasks/main.yml
+#+BEGIN_SRC yml :tangle roles/ossec-server/tasks/main.yml
 
 ---
 - name: Set root password
@@ -28,7 +28,7 @@
 
 **** =dependencies=
 
-#+BEGIN_SRC yml :tangle ossec-server/meta/main.yml
+#+BEGIN_SRC yml :tangle roles/ossec-server/meta/main.yml
 
 dependencies:
    - common-vars
@@ -39,7 +39,7 @@ dependencies:
 **** =ifcfg-eth1=
 
 
-#+BEGIN_SRC yml :tangle ossec-server/templates/ifcfg-eth1
+#+BEGIN_SRC yml :tangle roles/ossec-server/templates/ifcfg-eth1
 
 
 DEVICE=eth1

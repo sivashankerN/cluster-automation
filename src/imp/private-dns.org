@@ -12,7 +12,7 @@
 ** Private DNS server configuration
 *** Private DNS server 
 **** =main=
-#+BEGIN_SRC yml :tangle private-dns-server/tasks/main.yml
+#+BEGIN_SRC yml :tangle roles/private-dns-server/tasks/main.yml
 
 ---
 - name: Set root password
@@ -32,7 +32,7 @@
 
 **** =ifcfg-eth1=
 
-#+BEGIN_SRC yml :tangle private-dns-server/templates/ifcfg-eth1
+#+BEGIN_SRC yml :tangle roles/private-dns-server/templates/ifcfg-eth1
 
 DEVICE=eth1
 BOOTPROTO=static
@@ -48,7 +48,7 @@ NETMASK={{net_mask}}
 
 **** =dependencies=
 
-#+BEGIN_SRC yml :tangle private-dns-server/meta/main.yml
+#+BEGIN_SRC yml :tangle roles/private-dns-server/meta/main.yml
 
 dependencies:
     - common-vars

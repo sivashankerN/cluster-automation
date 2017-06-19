@@ -11,7 +11,7 @@ This document descirbes the configuration of ads-server
 ** ADS role configuration
 *** ADS 
 **** =main=
-#+BEGIN_SRC yml :tangle ads-server/tasks/main.yml
+#+BEGIN_SRC yml :tangle roles/ads-server/tasks/main.yml
 
 ---
 - name: Set root password
@@ -28,7 +28,7 @@ This document descirbes the configuration of ads-server
 
 **** =dependencies=
 
-#+BEGIN_SRC yml :tangle ads-server/meta/main.yml
+#+BEGIN_SRC yml :tangle roles/ads-server/meta/main.yml
 
 dependencies: 
     - common-vars
@@ -37,7 +37,7 @@ dependencies:
 
 **** =ifcfg-eth1=
 
-#+BEGIN_SRC yml :tangle ads-server/templates/ifcfg-eth1
+#+BEGIN_SRC yml :tangle roles/ads-server/templates/ifcfg-eth1
 
 DEVICE=eth1
 BOOTPROTO=static

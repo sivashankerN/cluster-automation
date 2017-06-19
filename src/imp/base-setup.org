@@ -227,7 +227,7 @@ dependencies:
     This file contains all necessary data needed to clone a repository
     systems-model from http://bitbucket.org
 
-#+BEGIN_SRC yml :tangle basesetup/templates/ssh-config
+#+BEGIN_SRC yml :tangle roles/basesetup/templates/ssh-config
 Host altssh.bitbucket.org
 User git
 Port 443
@@ -367,3 +367,4 @@ dependencies:
 
 
 
+     

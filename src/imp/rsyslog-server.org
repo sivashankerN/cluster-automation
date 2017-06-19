@@ -10,8 +10,8 @@
 * Implementation
 ** Rsyslog configuration
 *** rsyslog 
-
-#+BEGIN_SRC yml :tangle rsyslog-server/tasks/main.yml
+**** =main=
+#+BEGIN_SRC yml :tangle roles/rsyslog-server/tasks/main.yml
 
 ---
 - name: Set root password
@@ -26,16 +26,17 @@
 
 #+END_SRC
     
-  
-#+BEGIN_SRC yml :tangle rsyslog-server/meta/main.yml
+**** =dependencies=
+#+BEGIN_SRC yml :tangle roles/rsyslog-server/meta/main.yml
 
 dependencies:
    - common-vars
 
 #+END_SRC
 
+**** =ifcfg-eth1=
 
-#+BEGIN_SRC yml :tangle rsyslog-server/files/ifcfg-eth1
+#+BEGIN_SRC yml :tangle roles/rsyslog-server/files/ifcfg-eth1
 
 DEVICE=eth1
 BOOTPROTO=static

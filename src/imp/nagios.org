@@ -11,7 +11,7 @@
 ** Automate nagios node configuration
 *** nagios 
 **** =main=
-#+BEGIN_SRC yml :tangle nagios-server/tasks/main.yml
+#+BEGIN_SRC yml :tangle roles/nagios-server/tasks/main.yml
 
 ---
 - name: Set root password
@@ -28,14 +28,15 @@
 
 
 **** =dependencies=  
-#+BEGIN_SRC yml :tangle nagios-server/meta/main.yml
+#+BEGIN_SRC yml :tangle roles/nagios-server/meta/main.yml
 
 dependencies:
     - common-vars
 
 #+END_SRC
 
-#+BEGIN_SRC yml :tangle nagios-server/templates/ifcfg-eth1
+**** =ifcfg-eth1 template=
+#+BEGIN_SRC yml :tangle roles/nagios-server/templates/ifcfg-eth1
 
 DEVICE=eth1
 BOOTPROTO=static

@@ -10,11 +10,11 @@
   This document describes the of automation of reverse proxy network
   configuration.
 * Implementation
-   
+  
 ** Automate Reverse proxy node configuration
 *** reverse-proxy 
 **** =main=
-#+BEGIN_SRC yml :tangle reverse-proxy-server/tasks/main.yml
+#+BEGIN_SRC yml :tangle roles/reverse-proxy-server/tasks/main.yml
 # tasks file for reverse-proxyserver
 
 ---
@@ -30,7 +30,7 @@
 #+END_SRC
 
 **** =dependencies=
-#+begin_src yml :tangle reverse-proxy-server/meta/main.yml
+#+begin_src yml :tangle roles/reverse-proxy-server/meta/main.yml
 
 
 dependencies:
@@ -39,7 +39,7 @@ dependencies:
 #+end_src
 
 **** =ficfg-eth1=
-#+BEGIN_SRC yml :tangle reverse-proxyserver/templates/ifcfg-eth1
+#+BEGIN_SRC yml :tangle roles/reverse-proxyserver/templates/ifcfg-eth1
 
 DEVICE=eth1
 BOOTPROTO=static

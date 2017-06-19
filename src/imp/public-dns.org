@@ -14,7 +14,7 @@
 ** Public DNS server Configuration
 *** Public-DNS
 **** =main=
-#+BEGIN_SRC yml :tangle public-dns-server/tasks/main.yml
+#+BEGIN_SRC yml :tangle roles/public-dns-server/tasks/main.yml
 
 ---
 - name: Set root password
@@ -30,7 +30,7 @@
 
 **** =dependencies=
 
-#+BEGIN_SRC yml :tangle public-dns-server/meta/main.yml
+#+BEGIN_SRC yml :tangle roles/public-dns-server/meta/main.yml
 
 dependencies:
     - common-vars
@@ -39,7 +39,7 @@ dependencies:
 
 **** =ifcfg-eth1=
    
-#+BEGIN_SRC yml :tangle public-dns-server/templates/ifcfg-eth1
+#+BEGIN_SRC yml :tangle roles/public-dns-server/templates/ifcfg-eth1
 
 DEVICE=eth1
 BOOTPROTO=static
