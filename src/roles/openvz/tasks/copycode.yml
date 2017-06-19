@@ -1,8 +1,0 @@
----
-- hosts: localhost
-  become: yes
-  become_method: "sudo" 
-  tasks:
-     - copy:
-        content: "EXTERNAL_SCRIPT=\"/usr/sbin/vznetaddbr\" "
-        dest: "/etc/vz/vznet.conf"
