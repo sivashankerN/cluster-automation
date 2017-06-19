@@ -6,11 +6,65 @@
 #+OPTIONS: ^:nil
 
 * Introduction
-  This document contains the implementation of automation of cluster
-  creation.
+  This document contains the configuration of other contains using ansible   
 * Implementation
-** Automate Config-server node configuration
-*** config-server role
+**  Config-server node configuration
+*** Ansible 
+**** =main=
+#+BEGIN_SRC yml :tangle ansible/tasks/main.yml
+---
+# tasks file for ansible
+- name: Set root password
+  shell: vzctl set 1002 --userpasswd root:{{vlead_user_password}}
+
+- name: copy interface ifcfg-eth0 file
+  template: src=ifcfg-eth0 dest=/vz/private/1002/etc/sysconfig/network-scripts/
+
+- name: copy interface ifcfg-eth1 file
+  template: src=ifcfg-eth1 dest=/vz/private/1002/etc/sysconfig/network-scripts/
+
+- name: Config-server Network restart
+  command: vzctl exec 1002 service network restart
+#+END_SRC
+
+**** =ifcfg-eth0=
+#+BEGIN_SRC yml :tangle ansible/templates/ifcfg-eth0
+
+
+DEVICE=eth0
+TYPE=Ethernet
+BOOTPROTO=static
+ONBOOT=yes
+NM_CONTROLLED=no
+IPADDR={{ipaddress.config_server}}
+NETMASK={{net_mask}}
+GATEWAY={{internet_gateway}}
+DNS1={{dnsaddress.dns1}}
+DNS2={{dnsaddress.dns2}}
+
+#+END_SRC
+
+#+begin_src yml :tangle ansible/templates/ifcfg-eth1
+
+DEVICE=eth1
+BOOTPROTO=static
+ONBOOT=yes
+NM_CONTROLLED=no
+IPADDR=10.100.1.2
+NETMASK={{net_mask}}
+
+
+#+end_src
+
+**** =dependencies=
+#+begin_src yml :tangle ansible/meta/main.yml
+
+dependencies:
+    - common-vars
+
+#+end_src
+      
+*** config-server
 #+BEGIN_SRC yml :tangle config-server/tasks/main.yml
 
 ---
