@@ -77,11 +77,15 @@ This script installs all the required packages, creates a user (vlead) inside th
 #+BEGIN_SRC yml :tangle roles/config-server/tasks/main.yml
 
 ---
+ 
+ - name: installing ansible and other required packages
+   yum: name=epel-release state=latest
+   environment: "{{proxy_env}}"
+
  - name: installing ansible and other required packages
    yum: name="{{item}}" state=latest
    environment: "{{proxy_env}}"
    with_items:
-        - epel-release
         - ansible
         - git
         - emacs
