@@ -124,11 +124,11 @@ systems_model_repo: git@altssh.bitbucket.org:vlead/systems-model.git
 systems_model_dest: "{{corkscrew_dest}}/systems-model"
 
 ipaddress:
-     hostmachine: 10.2.59.220
-     router: 10.2.59.221     
-     config_server: 10.2.59.222
+     hostmachine: 10.2.59.2
+     router: 10.2.59.223  
+     config_server: 10.2.59.224
 
-clustername: base7
+clustername: base8
 
 dnsaddress:
       dns1: 10.4.12.160

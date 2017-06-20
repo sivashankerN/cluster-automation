@@ -287,7 +287,7 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
     - name: change directory to 
       git: 
          repo: "{{setup_ovpl_centos}}"
-         dest: roles/openvz/files/
+         dest: ~/
          version: master
       ignore_errors: yes
       register: out
@@ -309,12 +309,12 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
 ---
 
     - replace: 
-          path: roles/openvz/files/setup-ovpl-centos/scripts/config.sh
+          path: ~/cluster-setup-ovpl-centos/scripts/config.sh
           regexp: 'export http_proxy=""'
           replace: 'export http_proxy="{{proxy_env.http_proxy}}"'
      
     - replace: 
-          path: roles/openvz/files/setup-ovpl-centos/scripts/config.sh
+          path: ~/cluster-setup-ovpl-centos/scripts/config.sh
           regexp: 'export https_proxy=""'
           replace: 'export https_proxy="{{proxy_env.https_proxy}}"'
 
@@ -324,7 +324,7 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
       command: ./centos_prepare_ovpl.sh
       register: out 
       args: 
-        chdir: roles/openvz/files/setup-ovpl-centos/scripts/
+        chdir: ~/cluster-setup-ovpl-centos/scripts/
     - debug: var=out.stdout_lines
 
 
