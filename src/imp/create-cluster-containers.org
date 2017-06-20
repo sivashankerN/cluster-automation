@@ -22,7 +22,7 @@
 ---
     - name: Download CentOS template
       get_url:
-         url: "{{centos-template}}" 
+         url: "{{centos_template}}" 
          dest: /vz/template/cache
       ignore_errors: yes
       environment: "{{proxy_env}}"
