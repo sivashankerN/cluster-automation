@@ -8,12 +8,12 @@
 * Introduction
 This file contains the ip addresses of host-machine and of all the containers
 * Implementation
-#+BEGIN_SRC :tangle hosts
+#+BEGIN_SRC yml :tangle hosts
 
 [localhost]
 127.0.0.1
 [config-server]
-10.2.59.222
+10.2.59.224
 
 
 #+END_SRC
