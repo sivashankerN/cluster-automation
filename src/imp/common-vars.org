@@ -97,6 +97,7 @@
 Variables for cluster are defined in the following section
 
 #+BEGIN_SRC yml :tangle roles/common-vars/vars/main.yml
+
 ---
 # vars file for common
 proxy_env: 
@@ -108,6 +109,8 @@ export_proxy: export http_proxy={{proxy_env.http_proxy}} &&  export https_proxy=
 
 
 vlead_user_password: $6$39KX5f1ud1r3vAy8$cTdTp8CBENusQmS43z1gRbzQsLz1/r.nPrD2A/KruD3CW6wAjth15IdSaF1VkXnzvRqmO/H9LZLNEkfwfkCBs1 
+
+org_link: http://orgmode.org/org-8.2.10.tar.gz 
 
 corkscrew_proxy: proxy.iiit.ac.in
 corkscrew_dest: "/root"
@@ -127,7 +130,6 @@ ipaddress:
 
 clustername: base7
 
-
 dnsaddress:
       dns1: 10.4.12.160
       dns2: 10.4.12.220
@@ -144,6 +146,7 @@ setup_ovpl_centos: https://github.com/vlead/cluster-setup-ovpl-centos.git
 
 consumer_key: "949417609070-6sj9jiumei4k858v2vh39m1e2i8ngvrs.apps.googleusercontent.com"
 consumer_secret: "m15wAK1ln46LevbvuiRqenOh"
+
 
  
 #+END_SRC
