@@ -25,7 +25,7 @@
          url: "{{centos-template}}" 
          dest: /vz/template/cache
       ignore_errors: yes
-      environment: {{proxy_env}}    
+      environment: "{{proxy_env}}"
 
     - name: creating cluster containers
       command: sh cluster.sh

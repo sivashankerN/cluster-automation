@@ -34,7 +34,7 @@
       already contains data, then it replaced with the new data is
       included in that file as mentioned below.
 #+BEGIN_SRC yml :tangle roles/basesetup/tasks/br0.yml
- ---
+---
    - copy:  
        content: ""      
        dest: "/etc/sysconfig/network-scripts/ifcfg-br0"
@@ -159,6 +159,8 @@
 
 #+BEGIN_SRC yml :tangle roles/basesetup/tasks/corkscrew_installation.yml
 ---
+- name: Install Development tools
+  command: yum groupinstall "Development tools" -y
 - name: Install python-pip
   yum: name=python-pip state=installed
 
