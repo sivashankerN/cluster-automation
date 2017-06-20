@@ -40,26 +40,10 @@ This document contains the initial scripts that are used to run  all the playboo
     - rsnapshot-server
     - nagios-server
     - ads-server
-
-
-#+end_src
-
-** =copy-sshkeys=
-#+begin_src yml :tangle copy-ssh-keys-to-config-server.yml
-
----
-- hosts: localhost
-  become_user: root
-  
-  tasks:
-   - name: Copy public key
-     shell: echo yes | sshpass -p {{vlead_user_password}} ssh-copy-id -i .ssh/id_rsa.pub root@10.2.59.222
-     register: out
-   - debug: var=out.stdout_lines
-
+    - copy-ssh-keys-to-config-server
 
 #+end_src
-     
+
 ** =config-server=
 #+begin_src yml :tangle config-server.yml
 

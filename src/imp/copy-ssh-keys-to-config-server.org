@@ -1,0 +1,27 @@
+#+Title: copy-ssh-keys-to-config-server 
+#+Author: Systems Team
+#+SETUPFILE: ../org-templates/level-1.org
+#+TAGS: boilerplate(b)
+#+EXCLUDE_TAGS: boilerplate
+#+OPTIONS: ^:nil
+
+* Introduction
+* Implementation
+** copy-ssh-keys
+*** copy-ssh-keys
+**** =main=
+#+BEGIN_SRC yml :tangle roles/copy-ssh-keys-to-config-server/tasks/main.yml
+
+   - name: Copy public key
+     shell: echo yes | sshpass -p {{vlead_user_password}} ssh-copy-id -i .ssh/id_rsa.pub root@{{ipaddress.config_server}}
+     register: out
+   - debug: var=out.stdout_lines
+
+
+#+END_SRC
+
+#+BEGIN_SRC yml :tangle roles/copy-ssh-keys-to-config-server/meta/main.yml
+dependencies:
+    - common-vars
+
+#+END_SRC
