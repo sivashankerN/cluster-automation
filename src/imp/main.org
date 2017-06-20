@@ -14,7 +14,6 @@ This document contains the initial scripts that are used to run  all the playboo
 
 ---
 - include: servers-network-configuration.yml
-- include: copy-ssh-key-to-config-server.yml
 - include: config-server.yml
 - include: config-with-vlead-user.yml
 
