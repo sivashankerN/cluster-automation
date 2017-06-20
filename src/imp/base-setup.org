@@ -199,7 +199,7 @@
 - debug: var=out.stdout_lines
 
 - name: run make install
-  command: make
+  command: make install
   args:
     chdir: "{{corkscrew_dest}}/corkscrew-2.0/"
   register: out

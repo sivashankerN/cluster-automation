@@ -39,7 +39,7 @@ dependencies:
 #+end_src
 
 **** =Reverse-Proxy Private Network=
-#+BEGIN_SRC yml :tangle roles/reverse-proxyserver/templates/ifcfg-eth1
+#+BEGIN_SRC yml :tangle roles/reverse-proxy-server/templates/ifcfg-eth1
 
 DEVICE=eth1
 BOOTPROTO=static
