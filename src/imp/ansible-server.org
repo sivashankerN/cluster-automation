@@ -6,11 +6,13 @@
 #+OPTIONS: ^:nil
 
 * Introduction
-  This document contains the configuration of other contains using ansible and also network configuration of ansible  
+  This document contains the network configuration of ansible machine and configuring other containers from a user in ansible machine  
 * Implementation
-**  Config-server node configuration
+**  Ansible-server node configuration
 *** Ansible 
+  This script configures the network on ansible machine
 **** =main=
+-Creates a password for ansible container and also replaces some of the network configuration files of ansible
 #+BEGIN_SRC yml :tangle roles/ansible/tasks/main.yml
 ---
 # tasks file for ansible
@@ -27,7 +29,8 @@
   command: vzctl exec 1002 service network restart
 #+END_SRC
 
-**** =ifcfg-eth0 template=
+**** =Ansible's Public Network=
+This template contains the valid ip-address,gateway,dns that are required for the container configuration.These are imported from the values given in common-vars role
 #+BEGIN_SRC yml :tangle roles/ansible/templates/ifcfg-eth0
 
 
@@ -44,7 +47,8 @@ DNS2={{dnsaddress.dns2}}
 
 #+END_SRC
 
-**** =ifcfg-eth1 template=
+**** =Ansible's Private Network=
+This template contains the private ip and net-mask of the container
 #+begin_src yml :tangle roles/ansible/templates/ifcfg-eth1
 
 DEVICE=eth1
@@ -58,15 +62,18 @@ NETMASK={{net_mask}}
 #+end_src
 
 **** =dependencies=
+Variable dependencies are mentioned here.
 #+begin_src yml :tangle roles/ansible/meta/main.yml
 
 dependencies:
     - common-vars
 
 #+end_src
-      
+      `
 *** config-server
+
 **** =main=
+This script installs all the required packages, creates a user (vlead) inside the ansible container and changes some permissions and clone system-model inside vlead user.Generates ssh-keys
 #+BEGIN_SRC yml :tangle roles/config-server/tasks/main.yml
 
 ---
@@ -97,7 +104,7 @@ dependencies:
    lineinfile: path=/etc/ssh/sshd_config regexp="^PasswordAuthentication.*" line="PasswordAuthentication yes" state=present
    notify: restart_ssh
 
- - name: Copy system-model repo from host-machine to ansible/config-serer container 
+ - name: Copy system-model repo from host-machine to ansible/config-server container 
    synchronize: src="{{systems_model_dest}}" dest=/home/vlead/ 
 
  - name: Update ownership permissions to systems-model repo
@@ -134,7 +141,9 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 
 #+END_SRC
 *** Config-with-vlead-user
+Configures all other containers from ansible machine using vlead user.
 **** =main=
+
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/main.yml
 
 ---
@@ -196,9 +205,8 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
                                                         
 
 #+END_SRC
-
 **** =copy-sshkeys=
-
+Copies ssh-key of ansible machine to all other containers 
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/copy-sshkeys.yml
 
 
@@ -263,13 +271,10 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
    register: out
  - debug: var=out.stdout_lines
 
-
-
-
 #+END_SRC
 
 **** =setupemacs=
-
+     Downloads emacs and org-mode
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/setupemacs.yml
 
 ---
@@ -284,7 +289,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 #+END_SRC
 
 **** =change-in-makefile=
-
+Replaces some texts in system-model makefile
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/changes_in_makefile.yml
 
 ---
@@ -315,7 +320,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 #+END_SRC
 
 **** =set-proxy=
-
+This script sets-up proxy in all containers by appending proxy line.
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/set-proxy.yml
 
 
@@ -334,7 +339,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 #+END_SRC
 
 **** =dns-server=
-
+Configures dns-server by executing playbooks -public_dns.yaml and private_dns.yaml
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/dns-servers.yml
 
 ---
@@ -388,7 +393,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 #+END_SRC
 
 **** =Router=
-
+This script changes/replace some text in yml files to create possible environment for executing router.yaml file and then configures router.
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/router.yml
 
 ---
@@ -419,7 +424,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 #+end_src
 
 **** =ADS=
-
+Configures ads-server.
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/ads.yml  
 
 ---
@@ -478,7 +483,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 #+end_src
 
 **** =knownhost=
-
+This script appends ads-public-keys to vlead-user-ansible machine known-hosts
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/knownhost.yml
 
 ---
@@ -503,7 +508,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 #+end_src
 
 **** =cluster-site=
-
+Creates backup for main.yml file of common-vars in system-model.Also changes private-dns
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/cluster_site.yml
 
 ---
@@ -533,6 +538,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 #+end_src
 
 **** =site-modify=
+Modifies all yaml files to create necessary environment for runnning site.yaml script
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/site_modify.yml
 
 
@@ -654,7 +660,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 #+end_src
 
 **** =site-run=
-
+This script runs site.yaml file in vlead user-ansible machine
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/site_run.yml
 
 
@@ -699,7 +705,7 @@ dependencies:
 #+END_SRC
 
 **** =set-proxy template=
-
+Template for setting-up proxy in all containers
 #+BEGIN_SRC yml :tangle roles/config-with-vlea-user/templates/set-proxy.yml
 
 ---
@@ -795,7 +801,7 @@ dependencies:
 
 #+END_SRC
 
-**** =ads-setup=
+**** =ads-setup template=
 
 #+begin_src yml :tangle roles/config-with-vlead-user/templates/ads-setup.yml
 
