@@ -50,7 +50,7 @@
  cluster="{{clustername}}"
      public_bridge="br0"
      private_bridge="br1"
-     for i in {1001..10}
+     for i in {1001..1010}
      do
      vzctl create $i  --ostemplate centos-6-x86_64
      if [ $i == 1001 ]
