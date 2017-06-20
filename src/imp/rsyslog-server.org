@@ -10,7 +10,8 @@
 * Implementation
 ** Rsyslog configuration
 *** rsyslog 
-**** =main=
+**** =Rsyslog Network Setup=
+ - Creates a password for rsyslog-server and configures so that this container will be active with internet.
 #+BEGIN_SRC yml :tangle roles/rsyslog-server/tasks/main.yml
 
 ---
@@ -34,9 +35,9 @@ dependencies:
 
 #+END_SRC
 
-**** =ifcfg-eth1=
+**** =rsyslog Private Network=
 
-#+BEGIN_SRC yml :tangle roles/rsyslog-server/files/ifcfg-eth1
+#+BEGIN_SRC yml :tangle roles/rsyslog-server/templates/ifcfg-eth1
 
 DEVICE=eth1
 BOOTPROTO=static
@@ -44,7 +45,8 @@ ONBOOT=yes
 NM_CONTROLLED=no
 IPADDR=10.100.1.4
 GATEWAY=10.100.1.1
-NETMASK=255.255.252.0
+NETMASK={{net_mask}}
+
 
 
 #+END_SRC

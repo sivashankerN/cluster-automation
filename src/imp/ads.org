@@ -10,7 +10,7 @@ This document descirbes the configuration of ads-server
 * Implementation
 ** ADS role configuration
 *** ADS 
-**** =main=
+**** =ADS Network-setup=
 #+BEGIN_SRC yml :tangle roles/ads-server/tasks/main.yml
 
 ---
@@ -35,7 +35,7 @@ dependencies:
 
 #+END_SRC
 
-**** =ifcfg-eth1=
+**** =ADS Private Network=
 
 #+BEGIN_SRC yml :tangle roles/ads-server/templates/ifcfg-eth1
 

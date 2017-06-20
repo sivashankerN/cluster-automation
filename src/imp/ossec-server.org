@@ -10,8 +10,8 @@
 * Implementation
 ** Automate Ossec server node configuration
 *** ossec server 
-**** =main=
-
+**** =Network-setup in Ossec-server=
+ - Creates a password for ossec-server and configures so that this container will be active with internet.
 #+BEGIN_SRC yml :tangle roles/ossec-server/tasks/main.yml
 
 ---
@@ -36,7 +36,7 @@ dependencies:
 
 #+END_SRC
 
-**** =ifcfg-eth1=
+**** =Ossec-server Private Network=
 
 
 #+BEGIN_SRC yml :tangle roles/ossec-server/templates/ifcfg-eth1

@@ -10,7 +10,8 @@ This document describes the network configuration of rsnapshot server
 * Implementation
 ** Rsnapshot node configuration
 *** rsnapshot 
-**** =main.yml=
+**** =Rsnapshot Network Setup=
+   - Creates a password for rsnapshot network setup and configures so that this container will be active with internet.
 #+BEGIN_SRC yml :tangle roles/rsnapshot-server/tasks/main.yml
 
 ---
@@ -34,7 +35,7 @@ dependencies:
 
 #+END_SRC
 
-**** =ifcfg-eth1=
+**** =Rsnapshot Private Network=
 
 #+BEGIN_SRC yml :tangle roles/rsnapshot-server/templates/ifcfg-eth1
 

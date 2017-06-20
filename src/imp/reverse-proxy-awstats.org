@@ -10,10 +10,10 @@
   This document describes the of automation of reverse proxy network
   configuration.
 * Implementation
-  
 ** Automate Reverse proxy node configuration
 *** reverse-proxy 
-**** =main=
+**** =Reverse-Proxy-server Network Setup=
+-    
 #+BEGIN_SRC yml :tangle roles/reverse-proxy-server/tasks/main.yml
 # tasks file for reverse-proxyserver
 
@@ -38,7 +38,7 @@ dependencies:
 
 #+end_src
 
-**** =ficfg-eth1=
+**** =Reverse-Proxy Private Network=
 #+BEGIN_SRC yml :tangle roles/reverse-proxyserver/templates/ifcfg-eth1
 
 DEVICE=eth1
