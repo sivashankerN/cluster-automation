@@ -19,7 +19,7 @@
   command: vzctl set 1003 --userpasswd root:{{vlead_user_password}}
 
 - name: copy interface ifcfg-eth1 file
-  copy: src=ifcfg-eth1 dest=/vz/private/1003/etc/sysconfig/network-scripts/
+  template: src=ifcfg-eth1 dest=/vz/private/1003/etc/sysconfig/network-scripts/
 
 - name: ossec-server Network restart
   command: vzctl exec 1003 service network restart 

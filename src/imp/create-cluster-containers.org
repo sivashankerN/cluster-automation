@@ -26,6 +26,9 @@
          dest: /vz/template/cache
       ignore_errors: yes
       environment: "{{proxy_env}}"
+    
+    - name: Copying cluster.sh file to root
+      template: src=cluster.sh dest=/root
 
     - name: creating cluster containers
       command: sh cluster.sh

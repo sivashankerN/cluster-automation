@@ -18,7 +18,7 @@ This document descirbes the configuration of ads-server
   command: vzctl set 1009 --userpasswd root:{{vlead_user_password}}
 
 - name: copy interface ifcfg-eth1 file
-  copy: src=ifcfg-eth1 dest=/vz/private/1009/etc/sysconfig/network-scripts/
+  template: src=ifcfg-eth1 dest=/vz/private/1009/etc/sysconfig/network-scripts/
 
 - name: Network restart
   command: vzctl exec 1009 service network restart

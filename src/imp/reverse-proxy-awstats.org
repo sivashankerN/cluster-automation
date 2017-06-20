@@ -22,7 +22,7 @@
   command: vzctl set 1007 --userpasswd root:{{vlead_user_password}}
 
 - name: copy interface ifcfg-eth1 file
-  copy: src=ifcfg-eth1 dest=/vz/private/1007/etc/sysconfig/network-scripts/
+  template: src=ifcfg-eth1 dest=/vz/private/1007/etc/sysconfig/network-scripts/
 
 - name:  Network restart
   command: vzctl exec 1007 service network restart
