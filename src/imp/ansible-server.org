@@ -808,14 +808,14 @@ dependencies:
   
   tasks:
    - name: git cloning 
-     command: "{{export_proxy}} && git clone {{setup_ovpl_centos}} && cd cluster-setup-ovpl-centos &&  git checkout cluster-ads"
+     shell: "{{export_proxy}} && git clone {{setup_ovpl_centos}} && cd cluster-setup-ovpl-centos &&  git checkout cluster-ads"
      ignore_errors: yes
      register: out
    - debug: var=out.stdout_lines
 
 
    - name: Running centos-prepare-ovpl shell
-     command: "{{export_proxy}} && cd cluster-setup-ovpl-centos/scripts && ./centos_prepare_ovpl.sh"
+     shell: "{{export_proxy}} && cd cluster-setup-ovpl-centos/scripts && ./centos_prepare_ovpl.sh"
      register: out  
    - debug: var=out.stdout_lines
 
