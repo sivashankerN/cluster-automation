@@ -11,8 +11,9 @@
 **  Ansible-server node configuration
 *** Ansible 
   This script configures the network on ansible machine
-**** =main=
--Creates a password for ansible container and also replaces some of the network configuration files of ansible
+**** Create ansible/config-server container
+     - Creates a password for ansible container and also replaces some
+       of the network configuration files of ansible
 #+BEGIN_SRC yml :tangle roles/ansible/tasks/main.yml
 ---
 # tasks file for ansible
@@ -29,11 +30,11 @@
   command: vzctl exec 1002 service network restart
 #+END_SRC
 
-**** =Ansible's Public Network=
-This template contains the valid ip-address,gateway,dns that are required for the container configuration.These are imported from the values given in common-vars role
+**** Configure Ansible's Public Network
+     This template contains the valid ip-address,gateway,dns that are
+     required for the container network configuration. These are
+     imported from the values given in [[./common-vars.org][common-vars]] role
 #+BEGIN_SRC yml :tangle roles/ansible/templates/ifcfg-eth0
-
-
 DEVICE=eth0
 TYPE=Ethernet
 BOOTPROTO=static
@@ -47,10 +48,10 @@ DNS2={{dnsaddress.dns2}}
 
 #+END_SRC
 
-**** =Ansible's Private Network=
-This template contains the private ip and net-mask of the container
+**** Configure Ansible's Private Network
+     This template contains the private ip and net-mask of the
+     container
 #+begin_src yml :tangle roles/ansible/templates/ifcfg-eth1
-
 DEVICE=eth1
 BOOTPROTO=static
 ONBOOT=yes
@@ -58,30 +59,30 @@ NM_CONTROLLED=no
 IPADDR=10.100.1.2
 NETMASK={{net_mask}}
 
-
 #+end_src
 
-**** =dependencies=
-Variable dependencies are mentioned here.
+**** dependencies
+     Variable dependencies are mentioned here.
 #+begin_src yml :tangle roles/ansible/meta/main.yml
-
 dependencies:
     - common-vars
 
 #+end_src
       `
 *** config-server
+     This script installs all the required packages, creates a user
+     (vlead) inside the ansible container and changes some permissions
+     and clone system-model inside vlead user.Generates ssh-keys
 
-**** =main=
-This script installs all the required packages, creates a user (vlead) inside the ansible container and changes some permissions and clone system-model inside vlead user.Generates ssh-keys
+**** Install epel-release
 #+BEGIN_SRC yml :tangle roles/config-server/tasks/main.yml
-
 ---
- 
  - name: installing epel-release package
    yum: name=epel-release state=latest
    environment: "{{proxy_env}}"
-
+#+END_SRC
+**** Install ansible( configuration management tool)
+     #+BEGIN_SRC yml :tangle roles/config-server/tasks/main.yml
  - name: installing ansible, git and emacs
    yum: name="{{item}}" state=latest
    environment: "{{proxy_env}}"
@@ -89,14 +90,25 @@ This script installs all the required packages, creates a user (vlead) inside th
         - ansible
         - git
         - emacs
+
+     #+END_SRC
+**** Create vlead user on ansible container and generates ssh-keys for vlead user
+     #+BEGIN_SRC yml :tangle roles/config-server/tasks/main.yml
  - name: Creating vlead user and generating ssh-keys for vlead
    user: name=vlead password={{vlead_user_password}} generate_ssh_key=yes groups=wheel
+     #+END_SRC
+**** Add vlead user to sudoers list
+     #+BEGIN_SRC yml :tangle roles/config-server/tasks/main.yml
  - name: Adding vlead user to sudoers file
    lineinfile: 
        path: /etc/sudoers 
        regexp: '^%wheel.*NOPASSWD: ALL.*'  
        line: '%wheel        ALL=(ALL)       NOPASSWD: ALL' 
        state: present
+     
+     #+END_SRC
+**** Configure Host machine's ssh_config and sshd_config 
+     #+BEGIN_SRC yml :tangle roles/config-server/tasks/main.yml
  - name: Setting StrictHostkeyChecking of ansible to no
    lineinfile: path=/etc/ssh/ssh_config regexp="^Strict.*" line="StrictHostKeyChecking no" state=present
    notify: restart_ssh
@@ -108,59 +120,51 @@ This script installs all the required packages, creates a user (vlead) inside th
    lineinfile: path=/etc/ssh/sshd_config regexp="^PasswordAuthentication.*" line="PasswordAuthentication yes" state=present
    notify: restart_ssh
 
+     #+END_SRC
+**** Copy systems model from host machine to config-server
+     #+BEGIN_SRC yml :tangle roles/config-server/tasks/main.yml
  - name: Copying system-model repo from host-machine to ansible/config-server container 
    synchronize: src="{{systems_model_dest}}" dest=/home/vlead/ 
 
  - name: Updating ownership permissions to systems-model repo
    file: path=/home/vlead/systems-model recurse=true owner=vlead group=vlead 
+     
+     #+END_SRC
 
-
-
-
-#+END_SRC
-
-**** =dependencies=
+**** Dependencies
 #+BEGIN_SRC yml :tangle roles/config-server/meta/main.yml
-
 dependencies:
    - common-vars
 
 #+END_SRC   
 
-**** =handlers=
+**** Handlers
 #+BEGIN_SRC yml :tangle roles/config-server/handlers/main.yml
-
 ---
 - name: restart_ssh
   service: name=sshd state=restarted
 
 #+END_SRC
 
-**** =variables=
-
+**** Variables
 #+BEGIN_SRC yml :tangle roles/config-server/vars/main.yml
-
 export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_proxy="{{proxy_env.https_proxy}}"
-
-
 #+END_SRC
 *** Config-with-vlead-user
-Configures all other containers from ansible machine using vlead user.
-**** =main=
+    Configures all other containers from ansible machine using vlead
+    user.
+**** Tasks/main.yml 
 
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/main.yml
-
 ---
  #tasks file for config-with-vlead-user
  - name: Installing sshpass
    yum: name=sshpass state=installed
    environment: "{{proxy_env}}"
-
  
  - include: copy-sshkeys.yml
  - include: setupemacs.yml
  - include: changes_in_makefile.yml
-
 
  - name: changing directory to systems-model and running make
    command: make
@@ -202,8 +206,9 @@ Configures all other containers from ansible machine using vlead user.
                                                         
 
 #+END_SRC
-**** =copy-sshkeys=
-Copies ssh-key of ansible machine to all other containers 
+**** Copy-sshkeys of ansible/config-server to containesr
+     Copies ssh-key of ansible machine to all cluster containers
+     including ansible/config-server
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/copy-sshkeys.yml
 ---
  - name: Copying ssh keys of ansible to localhost
@@ -268,12 +273,10 @@ Copies ssh-key of ansible machine to all other containers
 
 #+END_SRC
 
-**** =setupemacs=
+**** Set emacs and org-mode version
      Downloads emacs and org-mode
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/setupemacs.yml
-
 ---
-
 - name: Downloading Emacs
   file: path=emacs/lisp mode=0755 state=directory
 
@@ -283,10 +286,9 @@ Copies ssh-key of ansible machine to all other containers
 
 #+END_SRC
 
-**** =change-in-makefile=
-Replaces some texts in system-model makefile
+**** Modify makefile
+     Replaces some texts in system-model makefile
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/changes_in_makefile.yml
-
 ---
 
 - name: Replacing router-ip in makefile of systems-model  
@@ -314,16 +316,11 @@ Replaces some texts in system-model makefile
       path: systems-model/makefile
       regexp: "SMTP_SMART_HOST= smtp.admin.iiit.ac.in"
       replace: "SMTP_SMART_HOST={{smtp_smart_host}}"
-
-
-
 #+END_SRC
-
-**** =set-proxy=
-This script sets-up proxy in all containers by appending proxy line.
+**** Set Proxy
+     This script sets-up proxy in all containers by appending proxy
+     line.
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/set-proxy.yml
-
-
 
 - name: Copying set-proxy template to ansible container
   template: src=set-proxy.yml dest=systems-model/build/{{clustername}}/
@@ -334,14 +331,12 @@ This script sets-up proxy in all containers by appending proxy line.
   args: 
     chdir: systems-model/build/{{clustername}}/
 - debug: var=out.stdout_lines
-
-
 #+END_SRC
 
-**** =dns-server=
-Configures dns-server by executing playbooks -public_dns.yaml and private_dns.yaml
+**** Dns Server
+     Configures dns-servers by executing playbooks =public_dns.yaml= and
+     =private_dns.yaml=
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/dns-servers.yml
-
 ---
 - name: Commenting rsnapshot_client  in public_dns.yml
   lineinfile: 
@@ -389,11 +384,11 @@ Configures dns-server by executing playbooks -public_dns.yaml and private_dns.ya
 - debug: 
      var: out
 
-
 #+END_SRC
-
-**** =Router=
-This script changes/replace some text in yml files to create possible environment for executing router.yaml file and then configures router.
+**** Router
+     This script changes/replace some text in yml files to create
+     possible environment for executing router.yaml file and then
+     configures router.
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/router.yml
 
 ---
@@ -423,10 +418,9 @@ This script changes/replace some text in yml files to create possible environmen
 
 #+end_src
 
-**** =ADS=
-Configures ads-server.
+**** ADS
+     Configures ads-server.
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/ads.yml  
-
 ---
 - name: installing git
   command: ssh root@10.100.1.9 yum install -y git
@@ -482,10 +476,10 @@ Configures ads-server.
 
 #+end_src
 
-**** =knownhost=
-This script appends ads-public-keys to vlead-user-ansible machine known-hosts
+**** Add knowhost keys of ads server to ansible's vlead
+     This script appends ads-public-keys to vlead-user-ansible machine
+     known-hosts
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/knownhost.yml
-
 ---
 - name: Get public key from ADS server from root account
   command: "cat ~/.ssh/id_rsa.pub"
@@ -507,10 +501,10 @@ This script appends ads-public-keys to vlead-user-ansible machine known-hosts
 
 #+end_src
 
-**** =cluster-site=
-Creates backup for main.yml file of common-vars in system-model.Also changes private-dns
+**** Backup common-vars/vars/main.yml
+     Creates backup for main.yml file of common-vars in
+     system-model. Also changes private-dns
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/cluster_site.yml
-
 ---
  - name: Backup main.yml
    shell: 'cp main.yml backup-main-$(date +%d-%b-%Y).yml'
@@ -524,13 +518,12 @@ Creates backup for main.yml file of common-vars in system-model.Also changes pri
         regexp: '^- include: ossec_server.yaml'
         replace: '#- include: ossec_server.yaml'
  
- 
 #+end_src
 
-**** =site-modify=
-Modifies all yaml files to create necessary environment for runnning site.yaml script
+**** Comment some of the lines in systems-model roles
+     Modifies all yaml files to create necessary environment for
+     runnning site.yaml script
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/site_modify.yml
-
 
  - name: commenting  ossec-client in ossec-server
    replace: 
@@ -649,10 +642,10 @@ Modifies all yaml files to create necessary environment for runnning site.yaml s
 
 #+end_src
 
-**** =site-run=
-This script runs site.yaml file in vlead user-ansible machine
+**** Syntax check systems-model site.yaml and run site.yaml
+     This script runs =site.yaml= file in vlead user on ansible
+     machine
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/site_run.yml
-
 
 - name: Testing  site yml file using ansible
   command: ansible-playbook -i hosts --list-tasks --syntax-check site.yaml
@@ -660,7 +653,6 @@ This script runs site.yaml file in vlead user-ansible machine
   args:
      chdir: systems-model/build/{{clustername}}/
 - debug: var=out.stdout_lines
-
 
 
 - name: Running site yml file using ansible
@@ -672,7 +664,7 @@ This script runs site.yaml file in vlead user-ansible machine
 
 
 #+end_src
-**** =site-run-2=
+**** Update cluster DNS ips in common-vars
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/site_run2.yml
 
  - name: Replacing private-dns-ips
@@ -689,8 +681,7 @@ This script runs site.yaml file in vlead user-ansible machine
 
 
 #+END_SRC
-**** =handlers=
-
+**** handlers
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/handlers/main.yml
 
 ---
@@ -701,7 +692,7 @@ This script runs site.yaml file in vlead user-ansible machine
 
 #+END_SRC
 
-**** =dependencies=
+**** Dependencies
 
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/meta/main.yml
 
@@ -710,12 +701,12 @@ dependencies:
 
 #+END_SRC
 
-**** =set-proxy template=
-Template for setting-up proxy in all containers
+**** Set network proxy in server containers
+     Template for setting-up proxy in all containers.  This template
+     will be copied into the cluser's ansible container. From
+     cluster's ansible container, this playbook will be running.
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/templates/set-proxy.yml
-
 ---
-
 - hosts: router
   remote_user: root
 
@@ -807,10 +798,10 @@ Template for setting-up proxy in all containers
 
 #+END_SRC
 
-**** =ads-setup template=
+**** ads-setup template
+     Sets up ads server to deploy lab in the cluster
 
 #+begin_src yml :tangle roles/config-with-vlead-user/templates/ads-setup.yml
-
 ---
 - hosts: ads_server
   remote_user: root
@@ -946,8 +937,6 @@ Template for setting-up proxy in all containers
         regexp: "^APP_URL .*"
         line: 'APP_URL = "http://ads.{{clustername}}.virtual-labs.ac.in:8080"'
         state: present
-
-
 
 #+end_src
     
