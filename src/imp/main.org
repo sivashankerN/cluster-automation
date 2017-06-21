@@ -9,7 +9,7 @@
 * Introduction
 This document contains the initial scripts that are used to run  all the playbooks in a sequential order
 * Implementation
-** =cluster=
+** cluster
 #+begin_src yml :tangle cluster.yml
 
 ---
@@ -19,7 +19,7 @@ This document contains the initial scripts that are used to run  all the playboo
 
 #+end_src
 
-** =network-configuration=
+** network-configuration
 #+begin_src yml :tangle servers-network-configuration.yml
 
 ---
@@ -43,7 +43,7 @@ This document contains the initial scripts that are used to run  all the playboo
 
 #+end_src
 
-** =config-server=
+** config-server
 #+begin_src yml :tangle config-server.yml
 
 ---
@@ -56,7 +56,7 @@ This document contains the initial scripts that are used to run  all the playboo
 
 #+end_src
 
-** =config-with-vlead-user=
+** config-with-vlead-user
 
 #+begin_src yml :tangle config-with-vlead-user.yml
 

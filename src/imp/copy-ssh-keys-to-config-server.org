@@ -9,7 +9,7 @@
 * Implementation
 ** copy-ssh-keys
 *** copy-ssh-keys
-**** =main=
+**** main
 #+BEGIN_SRC yml :tangle roles/copy-ssh-keys-to-config-server/tasks/main.yml
 
    - name: Copy public key
@@ -20,6 +20,7 @@
 
 #+END_SRC
 
+**** dependencies
 #+BEGIN_SRC yml :tangle roles/copy-ssh-keys-to-config-server/meta/main.yml
 dependencies:
     - common-vars
