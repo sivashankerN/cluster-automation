@@ -813,6 +813,19 @@ dependencies:
      register: out
    - debug: var=out.stdout_lines
 
+   - name: Settiing proxy in config.sh to install openvz
+     replace: 
+          path: ~/cluster-setup-ovpl-centos/scripts/config.sh
+          regexp: 'export http_proxy=""'
+          replace: 'export http_proxy="{{proxy_env.http_proxy}}"'
+     
+   - name: Settiing proxy in config.sh to install openvz
+     replace: 
+          path: ~/cluster-setup-ovpl-centos/scripts/config.sh
+          regexp: 'export https_proxy=""'
+          replace: 'export https_proxy="{{proxy_env.https_proxy}}"'
+
+
 
    - name: Running centos-prepare-ovpl shell script to install mongodb and other required packages for ADS
      shell: "{{export_proxy}} && cd cluster-setup-ovpl-centos/scripts && ./centos_prepare_ovpl.sh"
