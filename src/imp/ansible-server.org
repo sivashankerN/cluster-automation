@@ -16,16 +16,16 @@
 #+BEGIN_SRC yml :tangle roles/ansible/tasks/main.yml
 ---
 # tasks file for ansible
-- name: Set root password
+- name: Setting root password for ansible
   shell: vzctl set 1002 --userpasswd root:{{container_root_password}}
 
-- name: copy interface ifcfg-eth0 file
+- name: copying interface ifcfg-eth0 file
   template: src=ifcfg-eth0 dest=/vz/private/1002/etc/sysconfig/network-scripts/
 
-- name: copy interface ifcfg-eth1 file
+- name: copying interface ifcfg-eth1 file
   template: src=ifcfg-eth1 dest=/vz/private/1002/etc/sysconfig/network-scripts/
 
-- name: Config-server Network restart
+- name: Config-server Network restarting
   command: vzctl exec 1002 service network restart
 #+END_SRC
 
@@ -78,40 +78,40 @@ This script installs all the required packages, creates a user (vlead) inside th
 
 ---
  
- - name: installing ansible and other required packages
+ - name: installing epel-release package
    yum: name=epel-release state=latest
    environment: "{{proxy_env}}"
 
- - name: installing ansible and other required packages
+ - name: installing ansible, git and emacs
    yum: name="{{item}}" state=latest
    environment: "{{proxy_env}}"
    with_items:
         - ansible
         - git
         - emacs
- - name: Create vlead user and generate ssh-keys for vlead
+ - name: Creating vlead user and generating ssh-keys for vlead
    user: name=vlead password={{vlead_user_password}} generate_ssh_key=yes groups=wheel
- - name: Replacing wheel
+ - name: Adding vlead user to sudoers file
    lineinfile: 
        path: /etc/sudoers 
        regexp: '^%wheel.*NOPASSWD: ALL.*'  
        line: '%wheel        ALL=(ALL)       NOPASSWD: ALL' 
        state: present
- - name: Set StrictHostkeyChecking to no
+ - name: Setting StrictHostkeyChecking of ansible to no
    lineinfile: path=/etc/ssh/ssh_config regexp="^Strict.*" line="StrictHostKeyChecking no" state=present
    notify: restart_ssh
- - name: Set PermitRootLogin to yes
+ - name: Setting PermitRootLogin of ansible to yes
    lineinfile: path=/etc/ssh/sshd_config regexp="^PermitRoot.*" line="PermitRootLogin yes" state=present
    notify: restart_ssh
 
- - name: Set PermitRootLogin to yes
+ - name: Setting Password Authentication of ansible to yes
    lineinfile: path=/etc/ssh/sshd_config regexp="^PasswordAuthentication.*" line="PasswordAuthentication yes" state=present
    notify: restart_ssh
 
- - name: Copy system-model repo from host-machine to ansible/config-server container 
+ - name: Copying system-model repo from host-machine to ansible/config-server container 
    synchronize: src="{{systems_model_dest}}" dest=/home/vlead/ 
 
- - name: Update ownership permissions to systems-model repo
+ - name: Updating ownership permissions to systems-model repo
    file: path=/home/vlead/systems-model recurse=true owner=vlead group=vlead 
 
 
@@ -152,29 +152,17 @@ Configures all other containers from ansible machine using vlead user.
 
 ---
  #tasks file for config-with-vlead-user
- - name: Install sshpass
+ - name: Installing sshpass
    yum: name=sshpass state=installed
    environment: "{{proxy_env}}"
 
- - name: Copy ssh keys
-   shell: sshpass -p {{container_root_password}} ssh-copy-id root@localhost
-   register: out
- - debug: var=out.stdout_lines
- - name: Copy ssh keys
-   shell: sshpass -p {{container_root_password}} ssh-copy-id root@127.0.0.1
-   register: out
- - debug: var=out.stdout_lines
- - name: Copy ssh keys
-   shell: sshpass -p {{container_root_password}} ssh-copy-id root@10.100.1.1
-   register: out
- - debug: var=out.stdout_lines
-
+ 
  - include: copy-sshkeys.yml
  - include: setupemacs.yml
  - include: changes_in_makefile.yml
 
 
- - name: change directory and run make file
+ - name: changing directory to systems-model and running make
    command: make
    register: out
    args: 
@@ -209,7 +197,8 @@ Configures all other containers from ansible machine using vlead user.
  - include: cluster_site.yml
  - include: site_modify.yml
  - include: site_run.yml
-
+ - include: site_run2.yml
+ - include: site_run.yml
                                                         
 
 #+END_SRC
@@ -219,62 +208,62 @@ Copies ssh-key of ansible machine to all other containers
 
 
 ---
- - name: Copy ssh keys
-   shell: sshpass -p "{{container_root_password}}" ssh-copy-id root@localhost
-   register: out
- - debug: var=out.stdout_lines
- 
- - name: Copy ssh keys
-   shell: sshpass -p "{{container_root_password}}" ssh-copy-id root@127.0.0.1
+- name: Copying ssh keys of ansible to localhost
+   shell: sshpass -p {{container_root_password}} ssh-copy-id root@localhost
    register: out
  - debug: var=out.stdout_lines
 
- - name: Copy ssh keys
-   shell: sshpass -p "{{container_root_password}}" ssh-copy-id root@10.100.1.1
+ - name: Copying ssh keys of ansible to 127.0.0.1
+   shell: sshpass -p {{container_root_password}} ssh-copy-id root@127.0.0.1
    register: out
  - debug: var=out.stdout_lines
 
- - name: Copy ssh keys
+ - name: Copying ssh keys of ansible to router
+   shell: sshpass -p {{container_root_password}} ssh-copy-id root@10.100.1.1
+   register: out
+ - debug: var=out.stdout_lines
+
+ - name: Copying ssh keys of ansible to ansible
    shell: sshpass -p "{{container_root_password}}" ssh-copy-id root@10.100.1.2
    register: out
  - debug: var=out.stdout_lines
  
- - name: Copy ssh keys
+ - name: Copying  ssh keys of ansible to ossec-server
    shell: sshpass -p "{{container_root_password}}" ssh-copy-id root@10.100.1.3
    register: out
  - debug: var=out.stdout_lines
  
- - name: Copy ssh keys
+ - name: Copying ssh keys of ansible to rsyslog-server
    shell: sshpass -p "{{container_root_password}}" ssh-copy-id root@10.100.1.4
    register: out
  - debug: var=out.stdout_lines
 
- - name: Copy ssh keys
+ - name: Copying ssh keys of ansible to private-dns-server
    shell: sshpass -p "{{container_root_password}}" ssh-copy-id root@10.100.1.5
    register: out
  - debug: var=out.stdout_lines
  
- - name: Copy ssh keys
+ - name: Copying ssh keys of ansible to public-dns-server
    shell: sshpass -p "{{container_root_password}}" ssh-copy-id root@10.100.1.6
    register: out
  - debug: var=out.stdout_lines
 
- - name: Copy ssh keys
+ - name: Copying ssh keys of ansible to reverse-proxy-server
    shell: sshpass -p "{{container_root_password}}" ssh-copy-id root@10.100.1.7
    register: out
  - debug: var=out.stdout_lines
 
- - name: Copy ssh keys
+ - name: Copying ssh keys of ansible to nagios-server
    shell: sshpass -p "{{container_root_password}}" ssh-copy-id root@10.100.1.8
    register: out
  - debug: var=out.stdout_lines
 
- - name: Copy ssh keys
+ - name: Copying ssh keys of ansible to ads-server
    shell: sshpass -p "{{container_root_password}}" ssh-copy-id root@10.100.1.9
    register: out
  - debug: var=out.stdout_lines
 
- - name: Copy ssh keys
+ - name: Copying ssh keys of ansible to rsnapshot-server
    shell: sshpass -p "{{container_root_password}}" ssh-copy-id root@10.100.1.10
    register: out
  - debug: var=out.stdout_lines
@@ -290,7 +279,7 @@ Copies ssh-key of ansible machine to all other containers
 - name: Downloading Emacs
   file: path=emacs/lisp mode=0755 state=directory
 
-- name: un-tar  downloaded file
+- name: un-taring  downloaded file
   unarchive: src={{org_link}} dest=/home/vlead/emacs/lisp/ remote_src=True
   environment: "{{proxy_env}}"
 
@@ -301,24 +290,29 @@ Replaces some texts in system-model makefile
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/changes_in_makefile.yml
 
 ---
-- replace:
+
+- name: Replacing router-ip in makefile of systems-model  
+  replace:
       path: systems-model/makefile
       regexp: "ROUTER_IP=10.4.14.207"
       replace: "ROUTER_IP={{ipaddress.router}}"
 
-- replace:
+- name: Replacing config-server ip in makefile of system-model
+  replace:
       path: systems-model/makefile
       regexp: "CONFIG_SERVER=10.4.14.208"
       replace: "CONFIG_SERVER={{ipaddress.config_server}}"
 
 
-- replace:
+- name: Replacing clustername in makefile of system-model
+  replace:
       path: systems-model/makefile
       regexp: "CLUSTER=cluster"
       replace: "CLUSTER={{clustername}}"
 
 
-- replace:
+- name: Replacing Smtp_smart_host in makefile of systems-model
+  replace:
       path: systems-model/makefile
       regexp: "SMTP_SMART_HOST= smtp.admin.iiit.ac.in"
       replace: "SMTP_SMART_HOST={{smtp_smart_host}}"
@@ -333,10 +327,10 @@ This script sets-up proxy in all containers by appending proxy line.
 
 
 
-- name: Copy set-proxy to ansible container
+- name: Copying set-proxy template to ansible container
   template: src=set-proxy.yml dest=systems-model/build/{{clustername}}/
 
-- name: Run  set-proxy.yml file to set proxy in all other containers
+- name: Running  set-proxy.yml file to set proxy in all other containers
   command: ansible-playbook -i hosts set-proxy.yml
   register: out
   args: 
@@ -351,34 +345,34 @@ Configures dns-server by executing playbooks -public_dns.yaml and private_dns.ya
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/dns-servers.yml
 
 ---
-- name: Commenting rsnapshot_client 
+- name: Commenting rsnapshot_client  in public_dns.yml
   lineinfile: 
      path: systems-model/build/{{clustername}}/public_dns.yaml
      regexp: '^    - rsnapshot_client'
      line: '    # - rsnapshot_client'
   
 
-- name: Commenting ossec_client 
+- name: Commenting ossec_client in public_dns.yml
   lineinfile: 
      path: systems-model/build/{{clustername}}/public_dns.yaml
      regexp: '^    - ossec_client'
      line: '    # - ossec_client'
 
-- name: Commenting rsnapshot_client 
+- name: Commenting rsnapshot_client in private_dns.yml
   lineinfile: 
      path: systems-model/build/{{clustername}}/private_dns.yaml
      regexp: '^    - rsnapshot_client'
      line: '    # - rsnapshot_client'
   
 
-- name: Commenting ossec_client 
+- name: Commenting ossec_client in private_dns.yml
   lineinfile: 
      path: systems-model/build/{{clustername}}/private_dns.yaml
      regexp: '^    - ossec_client'
      line: '    # - ossec_client'
 
 
-- name: Running public_dns playbook
+- name: Running public_dns.yml playbook
   command: ansible-playbook -i hosts public_dns.yaml
   #environment: "{{proxy_env}}"
   register: out
@@ -388,7 +382,7 @@ Configures dns-server by executing playbooks -public_dns.yaml and private_dns.ya
     var: out
 
 
-- name: Running private_dns playbook
+- name: Running private_dns.yml playbook
   command: ansible-playbook -i hosts private_dns.yaml
   #environment: "{{proxy_env}}"
   register: out
@@ -405,20 +399,20 @@ This script changes/replace some text in yml files to create possible environmen
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/router.yml
 
 ---
-- name: Commenting rsnapshot_client
+- name: Commenting rsnapshot_client in router.yaml
   replace:
      path: systems-model/build/{{clustername}}/router.yaml
      regexp: '^    - rsnapshot_client'
      replace: '    # - rsnapshot_client'
 
 
-- name: Commenting ossec_client
+- name: Commenting ossec_client in router.yaml
   replace:
      path: systems-model/build/{{clustername}}/router.yaml
      regexp: '^    - ossec_client'
      replace: '    # - ossec_client'
 
-- name: Running router playbook
+- name: Running router.yaml playbook
   command: ansible-playbook -i hosts router.yaml
   environment: "{{proxy_env}}"
   register: out
@@ -524,17 +518,7 @@ Creates backup for main.yml file of common-vars in system-model.Also changes pri
    shell: 'cp main.yml backup-main-$(date +%d-%b-%Y).yml'
    args:
      chdir: systems-model/build/{{clustername}}/roles/common_vars/vars/ 
- - name: Replacing private-dns-ips
-   replace:
-        path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml       
-        regexp: 'private_dns_ips: none'
-        replace: 'private_dns_ips: \n\t - 10.100.1.5'
-       
- - name: Replacing private-dns-zone
-   replace:
-        path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml       
-        regexp: 'private_dns_zone: none'
-        replace: 'private_dns_zone: "{{clustername}}.virtual-labs.ac.in {{clustername}}.vlabs.ac.in"'
+
 
  - name: Commenting  ossec-server.yaml file in site.yaml
    replace:
@@ -690,7 +674,23 @@ This script runs site.yaml file in vlead user-ansible machine
 
 
 #+end_src
+**** =site-run-2=
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/site_run2.yml
 
+ - name: Replacing private-dns-ips
+   replace:
+        path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml       
+        regexp: 'private_dns_ips: none'
+        replace: 'private_dns_ips: \n\t - 10.100.1.5'
+       
+ - name: Replacing private-dns-zone
+   replace:
+        path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml       
+        regexp: 'private_dns_zone: none'
+        replace: 'private_dns_zone: "{{clustername}}.virtual-labs.ac.in {{clustername}}.vlabs.ac.in"'
+
+
+#+END_SRC
 **** =handlers=
 
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/handlers/main.yml

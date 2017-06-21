@@ -18,22 +18,22 @@
 #+BEGIN_SRC yml :tangle roles/router/tasks/main.yml
 ---
 
-- name: Set root password
+- name: Setting root password for router
   command: vzctl set 1001 --userpasswd root:{{container_root_password}}
 
-- name: copy interface ifcfg-eth0 file
+- name: copying interface ifcfg-eth0 file
   template: src=ifcfg-eth0 dest=/vz/private/1001/etc/sysconfig/network-scripts/
   
-- name: copy interface ifcfg-eth1 file
+- name: copying interface ifcfg-eth1 file
   template: src=ifcfg-eth1 dest=/vz/private/1001/etc/sysconfig/network-scripts/
 
-- name: Router's Network restart
+- name: Router's Network restarting
   command: vzctl exec 1001 service network restart
 
-- name: Set iptable rule 
+- name: Setting iptable rule to router
   command: vzctl exec 1001 iptables -t nat -A POSTROUTING ! -d {{subnet}} -o eth0 -j SNAT --to-source {{ipaddress.router}}
 
-- name: iptables Saving 
+- name: Saving iptables
   command: vzctl exec 1001 iptables-save > /etc/sysconfig/iptables
 
 - name: ipv4 forwarding in router
@@ -42,7 +42,7 @@
      regexp: 'net.ipv4.ip_forward = 0'
      replace: 'net.ipv4.ip_forward = 1'
 
-- name: reboot
+- name: rebooting router
   command: vzctl restart 1001
   register: out
 - debug: var=out.stdout_lines

@@ -55,7 +55,7 @@
          DNS1={{dnsaddress.dns1}}
          DNS2={{dnsaddress.dns2}}
 
-   - name: Netwwork restart
+   - name: Network restart
      service: name=network state=restarted 
 
 ...
@@ -73,7 +73,7 @@
       content: ""      
       dest: "/etc/sysconfig/network-scripts/ifcfg-eth0" 
   
-   - name: creating
+   - name: creating eth0 bridge
      blockinfile:
         path: /etc/sysconfig/network-scripts/ifcfg-eth0
         block: |
@@ -99,7 +99,7 @@
      content: ""      
      dest: "/etc/sysconfig/network-scripts/ifcfg-br1"
       
-  - name: creating Br1 file
+  - name: creating Br1 bridge
     blockinfile:
        path: /etc/sysconfig/network-scripts/ifcfg-br1
        block: |
@@ -159,46 +159,46 @@
 
 #+BEGIN_SRC yml :tangle roles/basesetup/tasks/corkscrew_installation.yml
 ---
-- name: Install Development tools
+- name: Installing Development tools
   command: yum groupinstall "Development tools" -y
 - name: Install python-pip
   yum: name=python-pip state=installed
 
-- name: install passlib
+- name: installing passlib
   pip: name=passlib
   environment: "{{proxy_env}}"
 
-- name: install wget
+- name: installing wget
   yum: name=wget state=installed
   environment: "{{proxy_env}}"
 
-- name: Download Corkscrew tar file
+- name: Downloading Corkscrew tar file
   get_url: url={{corkscrew_url1}} dest={{corckscrew_dest}}
   environment: "{{proxy_env}}"
   ignore_errors: yes
 
-- name: Download  corkscrew tar file
+- name: Downloading  corkscrew tar file
   get_url: url={{corkscrew_url2}} dest={{corkscrew_dest}}
   environment: "{{proxy_env}}"
 
-- name: Extract downloaded file
+- name: Extracting downloaded file
   unarchive: src={{corkscrew_dest}}/corkscrew-2.0.tar.gz dest={{corkscrew_dest}}
 
-- name: Run ./configugre
+- name: Running  ./configure file in corkscrew
   command: ./configure
   args:
     chdir: "{{corkscrew_dest}}/corkscrew-2.0/"
   register: out
 - debug: var=out.stdout_lines
 
-- name: run make
+- name: Running make
   command: make
   args:
     chdir: "{{corkscrew_dest}}/corkscrew-2.0/"
   register: out
 - debug: var=out.stdout_lines
 
-- name: run make install
+- name: Running make install
   command: make install
   args:
     chdir: "{{corkscrew_dest}}/corkscrew-2.0/"
@@ -206,11 +206,11 @@
 - debug: var=out.stdout_lines
 
 
-- name: create and configure ~/.ssh/config to clone bitbucket repo system model
+- name: Creating and configuring ~/.ssh/config to clone bitbucket repo system model
   template: src=ssh-config dest=~/.ssh/config mode=400
 
 
-- name: clone systems-model repo from bitbucket
+- name: clonning systems-model repo from bitbucket
   git: repo="{{systems_model_repo}}" dest="{{systems_model_dest}}" version=develop
 
 #+END_SRC
@@ -277,14 +277,14 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
 #+BEGIN_SRC yml :tangle roles/openvz/tasks/clone.yml
 
 ---
-    - name: install git
+    - name: installing git
       yum: name=git state=installed
       environment: "{{proxy_env}}"
       register: out
     - debug: var=out.stdout_lines 
 
 
-    - name: change directory to 
+    - name: changing directory to clone setup-ovpl-centos 
       git: 
          repo: "{{setup_ovpl_centos}}"
          dest: ~/cluster-setup-ovpl-centos
@@ -305,22 +305,22 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
      
 
 #+BEGIN_SRC yml :tangle roles/openvz/tasks/install-openvz.yml
-
 ---
-
-    - replace: 
+    - name: Settiing proxy in config.sh to install openvz
+      replace: 
           path: ~/cluster-setup-ovpl-centos/scripts/config.sh
           regexp: 'export http_proxy=""'
           replace: 'export http_proxy="{{proxy_env.http_proxy}}"'
      
-    - replace: 
+    - name: Settiing proxy in config.sh to install openvz
+      replace: 
           path: ~/cluster-setup-ovpl-centos/scripts/config.sh
           regexp: 'export https_proxy=""'
           replace: 'export https_proxy="{{proxy_env.https_proxy}}"'
 
 
     
-    - name: running shell command
+    - name: running centos_prepare_ovpl.sh shell script
       command: ./centos_prepare_ovpl.sh
       register: out 
       args: 
@@ -338,17 +338,17 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
        netfilter/iptables modules for a container
 #+BEGIN_SRC yml :tangle roles/openvz/tasks/openvz-config.yml
 ---
-    - replace: 
+    - replace: Enabling Packet Forwarding 
           path: /etc/sysctl.conf
           regexp: 'net.ipv4.ip_forward = 0'
           replace: 'net.ipv4.ip_forward = 1'
            
-    - replace: 
+    - replace: Setting netfilter to full
           path: /etc/vz/conf/ve-vswap-256m.conf-sample 
           regexp: 'NETFILTER="stateless"'
           replace: 'NETFILTER="full"'
 
-    - copy:
+    - copy: Enabling onboot network attachment to containers
        content: "EXTERNAL_SCRIPT=\"/usr/sbin/vznetaddbr\" "
        dest: "/etc/vz/vznet.conf"
 

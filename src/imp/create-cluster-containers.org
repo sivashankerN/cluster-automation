@@ -20,7 +20,7 @@
        container( without network configuration in containers).
 #+BEGIN_SRC yml :tangle roles/cluster/tasks/main.yml
 ---
-    - name: Download CentOS template
+    - name: Downloading CentOS template
       get_url:
          url: "{{centos_template}}" 
          dest: /vz/template/cache
