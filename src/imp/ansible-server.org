@@ -714,7 +714,7 @@ dependencies:
 
 **** =set-proxy template=
 Template for setting-up proxy in all containers
-#+BEGIN_SRC yml :tangle roles/config-with-vlea-user/templates/set-proxy.yml
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/templates/set-proxy.yml
 
 ---
 
