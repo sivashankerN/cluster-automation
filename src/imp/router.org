@@ -11,7 +11,7 @@
 * Implementation
 ** Router container configuration
 *** Router 
-**** =main=
+**** main
     Following script does
    - Creates a password for router and configures so that this container will be active with internet.
    - Also adds some firewall rules in iptables
@@ -49,7 +49,7 @@
 
 #+END_SRC
 
-**** =dependencies=
+**** dependencies
    
 
 #+BEGIN_SRC yml :tangle roles/router/meta/main.yml
@@ -59,7 +59,7 @@ dependencies:
 
 #+END_SRC
 
-**** =Router's Public Network=
+**** Router's Public Network
   This template contains publci network configuration of router with public ipaddress,net-mask,gateway and dns.
 
 #+BEGIN_SRC yml :tangle roles/router/templates/ifcfg-eth0
@@ -77,7 +77,7 @@ DNS2={{dnsaddress.dns2}}
 
 #+END_SRC
 
-**** =Router's Private network=
+**** Router's Private network
 This template contains private network configuration of router with private ip and net-mask contained in common-vars
 #+BEGIN_SRC yml :tangle roles/router/templates/ifcfg-eth1
 

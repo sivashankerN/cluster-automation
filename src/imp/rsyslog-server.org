@@ -10,7 +10,7 @@
 * Implementation
 ** Rsyslog configuration
 *** rsyslog 
-**** =Rsyslog Network Setup=
+**** Rsyslog Network Setup
  - Creates a password for rsyslog-server and configures so that this container will be active with internet.
 #+BEGIN_SRC yml :tangle roles/rsyslog-server/tasks/main.yml
 
@@ -27,7 +27,7 @@
 
 #+END_SRC
     
-**** =dependencies=
+**** dependencies
 #+BEGIN_SRC yml :tangle roles/rsyslog-server/meta/main.yml
 
 dependencies:
@@ -35,7 +35,7 @@ dependencies:
 
 #+END_SRC
 
-**** =rsyslog Private Network=
+**** rsyslog Private Network
 
 #+BEGIN_SRC yml :tangle roles/rsyslog-server/templates/ifcfg-eth1
 

@@ -14,7 +14,7 @@
    playbook is included in =main.yml= file. The =main.yml= is the main
    play book to setup base machine. The =main.yml= playbook runs other playbooks
    included in it in a sequential order
-*** =main.yml=
+*** main.yml
 #+BEGIN_SRC yml :tangle roles/basesetup/tasks/main.yml
 ---
 # tasks file for basesetup
@@ -27,7 +27,7 @@
 #+End_SRC
     Above included playbooks  are  described clearly below.
 
-*** =br0.yml= br0 interface creation
+*** br0 interface creation
     - The following playbook =br0.yml= creates =br0= interface for
       host machine. It copies the block part described in the file to
       destination specified in path. If the file mentioned in path
@@ -62,7 +62,7 @@
  
 #+END_SRC
 
-*** =eth0.yml= creates eth0 interface on host machine.
+*** eth0.yml creates eth0 interface on host machine.
     Similar to above file,this also does the same work.Copies the
     content to =ifcfg-eth0= file. If it is empty just copies else it
     makes it empty and then copies code.
@@ -88,7 +88,7 @@
     
 #+END_SRC
 
-*** =br1.yml= Creates br1 interface on host machine and restart network
+*** br1.yml Creates br1 interface on host machine and restart network
     Copies the content in block part to the destination mentioned in
     =path=. Then network restart and shuts network-manager off
     and restarts.
@@ -131,7 +131,7 @@
 
 #+END_SRC
 
-***  =ssh-keys.yml= 
+*** ssh-keys.yml 
      Generates ssh-keys in host machine and modifies =ssh_Config= file
      to change =stricthostkeychecking= to =no=
 #+BEGIN_SRC yml :tangle roles/basesetup/tasks/ssh-keys.yml
@@ -145,7 +145,7 @@
 
 #+END_SRC
 
-*** =corkscrew_installation.yml= 
+*** corkscrew_installation.yml 
     Install corkscrew and its dependencies. Corckscrew is needed when
     network blocks outgoing =ssh= port over =the http_proxy=.
    
@@ -215,7 +215,7 @@
 
 #+END_SRC
 
-*** =dependencies=
+*** dependencies
      Meta directory is to use other roles variables in local role.
 #+BEGIN_SRC yml :tangle roles/basesetup/meta/main.yml
 
@@ -225,7 +225,7 @@ dependencies:
 
 #+END_SRC
 
-*** =ssh-config= 
+*** ssh-config 
     This file contains all necessary data needed to clone a repository
     systems-model from http://bitbucket.org
 
@@ -241,7 +241,7 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
 
 #+END_SRC
 
-*** =Handlers= 
+*** Handlers 
     Handlers comes into play when there is a notify statement in task
     files.
 
@@ -254,7 +254,7 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
 
 ** Setup Virtualization on host machine
 *** OpenVZ Virtualization
-**** =main.yml=
+**** main.yml
      =main.yml= contains various included playbooks which are needed
      for OpenVZ virtualization setup. Purpose of each included
      playbook is described below the =main.yml= file.
@@ -268,7 +268,7 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
 
 #+END_SRC
 
-**** =clone.yml=
+**** clone.yml
     - This script =clone.yml= installs =git=. 
     - Clones [[./https://github.com/vlead/cluster-setup-ovpl-centos][cluster-setup-ovpl-centos]] repository from
       http://github.com and saves it in destination mentioned in
@@ -296,7 +296,7 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
 
 #+END_SRC
 
-**** =install-openvz=
+**** install-openvz
      Following script does 
      - Exports network proxy through a =proxy_env.http_proxy=
        variable. It is defined in [[./common-vars.org][common-vars]] file.
@@ -330,7 +330,7 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
 
 #+END_SRC
 
-**** =openvz-config.yml=
+**** openvz-config.yml
      Following script does 
      - Sets to =net.ipv4.ip_forward = 1= to enable packet forwarding for
        IPv4
@@ -357,7 +357,7 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
 
 #+END_SRC
 
-**** =Dependencies=
+**** Dependencies
       Dependencies are required when taking variables from other
       roles.
 #+BEGIN_SRC yml :tangle roles/openvz/meta/main.yml

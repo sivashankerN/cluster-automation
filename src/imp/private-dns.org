@@ -11,7 +11,7 @@
 * Implementation
 ** Private DNS server configuration
 *** Private DNS server 
-**** =Private-DNS Network Setup=
+**** Private-DNS Network Setup
  - Creates a password for private-dns and configures so that this container will be active with internet.
 #+BEGIN_SRC yml :tangle roles/private-dns-server/tasks/main.yml
 
@@ -30,8 +30,7 @@
 
 
 #+END_SRC
-
-**** =Private-DNS Private Network=
+**** Private-DNS Private Network
 
 #+BEGIN_SRC yml :tangle roles/private-dns-server/templates/ifcfg-eth1
 
@@ -47,7 +46,7 @@ NETMASK={{net_mask}}
 
 #+END_SRC
 
-**** =dependencies=
+**** dependencies
 
 #+BEGIN_SRC yml :tangle roles/private-dns-server/meta/main.yml
 

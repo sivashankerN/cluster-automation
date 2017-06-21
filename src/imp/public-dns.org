@@ -10,10 +10,9 @@
   network configuration
   creation.
 * Implementation
-  
 ** Public DNS server Configuration
 *** Public-DNS
-**** =Public-DNS Network Setup=
+**** Public-DNS Network Setup
  - Creates a password for public dns and configures so that this container will be active with internet.
 #+BEGIN_SRC yml :tangle roles/public-dns-server/tasks/main.yml
 
@@ -29,7 +28,7 @@
 
 #+END_SRC
 
-**** =dependencies=
+**** dependencies
 
 #+BEGIN_SRC yml :tangle roles/public-dns-server/meta/main.yml
 
@@ -38,7 +37,7 @@ dependencies:
 
 #+END_SRC
 
-**** =Public-DNS Private Network=
+**** Public-DNS Private Network
    
 #+BEGIN_SRC yml :tangle roles/public-dns-server/templates/ifcfg-eth1
 

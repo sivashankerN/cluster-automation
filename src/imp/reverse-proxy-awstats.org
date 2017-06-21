@@ -12,7 +12,7 @@
 * Implementation
 ** Automate Reverse proxy node configuration
 *** reverse-proxy 
-**** =Reverse-Proxy-server Network Setup=
+**** Reverse-Proxy-server Network Setup
 -    
 #+BEGIN_SRC yml :tangle roles/reverse-proxy-server/tasks/main.yml
 # tasks file for reverse-proxyserver
@@ -29,7 +29,7 @@
 
 #+END_SRC
 
-**** =dependencies=
+**** dependencies
 #+begin_src yml :tangle roles/reverse-proxy-server/meta/main.yml
 
 
@@ -38,7 +38,7 @@ dependencies:
 
 #+end_src
 
-**** =Reverse-Proxy Private Network=
+**** Reverse-Proxy Private Network
 #+BEGIN_SRC yml :tangle roles/reverse-proxy-server/templates/ifcfg-eth1
 
 DEVICE=eth1

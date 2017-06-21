@@ -10,7 +10,7 @@
 * Implementation
 ** Automate nagios node configuration
 *** nagios 
-**** =Nagios Network Setup=
+**** Nagios Network Setup
  Creates a password for nagios and configures so that this container will be active with internet.
 #+BEGIN_SRC yml :tangle roles/nagios-server/tasks/main.yml
 
@@ -27,7 +27,7 @@
 #+END_SRC    
 
 
-**** =dependencies=  
+**** dependencies  
 #+BEGIN_SRC yml :tangle roles/nagios-server/meta/main.yml
 
 dependencies:
@@ -35,7 +35,7 @@ dependencies:
 
 #+END_SRC
 
-**** =Nagios Private Network=
+**** Nagios Private Network
 #+BEGIN_SRC yml :tangle roles/nagios-server/templates/ifcfg-eth1
 
 DEVICE=eth1

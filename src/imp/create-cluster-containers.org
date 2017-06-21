@@ -12,7 +12,7 @@
 * Implementation
 ** Cluster nodes/servers creation
 *** Cluster 
-**** =main.yml=
+**** main.yml
      Following script does
      - Downloads required CentOS template. {{centos-template}} is
        defined in [[./common-vars.org][common-vars]] 
@@ -40,7 +40,7 @@
 
 #+END_SRC
      
-**** =cluster.sh=
+**** cluster.sh
      The above playbooks uses the following template/shell script
      =cluster.sh= to create basic cluster container( without network
      configuration in containers).
@@ -123,7 +123,7 @@
 
 #+END_SRC
 
-**** =dependencies=
+**** dependencies
      Above template uses variables from [[./common-vars.org][common-vars]]. So dependencies
      are required for the above playbook.
 #+BEGIN_SRC yml :tangle roles/cluster/meta/main.yml
