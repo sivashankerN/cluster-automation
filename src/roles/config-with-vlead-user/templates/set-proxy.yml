@@ -87,3 +87,11 @@
    - name: set proxy
      lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
 
+- hosts: config_server
+  remote_user: root
+
+  tasks: 
+   - name: Delete proxy if there is any
+     lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
+   - name: set proxy
+     lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
