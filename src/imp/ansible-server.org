@@ -807,19 +807,19 @@ dependencies:
   remote_user: root
   
   tasks:
-   - name: git cloning 
+   - name: Cloning cluster-setup-ovpl-centos repo from github 
      shell: "{{export_proxy}} && git clone {{setup_ovpl_centos}} && cd cluster-setup-ovpl-centos &&  git checkout cluster-ads"
      ignore_errors: yes
      register: out
    - debug: var=out.stdout_lines
 
 
-   - name: Running centos-prepare-ovpl shell
+   - name: Running centos-prepare-ovpl shell script to install mongodb and other required packages for ADS
      shell: "{{export_proxy}} && cd cluster-setup-ovpl-centos/scripts && ./centos_prepare_ovpl.sh"
      register: out  
    - debug: var=out.stdout_lines
 
-   - name: Copy file
+   - name: Copy sample_config.json to config.json
      command: cp sample_config.json config.json 
      args: 
        chdir: ovpl/config/
@@ -830,14 +830,14 @@ dependencies:
        regexp: '"COOKIE_SECRET.*"'
        replace: '"COOKIE_SECRET": "jgsjdhgfcjgsdjgfvjhsdfhkjsdgk"'
 
-   - name: 
+   - name: Set POOLID and ADAPTER_TO_USE
      replace: 
       path: ovpl/config/config.json
       regexp: '"ADAPTER_TO_USE" : {"POOLID" : 1, "ADAPTERID" : 2}'
       replace: '"ADAPTER_TO_USE" : {"POOLID" : 1, "ADAPTERID" : 3}'
 
 
-   - name: Copy base_config.py
+   - name: Copy sample_base_config.py base_config.py
      command: cp sample_base_config.py base_config.py
      args: 
        chdir: ovpl/config/adapters/
@@ -884,7 +884,7 @@ dependencies:
      args: 
       chdir: ovpl/config/adapters/
 
-   - name: SUBNET Bridge
+   - name: Set SUBNET_BRIDGE in ADS configuration file
      lineinfile:
       path: ovpl/config/adapters/centos_bridged_config.py
       regexp: "SUBNET_BRIDGE = .*"  
@@ -937,7 +937,6 @@ dependencies:
         regexp: "^APP_URL .*"
         line: 'APP_URL = "http://ads.{{clustername}}.virtual-labs.ac.in:8080"'
         state: present
-
 #+end_src
     
   
