@@ -16,7 +16,7 @@ This document describes the network configuration of rsnapshot server
 
 ---
 - name: Set root password
-  command: vzctl set 1010 --userpasswd root:{{vlead_user_password}}
+  command: vzctl set 1010 --userpasswd root:{{container_root_password}}
 
 - name: copy interface ifcfg-eth1 file
   template: src=ifcfg-eth1 dest=/vz/private/1010/etc/sysconfig/network-scripts/

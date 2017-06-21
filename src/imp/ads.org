@@ -15,7 +15,7 @@ This document descirbes the configuration of ads-server
 
 ---
 - name: Set root password
-  command: vzctl set 1009 --userpasswd root:{{vlead_user_password}}
+  command: vzctl set 1009 --userpasswd root:{{container_root_password}}
 
 - name: copy interface ifcfg-eth1 file
   template: src=ifcfg-eth1 dest=/vz/private/1009/etc/sysconfig/network-scripts/

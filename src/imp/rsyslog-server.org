@@ -16,7 +16,7 @@
 
 ---
 - name: Set root password
-  command: vzctl set 1004 --userpasswd root:test
+  command: vzctl set 1004 --userpasswd root:{{container_root_password}}
 
 - name: copy interface ifcfg-eth1 file
   template: src=ifcfg-eth1 dest=/vz/private/1004/etc/sysconfig/network-scripts/
