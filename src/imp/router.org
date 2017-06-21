@@ -19,7 +19,7 @@
 ---
 
 - name: Set root password
-  command: vzctl set 1001 --userpasswd root:{{vlead_user_password}}
+  command: vzctl set 1001 --userpasswd root:{{container_root_password}}
 
 - name: copy interface ifcfg-eth0 file
   template: src=ifcfg-eth0 dest=/vz/private/1001/etc/sysconfig/network-scripts/
