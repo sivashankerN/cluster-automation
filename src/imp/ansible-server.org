@@ -205,10 +205,8 @@ Configures all other containers from ansible machine using vlead user.
 **** =copy-sshkeys=
 Copies ssh-key of ansible machine to all other containers 
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/copy-sshkeys.yml
-
-
 ---
-- name: Copying ssh keys of ansible to localhost
+ - name: Copying ssh keys of ansible to localhost
    shell: sshpass -p "{{container_root_password}}" ssh-copy-id root@localhost
    register: out
  - debug: var=out.stdout_lines
