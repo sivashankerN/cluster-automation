@@ -209,17 +209,17 @@ Copies ssh-key of ansible machine to all other containers
 
 ---
 - name: Copying ssh keys of ansible to localhost
-   shell: sshpass -p {{container_root_password}} ssh-copy-id root@localhost
+   shell: sshpass -p "{{container_root_password}}" ssh-copy-id root@localhost
    register: out
  - debug: var=out.stdout_lines
 
  - name: Copying ssh keys of ansible to 127.0.0.1
-   shell: sshpass -p {{container_root_password}} ssh-copy-id root@127.0.0.1
+   shell: sshpass -p "{{container_root_password}}" ssh-copy-id root@127.0.0.1
    register: out
  - debug: var=out.stdout_lines
 
  - name: Copying ssh keys of ansible to router
-   shell: sshpass -p {{container_root_password}} ssh-copy-id root@10.100.1.1
+   shell: sshpass -p "{{container_root_password}}" ssh-copy-id root@10.100.1.1
    register: out
  - debug: var=out.stdout_lines
 
