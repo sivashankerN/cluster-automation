@@ -338,17 +338,20 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
        netfilter/iptables modules for a container
 #+BEGIN_SRC yml :tangle roles/openvz/tasks/openvz-config.yml
 ---
-    - replace: Enabling Packet Forwarding 
+    - name: Enabling Packet Forwarding  
+      replace: 
           path: /etc/sysctl.conf
           regexp: 'net.ipv4.ip_forward = 0'
           replace: 'net.ipv4.ip_forward = 1'
            
-    - replace: Setting netfilter to full
+    - name: Setting netfilter to full  
+      replace:
           path: /etc/vz/conf/ve-vswap-256m.conf-sample 
           regexp: 'NETFILTER="stateless"'
           replace: 'NETFILTER="full"'
 
-    - copy: Enabling onboot network attachment to containers
+    - name:  Enabling onboot network attachment to containers
+      copy:
        content: "EXTERNAL_SCRIPT=\"/usr/sbin/vznetaddbr\" "
        dest: "/etc/vz/vznet.conf"
 
