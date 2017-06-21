@@ -438,31 +438,31 @@ Configures ads-server.
   register: out
 - debug: var=out.stdout_lines
 
-- name: Get public key from ADS server from root account
+- name: Getting public key from ADS server from root account
   command: ssh root@10.100.1.9 "cat ~/.ssh/id_rsa.pub"
   register: ssh_keys
 
-- name: install eple-release and sshpass
+- name: installing epel-release and sshpass
   command: ssh root@10.100.1.9 "{{item}}"
   with_items:
    - export http_proxy={{proxy_env.http_proxy}} 
    - export https_proxy={{proxy_env.https_proxy}} 
    - yum install -y epel-release
    - yum install -y sshpass
-- name: Set StrictHostKeyChecking no
+- name: Setting StrictHostKeyChecking to  no
   command: ssh root@10.100.1.9 'sed -i "/^StrictHostKeyChecking.*/d" /etc/ssh/ssh_config && echo StrictHostKeyChecking=no >> /etc/ssh/ssh_config'
 
-- name: Copying keys
+- name: Copying keys 
   command: ssh root@10.100.1.9 'sshpass -p "vlead123" ssh-copy-id root@"{{ipaddress.hostmachine}}"'
   register: out
 - debug: var=out.stdout_lines
 
-- name: check keys
+- name: checking keys
   debug: msg= "{{ ssh_keys.stdout }}"
   tags:
    - ssh
 
-- name: deploy keys on localhost at vlead user
+- name: deploying keys on localhost at vlead user
   authorized_key: user=vlead key= "{{ item }}"
   delegate_to: "{{ipaddress.config_server}}"
   with_items:
