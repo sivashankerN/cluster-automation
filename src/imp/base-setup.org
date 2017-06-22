@@ -14,20 +14,7 @@
    playbook is included in =main.yml= file. The =main.yml= is the main
    play book to setup base machine. The =main.yml= playbook runs other playbooks
    included in it in a sequential order
-*** main.yml
-#+BEGIN_SRC yml :tangle roles/basesetup/tasks/main.yml
----
-# tasks file for basesetup
-- include: eth0.yml
-- include: br0.yml
-- include: br1.yml
-- include: ssh-keys.yml
-- include: corkscrew_installation.yml
-
-#+End_SRC
-    Above included playbooks  are  described clearly below.
-
-*** br0 interface creation
+*** Create br0 interface
     - The following playbook =br0.yml= creates =br0= interface for
       host machine. It copies the block part described in the file to
       destination specified in path. If the file mentioned in path
@@ -62,7 +49,7 @@
  
 #+END_SRC
 
-*** eth0.yml creates eth0 interface on host machine.
+*** Create eth0 interface on host machine.
     Similar to above file,this also does the same work.Copies the
     content to =ifcfg-eth0= file. If it is empty just copies else it
     makes it empty and then copies code.
@@ -88,7 +75,7 @@
     
 #+END_SRC
 
-*** br1.yml Creates br1 interface on host machine and restart network
+*** Create br1 interface on host machine and restart network
     Copies the content in block part to the destination mentioned in
     =path=. Then network restart and shuts network-manager off
     and restarts.
@@ -131,9 +118,17 @@
 
 #+END_SRC
 
-*** ssh-keys.yml 
+*** Generate SSH-Keys on Host machine
      Generates ssh-keys in host machine and modifies =ssh_Config= file
-     to change =stricthostkeychecking= to =no=
+     to change =stricthostkeychecking= to =no=. 
+     
+     Public key of the host machine is required
+ 
+     1. for running ansible-playbooks on localhost 
+     2. to run playbooks on config-server.
+     3. To clone systems-model repo from bitbucket.org
+
+     
 #+BEGIN_SRC yml :tangle roles/basesetup/tasks/ssh-keys.yml
 ---
 - name: ssh-key generate
@@ -145,7 +140,7 @@
 
 #+END_SRC
 
-*** corkscrew_installation.yml 
+*** Install corkscrew
     Install corkscrew and its dependencies. Corckscrew is needed when
     network blocks outgoing =ssh= port over =the http_proxy=.
    
@@ -215,19 +210,22 @@
 
 #+END_SRC
 
-*** dependencies
+*** Dependencies
      Meta directory is to use other roles variables in local role.
 #+BEGIN_SRC yml :tangle roles/basesetup/meta/main.yml
 
 dependencies:
    - common-vars 
 
-
 #+END_SRC
 
-*** ssh-config 
+*** SSH configuration to clone to systems-model from bitbucket.org 
     This file contains all necessary data needed to clone a repository
     systems-model from http://bitbucket.org
+
+    The following file is needed when the network proxy is blocking
+    outgoing packets on port =22= and trying to clone a repository
+    over http,https and over ssh.
 
 #+BEGIN_SRC yml :tangle roles/basesetup/templates/ssh-config
 Host altssh.bitbucket.org
@@ -246,43 +244,42 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
     files.
 
 #+BEGIN_SRC yml :tangle roles/basesetup/handlers/main.yml
-
 - name: restart_ssh
   service: name=sshd state=restarted
 
 #+END_SRC
 
+*** Include all tasks files 
+    The following playbook contains included files. These included
+    files are already described above. So that, all in one
+    playbook. This playbooks sets up base machine. 
+#+BEGIN_SRC yml :tangle roles/basesetup/tasks/main.yml
+---
+# tasks file for basesetup
+- include: eth0.yml
+- include: br0.yml
+- include: br1.yml
+- include: ssh-keys.yml
+- include: corkscrew_installation.yml
+
+#+End_SRC
+    Above included playbooks  are  described clearly below.
+
 ** Setup Virtualization on host machine
 *** OpenVZ Virtualization
-**** main.yml
-     =main.yml= contains various included playbooks which are needed
-     for OpenVZ virtualization setup. Purpose of each included
-     playbook is described below the =main.yml= file.
-#+BEGIN_SRC yml :tangle roles/openvz/tasks/main.yml 
----
-# tasks file for openvz
-- include: clone.yml
-- include: install-openvz.yml
-- include: openvz-config.yml
-
-
-#+END_SRC
-
-**** clone.yml
+**** Clone cluster-setup-ovpl-centos repository
     - This script =clone.yml= installs =git=. 
     - Clones [[./https://github.com/vlead/cluster-setup-ovpl-centos][cluster-setup-ovpl-centos]] repository from
       http://github.com and saves it in destination mentioned in
       =dest= parameter. 
  
-#+BEGIN_SRC yml :tangle roles/openvz/tasks/clone.yml
-
+#+BEGIN_SRC yml :tangle roles/openvz/tasks/clone-cluster-setup-ovpl-centos.yml
 ---
     - name: installing git
       yum: name=git state=installed
       environment: "{{proxy_env}}"
       register: out
     - debug: var=out.stdout_lines 
-
 
     - name: changing directory to clone setup-ovpl-centos 
       git: 
@@ -296,7 +293,7 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
 
 #+END_SRC
 
-**** install-openvz
+**** Install OpenVZ
      Following script does 
      - Exports network proxy through a =proxy_env.http_proxy=
        variable. It is defined in [[./common-vars.org][common-vars]] file.
@@ -318,7 +315,6 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
           regexp: 'export https_proxy=""'
           replace: 'export https_proxy="{{proxy_env.https_proxy}}"'
 
-
     
     - name: running centos_prepare_ovpl.sh shell script
       command: ./centos_prepare_ovpl.sh
@@ -330,7 +326,7 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
 
 #+END_SRC
 
-**** openvz-config.yml
+**** Configure OpenVZ configuration files
      Following script does 
      - Sets to =net.ipv4.ip_forward = 1= to enable packet forwarding for
        IPv4
@@ -367,9 +363,15 @@ dependencies:
 
 #+END_SRC
 
-
- 
-
-
-
+**** Main tasks file
+     =main.yml= contains various included playbooks which are needed
+     for OpenVZ virtualization setup. Purpose of each included
+     playbook is described below the =main.yml= file.
+#+BEGIN_SRC yml :tangle roles/openvz/tasks/main.yml 
+---
+# tasks file for openvz
+- include: clone-cluster-setup-ovpl-centos.yml
+- include: install-openvz.yml
+- include: openvz-config.yml
+#+END_SRC
      
