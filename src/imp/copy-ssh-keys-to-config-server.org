@@ -14,7 +14,7 @@
 #+BEGIN_SRC yml :tangle roles/copy-ssh-keys-to-config-server/tasks/main.yml
 
    - name: Copy Public key of Host machine to config-server
-     shell: echo yes | sshpass -p {{vlead_user_password}} ssh-copy-id -i .ssh/id_rsa.pub root@{{ipaddress.config_server}}
+     shell: echo yes | sshpass -p {{container_root_password}} ssh-copy-id -i .ssh/id_rsa.pub root@{{ipaddress.config_server}}
      register: out
    - debug: var=out.stdout_lines
 
