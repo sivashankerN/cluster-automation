@@ -50,8 +50,7 @@
 #+END_SRC
 
 **** dependencies
-   
-
+This file includes common-vars role which contains all variables
 #+BEGIN_SRC yml :tangle roles/router/meta/main.yml
 
 dependencies:
@@ -60,7 +59,7 @@ dependencies:
 #+END_SRC
 
 **** Router's Public Network
-  This template contains publci network configuration of router with public ipaddress,net-mask,gateway and dns.
+  This template contains public network configuration of router with public ipaddress,net-mask,gateway and dns.
 
 #+BEGIN_SRC yml :tangle roles/router/templates/ifcfg-eth0
 

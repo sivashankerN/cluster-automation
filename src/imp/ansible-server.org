@@ -647,7 +647,14 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
      machine
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/site_run.yml
 
-- name: Checking syntax of site yml file using ansible
+
+- name: commenting lab_rsnapshot_server.yaml in site.yaml
+  replace:
+     path: systems-model/build/{{clustername}}/site.yaml
+     regexp: '^- include: lab_rsnapshot_server.yaml'
+     replace: '#- include: lab_rsnapshot_server.yaml'
+
+- name: Testing  site yml file using ansible
   command: ansible-playbook -i hosts --list-tasks --syntax-check site.yaml
   register: out
   args:
@@ -661,6 +668,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
   args:
      chdir: systems-model/build/{{clustername}}/
 - debug: var=out.stdout_lines
+
 
 
 #+end_src
