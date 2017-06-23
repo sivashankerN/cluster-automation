@@ -19,15 +19,25 @@ This document contains the initial scripts that are used to run  all the playboo
 
 #+end_src
 
+** Base Machine Setup
+
+#+BEGIN_SRC yml :tangle base-machine-setup.yml
+---
+- hosts: localhost
+  roles:
+     - basesetup
+     - openvz
+
+#+END_SRC
+
 ** network-configuration
+
 #+begin_src yml :tangle servers-network-configuration.yml
 
 ---
 - hosts: localhost
  # become: root
   roles:
-    - basesetup
-    - openvz
     - cluster
     - router
     - ansible
