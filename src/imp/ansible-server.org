@@ -830,7 +830,7 @@ dependencies:
      register: out
    - debug: var=out.stdout_lines
 
-   - name: Settiing proxy in config.sh to install openvz
+   - name: Setting proxy in config.sh to install MongoDB
      replace: 
           path: ~/cluster-setup-ovpl-centos/scripts/config.sh
           regexp: 'export http_proxy=""'

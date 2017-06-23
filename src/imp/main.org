@@ -45,7 +45,6 @@ This document contains the initial scripts that are used to run  all the playboo
 
 ** config-server
 #+begin_src yml :tangle config-server.yml
-
 ---
 - hosts: config-server
   become_user: root

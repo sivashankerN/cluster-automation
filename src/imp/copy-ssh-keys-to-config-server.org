@@ -7,20 +7,20 @@
 
 * Introduction
 * Implementation
-** copy-ssh-keys
-*** copy-ssh-keys
-**** main
+** Copy Public key of Host machine to config-server
+   Following playbook copies =Public key= of Host machine to
+   config-server, so that , next playbook is actually depened on this
+   playbook
 #+BEGIN_SRC yml :tangle roles/copy-ssh-keys-to-config-server/tasks/main.yml
 
-   - name: Copy public key
+   - name: Copy Public key of Host machine to config-server
      shell: echo yes | sshpass -p {{vlead_user_password}} ssh-copy-id -i .ssh/id_rsa.pub root@{{ipaddress.config_server}}
      register: out
    - debug: var=out.stdout_lines
 
-
 #+END_SRC
 
-**** dependencies
+** dependencies
 #+BEGIN_SRC yml :tangle roles/copy-ssh-keys-to-config-server/meta/main.yml
 dependencies:
     - common-vars
