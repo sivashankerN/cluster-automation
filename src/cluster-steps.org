@@ -1,4 +1,4 @@
-* Step-1: installing packages
+* Step-1: Installing packages
 
 #+BEGIN_EXAMPLE
 yum install epel-release -y
