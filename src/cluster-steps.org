@@ -1,0 +1,86 @@
+* step1: installing packages
+
+#+BEGIN_EXAMPLE
+yum install epel-release -y
+yum install git -y
+yum install ansible -y
+
+#+END_EXAMPLE
+
+* step2: Cloning Repository
+
+#+BEGIN_EXAMPLE
+
+git clone https://github.com/vlead/cluster-automation.git
+
+#+END_EXAMPLE
+ 
+
+* Step3: Run make
+
+#+BEGIN_EXAMPLE
+
+cd cluster-automation
+
+make
+
+#+END_EXAMPLE
+
+* Step4: Change directory and open variables files
+
+Make necessary changes in main.yml file.
+
+#+BEGIN_EXAMPLE
+
+cd build/code/imp/
+
+vim roles/common-vars/vars/main.yml
+
+#+END_EXAMPLE
+
+* step5: Update ip-address of config-server in host file
+
+#+BEGIN_EXAMPLE
+
+vim hosts
+
+#+END_EXAMPLE
+
+* step6: Generate ssh keys and set public-key in bitbucket to clone systems-model
+
+#+BEGIN_EXAMPLE
+
+ssh-keygen -t rsa
+
+#+END_EXAMPLE
+
+
+* step7: Copy host-machine public-key to localhost,127.0.0.1 
+
+#+BEGIN_EXAMPLE
+
+ssh-copy-id root@localhost
+ssh-copy-id root@127.0.0.1
+
+#+END_EXAMPLE
+
+
+* Step8: Run base-machine-setup.yml file
+
+#+BEGIN_EXAMPLE
+
+ansible-playbook -i hosts base-machine-setup.yml
+
+#+END_EXAMPLE 
+
+
+* Step9: Wait for machine to restart
+  
+* Step10: Run cluster.yml
+
+#+BEGIN_EXAMPLE
+
+ansible-playbook -i hosts cluster.yml
+
+#+END_EXAMPLE
+
