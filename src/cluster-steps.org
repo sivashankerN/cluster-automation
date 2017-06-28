@@ -1,4 +1,4 @@
-* step1: installing packages
+* Step-1: installing packages
 
 #+BEGIN_EXAMPLE
 yum install epel-release -y
@@ -7,7 +7,7 @@ yum install ansible -y
 
 #+END_EXAMPLE
 
-* step2: Cloning Repository and run make
+* Step-2: Cloning Repository and run make
 
 #+BEGIN_EXAMPLE
 
@@ -19,7 +19,7 @@ make
 
 #+END_EXAMPLE
  
-* Step3: Change directory and open variables files
+* Step-3: Change directory and open variables files
 
 Make necessary changes in main.yml file.
 
@@ -31,7 +31,7 @@ vim roles/common-vars/vars/main.yml
 
 #+END_EXAMPLE
 
-* step4: Update ip-address of config-server in host file
+* Step-4: Update ip-address of config-server in host file
 
 #+BEGIN_EXAMPLE
 
@@ -39,7 +39,7 @@ vim hosts
 
 #+END_EXAMPLE
 
-* step5: Generate ssh keys and set public-key in bitbucket to clone systems-model
+* Step-5: Generate ssh keys and set public-key in bitbucket to clone systems-model
 
 #+BEGIN_EXAMPLE
 
@@ -48,7 +48,7 @@ ssh-keygen -t rsa
 #+END_EXAMPLE
 
 
-* step6: Copy host-machine public-key to localhost,127.0.0.1 
+* Step-6: Copy host-machine public-key to localhost,127.0.0.1 
 
 #+BEGIN_EXAMPLE
 
@@ -58,7 +58,7 @@ ssh-copy-id root@127.0.0.1
 #+END_EXAMPLE
 
 
-* Step7: Run base-machine-setup.yml file and wait for machine to restart
+* Step-7: Run base-machine-setup.yml file and wait for machine to restart
 
 #+BEGIN_EXAMPLE
 
@@ -66,7 +66,7 @@ ansible-playbook -i hosts base-machine-setup.yml
 
 #+END_EXAMPLE 
 
-* Step8: Run cluster.yml
+* Step-8: Run cluster.yml
 
 #+BEGIN_EXAMPLE
 
