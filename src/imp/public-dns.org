@@ -38,7 +38,7 @@ dependencies:
 #+END_SRC
 
 **** Public-DNS Private Network
-   
+Configures the network-interface in /etc/sysconfig/network-scripts/ifcfg-eth1 of public-dns with the following fields    
 #+BEGIN_SRC yml :tangle roles/public-dns-server/templates/ifcfg-eth1
 
 DEVICE=eth1

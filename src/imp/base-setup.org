@@ -6,7 +6,7 @@
 #+OPTIONS: ^:nil
 
 * Introduction
-  This document describes the implementation/automation of base
+  This document describes the Automation of base
   machine's setup.
 * Implementation
 ** Base Machine Setup
@@ -16,10 +16,8 @@
    included in it in a sequential order
 *** Create br0 interface
     - The following playbook =br0.yml= creates =br0= interface for
-      host machine. It copies the block part described in the file to
-      destination specified in path. If the file mentioned in path
-      already contains data, then it replaced with the new data is
-      included in that file as mentioned below.
+      host machine.This Creates ifcfg-br0 file in /etc/sysconfig/network-scripts/ and adds data mentioned in block field
+    
 #+BEGIN_SRC yml :tangle roles/basesetup/tasks/br0.yml
 ---
    - copy:  
@@ -50,9 +48,7 @@
 #+END_SRC
 
 *** Create eth0 interface on host machine.
-    Similar to above file,this also does the same work.Copies the
-    content to =ifcfg-eth0= file. If it is empty just copies else it
-    makes it empty and then copies code.
+    Similar to above file,this also create ifcfg-eth0 file in /etc/sysconfig/network-scripts/ and adds data mentioned in block field to the file 
 #+BEGIN_SRC yml :tangle roles/basesetup/tasks/eth0.yml
 ---
    
@@ -78,7 +74,7 @@
 *** Create br1 interface on host machine and restart network
     Copies the content in block part to the destination mentioned in
     =path=. Then network restart and shuts network-manager off
-    and restarts.
+    and restarts.Now you can see the bridges on your machine using brctl show command.
 #+BEGIN_SRC yml :tangle roles/basesetup/tasks/br1.yml
 ---
 
@@ -146,7 +142,7 @@
    
     Purpose of installing corckscrew here is, need to clone
     [[https://bitbucket.org/vlead/systems-model][systems-model]] from bitbucket over =http+ssh=. In this case,
-    corkscrew is needed to clone repository.
+    corkscrew is needed to clone repository.Corkscrew resolves port problem while cloning repository using ssh
 
     *To run this ansible playbook/script, host machine's public_key
     =id_rsa.pub= should be added in [[https://bitbucket.org/vlead/systems-model/admin/access-keys/][access keys on bitbucket.org]]
@@ -211,7 +207,7 @@
 #+END_SRC
 
 *** Dependencies
-     Meta directory is to use other roles variables in local role.
+     Meta directory is to access other roles variables in local role.
 #+BEGIN_SRC yml :tangle roles/basesetup/meta/main.yml
 
 dependencies:
@@ -240,7 +236,7 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
 #+END_SRC
 
 *** Handlers 
-    Handlers comes into play when there is a notify statement in task
+    Handlers comes into play when there is a notify statement in any of the task
     files.
 
 #+BEGIN_SRC yml :tangle roles/basesetup/handlers/main.yml
@@ -250,9 +246,8 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
 #+END_SRC
 
 *** Include all tasks files 
-    The following playbook contains included files. These included
-    files are already described above. So that, all in one
-    playbook. This playbooks sets up base machine. 
+    The following playbook contains included task files. These include
+    files that are already described above.This playbooks sets up base machine. 
 #+BEGIN_SRC yml :tangle roles/basesetup/tasks/main.yml
 ---
 # tasks file for basesetup
@@ -263,7 +258,7 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
 - include: corkscrew_installation.yml
 
 #+End_SRC
-    Above included playbooks  are  described clearly below.
+ 
 
 ** Setup Virtualization on host machine
 *** OpenVZ Virtualization
@@ -354,7 +349,7 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
 #+END_SRC
 
 **** Dependencies
-      Dependencies are required when taking variables from other
+      Dependencies are required when accessing variables from other
       roles.
 #+BEGIN_SRC yml :tangle roles/openvz/meta/main.yml
 
@@ -366,7 +361,7 @@ dependencies:
 **** Main tasks file
      =main.yml= contains various included playbooks which are needed
      for OpenVZ virtualization setup. Purpose of each included
-     playbook is described below the =main.yml= file.
+     playbook is described above the =main.yml= file.
 #+BEGIN_SRC yml :tangle roles/openvz/tasks/main.yml 
 ---
 # tasks file for openvz

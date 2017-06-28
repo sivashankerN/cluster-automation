@@ -15,6 +15,7 @@
     Following script does
    - Creates a password for router and configures so that this container will be active with internet.
    - Also adds some firewall rules in iptables
+   - A temporary NATing rule to get internet in private network containers is included and This rule will be used to run playbooks of private and public dns nodes and router nodes smoothly
 #+BEGIN_SRC yml :tangle roles/router/tasks/main.yml
 ---
 
@@ -50,7 +51,7 @@
 #+END_SRC
 
 **** dependencies
-This file includes common-vars role which contains all variables
+This file includes common-vars role which contains all variables that are mentioned
 #+BEGIN_SRC yml :tangle roles/router/meta/main.yml
 
 dependencies:
@@ -60,6 +61,7 @@ dependencies:
 
 **** Router's Public Network
   This template contains public network configuration of router with public ipaddress,net-mask,gateway and dns.
+
 
 #+BEGIN_SRC yml :tangle roles/router/templates/ifcfg-eth0
 
@@ -90,7 +92,7 @@ NETMASK={{net_mask}}
 
 #+END_SRC
 
-  
+It means, the container is created with two interfaces eth0 and eth1. eth0 of the router is connected to br0 of host machine and eth1 of the router is connected to br1  
 
 
 
