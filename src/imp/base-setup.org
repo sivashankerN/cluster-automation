@@ -368,5 +368,7 @@ dependencies:
 - include: clone-cluster-setup-ovpl-centos.yml
 - include: install-openvz.yml
 - include: openvz-config.yml
+- name: Restarting
+  command: reboot
 #+END_SRC
      
