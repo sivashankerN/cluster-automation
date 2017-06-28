@@ -233,7 +233,7 @@ Description of these yml files will be explained below.
 
 **** Copy-sshkeys of ansible/config-server to containesr
      Copies ssh-key of ansible machine to all cluster containers
-     including ansible/config-server
+     including ansible/config-server.Enabling ssh access from ansible using key-based authentication
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/copy-sshkeys.yml
 ---
  - name: Copying ssh keys of ansible to localhost
