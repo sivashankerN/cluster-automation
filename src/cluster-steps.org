@@ -7,26 +7,19 @@ yum install ansible -y
 
 #+END_EXAMPLE
 
-* step2: Cloning Repository
+* step2: Cloning Repository and run make
 
 #+BEGIN_EXAMPLE
 
-git clone https://github.com/vlead/cluster-automation.git
-
-#+END_EXAMPLE
- 
-
-* Step3: Run make
-
-#+BEGIN_EXAMPLE
+git clone https://github.com/vlead/clust-er-automation.git
 
 cd cluster-automation
 
 make
 
 #+END_EXAMPLE
-
-* Step4: Change directory and open variables files
+ 
+* Step3: Change directory and open variables files
 
 Make necessary changes in main.yml file.
 
@@ -38,7 +31,7 @@ vim roles/common-vars/vars/main.yml
 
 #+END_EXAMPLE
 
-* step5: Update ip-address of config-server in host file
+* step4: Update ip-address of config-server in host file
 
 #+BEGIN_EXAMPLE
 
@@ -46,7 +39,7 @@ vim hosts
 
 #+END_EXAMPLE
 
-* step6: Generate ssh keys and set public-key in bitbucket to clone systems-model
+* step5: Generate ssh keys and set public-key in bitbucket to clone systems-model
 
 #+BEGIN_EXAMPLE
 
@@ -55,7 +48,7 @@ ssh-keygen -t rsa
 #+END_EXAMPLE
 
 
-* step7: Copy host-machine public-key to localhost,127.0.0.1 
+* step6: Copy host-machine public-key to localhost,127.0.0.1 
 
 #+BEGIN_EXAMPLE
 
@@ -65,7 +58,7 @@ ssh-copy-id root@127.0.0.1
 #+END_EXAMPLE
 
 
-* Step8: Run base-machine-setup.yml file
+* Step7: Run base-machine-setup.yml file and wait for machine to restart
 
 #+BEGIN_EXAMPLE
 
@@ -73,10 +66,7 @@ ansible-playbook -i hosts base-machine-setup.yml
 
 #+END_EXAMPLE 
 
-
-* Step9: Wait for machine to restart
-  
-* Step10: Run cluster.yml
+* Step8: Run cluster.yml
 
 #+BEGIN_EXAMPLE
 
