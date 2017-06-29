@@ -11,7 +11,7 @@ yum install ansible -y
 yum install emacs -y
 yum install sshpass -y
 
-ssh-keygen -t rsa -f id_rsa -q -P ""
+ssh-keygen -t rsa -f /root/.ssh/id_rsa -q -P ""
 sshpass -p $password ssh-copy-id root@localhost
 sshpass -p $password ssh-copy-id root@127.0.0.1
 
