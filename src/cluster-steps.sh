@@ -1,6 +1,6 @@
 #! /bin/bash
 
-$password=vlead123
+password=vlead123
 
 sed -i '/proxy=.*/d' /etc/yum.conf
 echo 'proxy=http://proxy.iiit.ac.in:8080' >> /etc/yum.conf
