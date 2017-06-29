@@ -7,13 +7,32 @@
 * Introduction
   This document is for automating the Virtual Labs cluster setup using
   ansible( Configuration management tool).
+* Problem 
+  The problem is [[https://bitbucket.org/vlead/systems-model/src/fd77adcc24ad68ce22194fad2224adb12c5219ab/src/bootstrapping.org?at%3Ddevelop&fileviewer%3Dfile-view-default][bootstrapping]] steps for cluster creation. For
+  creating VLEAD cluster( Infrastructure for hosting labs),
+  bootstrapping steps takes three to four days for VLEAD Employees( who
+  knows about VLEAD cluster) and for others it may take two to three
+  weeks.
+* Objective 
+  Automate the boostrapping steps and running [[https://bitbucket.org/vlead/systems-model/src/fd77adcc24ad?at%3Ddevelop][systems-model]] ansible
+  playbooks. So that eliminate more number of days to setup VLEAD
+  cluster and install cluster in minimal steps in one day.
 * Requirements 
   - [[./req/index.org][Requirements]]
 * Implementation
   - [[./imp/index.org][Implementation]]
-
-
-* Important links
-  - https://github.com/vlead/cluster-automation 
-  - https://github.com/vlead/cluster-setup-ovpl-centos
+* Important Repositories
+  The following repositories are used in automation steps
+  - [[https://github.com/vlead/cluster-automation][cluster-automation]]
+  - [[https://github.com/vlead/cluster-setup-ovpl-centos][cluster-setup-ovpl-centos]]
+  - [[https://bitbucket.org/vlead/systems-model/][Systems-model]]
   
+* Issues and Milestones
+  - [[https://github.com/vlead/cluster-automation/issues][Issues]]
+  - [[https://github.com/vlead/cluster-automation/milestones][Milestones]]
+
+* Branches in cluster-automation repository
+  - Master   - Production repo
+  - Develop  - Development repo ( similar to Master) 
+  - Features - Adding features
+

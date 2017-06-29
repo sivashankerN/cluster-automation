@@ -1,6 +1,0 @@
----
-- hosts: config-server
-  become_user: root
-
-  roles:
-    - config-server
