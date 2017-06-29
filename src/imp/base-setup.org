@@ -265,6 +265,7 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
 #+End_SRC
     Above included playbooks  are  described clearly below.
 
+
 ** Setup Virtualization on host machine
 *** OpenVZ Virtualization
 **** Clone cluster-setup-ovpl-centos repository
