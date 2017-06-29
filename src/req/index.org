@@ -9,5 +9,8 @@
   creation.
 * Requirements
 ** Req 1
-   - Automate cluster creation using ansible
+   Automate the boostrapping steps and running [[https://bitbucket.org/vlead/systems-model/src/fd77adcc24ad?at%3Ddevelop][systems-model]] ansible
+   playbooks.
+   
+   Implementation of this requirement is [[../imp/index.org][here]] 
    
