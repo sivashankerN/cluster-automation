@@ -1,9 +1,0 @@
----
-- hosts: localhost
-  become_user: root
-  
-  tasks:
-   - name: Copy public key
-     shell: echo yes | sshpass -p {{vlead_user_password}} ssh-copy-id -i .ssh/id_rsa.pub root@10.2.59.222
-     register: out
-   - debug: var=out.stdout_lines
