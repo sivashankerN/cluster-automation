@@ -152,8 +152,11 @@
 ---
 - name: Installing Development tools
   command: yum groupinstall "Development tools" -y
+  environment: "{{proxy_env}}"
+
 - name: Install python-pip
   yum: name=python-pip state=installed
+  environment: "{{proxy_env}}"
 
 - name: installing passlib
   pip: name=passlib
@@ -203,6 +206,7 @@
 
 - name: clonning systems-model repo from bitbucket
   git: repo="{{systems_model_repo}}" dest="{{systems_model_dest}}" version=develop
+  environment: "{{proxy_env}}"
 
 #+END_SRC
 
@@ -281,6 +285,7 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
          repo: "{{setup_ovpl_centos}}"
          dest: ~/cluster-setup-ovpl-centos
          version: master
+      environment: "{{proxy_env}}"
       ignore_errors: yes
       register: out
     - debug: var=out.stdout_lines
