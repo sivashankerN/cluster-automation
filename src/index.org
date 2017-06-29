@@ -21,11 +21,11 @@
   - [[./req/index.org][Requirements]]
 * Implementation
   - [[./imp/index.org][Implementation]]
-* Important Repository links
+* Important Repositories
   The following repositories are used in automation steps
-  - https://github.com/vlead/cluster-automation 
-  - https://github.com/vlead/cluster-setup-ovpl-centos
-  - https://bitbucket.org/vlead/systems-model/
+  - [[https://github.com/vlead/cluster-automation][cluster-automation]]
+  - [[https://github.com/vlead/cluster-setup-ovpl-centos][cluster-setup-ovpl-centos]]
+  - [[https://bitbucket.org/vlead/systems-model/][Systems-model]]
   
 * Issues and Milestones
   - [[https://github.com/vlead/cluster-automation/issues][Issues]]
