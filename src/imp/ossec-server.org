@@ -37,11 +37,10 @@ dependencies:
 #+END_SRC
 
 **** Ossec-server Private Network
-
-
+Configures the network-interface in
+/etc/sysconfig/network-scripts/ifcfg-eth1 of ossec-server with the
+following fields
 #+BEGIN_SRC yml :tangle roles/ossec-server/templates/ifcfg-eth1
-
-
 DEVICE=eth1
 BOOTPROTO=static
 ONBOOT=yes
@@ -49,8 +48,6 @@ NM_CONTROLLED=no
 IPADDR=10.100.1.3
 GATEWAY=10.100.1.1
 NETMASK={{net_mask}}
-
-
 #+END_SRC
 
     

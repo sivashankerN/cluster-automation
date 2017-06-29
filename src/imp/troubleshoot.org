@@ -1,0 +1,20 @@
+* Troubleshoot-1
+
+Error: Cannot install as this is not root
+
+solution: login as root
+
+su -
+
+then execute password
+
+
+* Troubleshoot-2
+
+Error: Couldn' resolve host 
+
+Solution : Your network contains proxy.
+
+please run with proxy and then test your internet
+
+

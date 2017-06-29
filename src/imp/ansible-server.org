@@ -132,6 +132,9 @@ dependencies:
      #+END_SRC
 
 **** Dependencies
+       Dependencies are required when accessing variables from other
+      roles.
+
 #+BEGIN_SRC yml :tangle roles/config-server/meta/main.yml
 dependencies:
    - common-vars
@@ -139,6 +142,7 @@ dependencies:
 #+END_SRC   
 
 **** Handlers
+handlers come into play when there any notify field in a particular playbook
 #+BEGIN_SRC yml :tangle roles/config-server/handlers/main.yml
 ---
 - name: restart_ssh
@@ -147,24 +151,40 @@ dependencies:
 #+END_SRC
 
 **** Variables
+Some of the variables that are only mentioned in this playbook comes under variables
 #+BEGIN_SRC yml :tangle roles/config-server/vars/main.yml
 export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_proxy="{{proxy_env.https_proxy}}"
 #+END_SRC
 *** Config-with-vlead-user
-    Configures all other containers from ansible machine using vlead
+    Configures all other containers from ansible machine through vlead
     user.
-**** Tasks/main.yml 
+**** installing sshpass 
+This script installs sshpass package for copying sshkeys  into other containers
+#+BEGIN_SRC yml: tangle roles/config-with-vlead-user/tasks/main.yml 
 
-#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/main.yml
 ---
  #tasks file for config-with-vlead-user
  - name: Installing sshpass
    yum: name=sshpass state=installed
    environment: "{{proxy_env}}"
- 
+
+#+END_SRC
+
+**** including yml files
+Description of these files can be found below
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/main.yml
  - include: copy-sshkeys.yml
  - include: setupemacs.yml
  - include: changes_in_makefile.yml
+#+END_SRC
+
+**** Running make in systems-model 
+This script describes 
+     - Running make in systems-model repository
+     - Keeping a backup file after running make
+     - Checking site.yaml file for syntax errors
+     - Including proxy-port in systems-models
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/main.yml
 
  - name: changing directory to systems-model and running make
    command: make
@@ -186,13 +206,19 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
    args:
     chdir: ~/systems-model/build/{{clustername}}
  - debug: var=out.stdout_lines
+
  - name: Changing proxy-port of system-model
    lineinfile:
         path: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml 
         regexp: '^proxy_port:.*'
         line: 'proxy_port: {{proxy_port}}'
         state: present
+                                                        
+#+END_SRC
 
+**** Including yml files
+Description of these yml files will be explained below.
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/main.yml
  - include: set-proxy.yml
  - include: dns-servers.yml
  - include: router.yml
@@ -203,12 +229,11 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
  - include: site_run.yml
  - include: site_run2.yml
  - include: site_run.yml
-                                                        
-
 #+END_SRC
+
 **** Copy-sshkeys of ansible/config-server to containesr
      Copies ssh-key of ansible machine to all cluster containers
-     including ansible/config-server
+     including ansible/config-server.Enabling ssh access from ansible using key-based authentication
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/copy-sshkeys.yml
 ---
  - name: Copying ssh keys of ansible to localhost
@@ -274,7 +299,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 #+END_SRC
 
 **** Set emacs and org-mode version
-     Downloads emacs and org-mode
+This script downloads emacs- org-mode
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/setupemacs.yml
 ---
 - name: Downloading Emacs
@@ -287,7 +312,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 #+END_SRC
 
 **** Modify makefile
-     Replaces some texts in system-model makefile
+     Replaces some texts in system-model makefile according to our configuration before running make
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/changes_in_makefile.yml
 ---
 
@@ -318,8 +343,9 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
       replace: "SMTP_SMART_HOST={{smtp_smart_host}}"
 #+END_SRC
 **** Set Proxy
-     This script sets-up proxy in all containers by appending proxy
-     line.
+     This script copies set-proxy.yml file from templates to
+     destination mentioned below and then runs playbook which sets up
+     proxy in all other containers
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/set-proxy.yml
 
 - name: Copying set-proxy template to ansible container
@@ -334,8 +360,9 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 #+END_SRC
 
 **** Dns Server
-     Configures dns-servers by executing playbooks =public_dns.yaml= and
-     =private_dns.yaml=
+     Configures dns-servers by executing playbooks =public_dns.yaml=
+     and =private_dns.yaml=.Before executing these playbooks
+     rsnapshot-client and ossec-client are commented.
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/dns-servers.yml
 ---
 - name: Commenting rsnapshot_client  in public_dns.yml
@@ -388,7 +415,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 **** Router
      This script changes/replace some text in yml files to create
      possible environment for executing router.yaml file and then
-     configures router.
+     configures router by executing router.yaml playbook.
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/router.yml
 
 ---
@@ -478,7 +505,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 
 **** Add knowhost keys of ads server to ansible's vlead
      This script appends ads-public-keys to vlead-user-ansible machine
-     known-hosts
+     known-hosts with some necessary changes
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/knownhost.yml
 ---
 - name: Get public key from ADS server from root account
@@ -673,6 +700,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 
 #+end_src
 **** Update cluster DNS ips in common-vars
+   Changes private-dns-ips and private-dns-zone in common-vars of systems-model
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/site_run2.yml
 
  - name: Replacing private-dns-ips
@@ -690,6 +718,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 
 #+END_SRC
 **** handlers
+ Comes into play when there is any notify field mentioned in tasks of this role
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/handlers/main.yml
 
 ---
@@ -712,7 +741,7 @@ dependencies:
 **** Set network proxy in server containers
      Template for setting-up proxy in all containers.  This template
      will be copied into the cluser's ansible container. From
-     cluster's ansible container, this playbook will be running.
+     cluster's ansible container, this playbook will run.This sets proxy in all other containers
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/templates/set-proxy.yml
 ---
 - hosts: router
