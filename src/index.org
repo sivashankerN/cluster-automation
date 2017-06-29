@@ -27,7 +27,7 @@
   - https://github.com/vlead/cluster-setup-ovpl-centos
   - https://bitbucket.org/vlead/systems-model/
   
-* Issues and Milestones on GitHub
+* Issues and Milestones
   - [[https://github.com/vlead/cluster-automation/issues][Issues]]
   - [[https://github.com/vlead/cluster-automation/milestones][Milestones]]
 
