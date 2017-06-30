@@ -1,15 +1,15 @@
 ---
 - name: Installing epel-release package
   yum: name=epel-release state=installed
-  environment: {{proxy_env}}
+  environment: "{{proxy_env}}"
 
 - name: Installing rootkit hunter 
   yum: name=rkhunter state=latest
-  environment: {{proxy_env}}
+  environment: "{{proxy_env}}"
 
 - name: Updating Dataabase of rkhunter
   command: rkhunter --update
-  environment: {{proxy_env}}
+  environment: "{{proxy_env}}"
 
 - name: Updating system file properites
   command: rkhunter --propupd
