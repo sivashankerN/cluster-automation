@@ -17,11 +17,11 @@
 - name: E-mail
   replace:
      path: /etc/rkhunter.conf
-     regexp: '^#MAIL-ON-WARNING .*'
+     regexp: '^#MAIL-ON-WARNING.*'
      replace: 'MAIL-ON-WARNING="shankar@vlabs.ac.in"'
 
 - name: Replacing
   replace:
      path: /etc/rkhunter.conf
-     regexp: '^#ALLOW_SSH_ROOT_USER.*'
+     regexp: '^ALLOW_SSH_ROOT_USER.*'
      replace: 'ALLOW_SSH_ROOT_USER=no'
