@@ -1,10 +1,10 @@
 #+Title: Bootstrapping steps
 #+Author: Systems Team
-#+SETUPFILE: ../org-templates/level-1.org
+#+SETUPFILE: ./org-templates/level-0.org
 #+TAGS: boilerplate(b)
 #+EXCLUDE_TAGS: boilerplate
 #+OPTIONS: ^:nil
-* step1: install git
+* Install git
 
 #+BEGIN_EXAMPLE
 
@@ -12,7 +12,7 @@ yum install git -y
 
 #+END_EXAMPLE
 
-* step2: Cloning Repository 
+* Cloning Repository 
 
 #+BEGIN_EXAMPLE
 
@@ -22,7 +22,7 @@ cd cluster-automation
 
 #+END_EXAMPLE
 
-* Step3: Open shell script and  change some variables
+* Open shell script and  change some variables
 
 #+BEGIN_EXAMPLE
 #! /bin/bash
@@ -46,7 +46,7 @@ sshpass -p $password ssh-copy-id root@127.0.0.1
 
 #+END_EXAMPLE
 
-* Step4: Run cluster.yml
+* Run cluster.yml
 #+BEGIN_EXAMPLE
 
 ansible-playbook -i hosts cluster.yml

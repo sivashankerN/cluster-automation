@@ -21,6 +21,8 @@
   - [[./req/index.org][Requirements]]
 * Implementation
   - [[./imp/index.org][Implementation]]
+* Bootstrapping steps
+  - [[./bootstrapping.org][Bootstrapping steps]]
 * Important Repositories
   The following repositories are used in automation steps
   - [[https://github.com/vlead/cluster-automation][cluster-automation]]
