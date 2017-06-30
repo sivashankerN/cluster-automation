@@ -4,7 +4,7 @@
 #+PROPERTY: results output
 #+PROPERTY: exports code
 #+OPTIONS: ^:nil
-#+SETUPFILE: ../../org-templates/level-2.org
+#+SETUPFILE: ../org-templates/level-1.org
 
 * Introduction
   The document describes the requirements, design and implementation
@@ -24,7 +24,7 @@
 * Requirements
   The functional requirements of the common-vars role are mentioned in
   the following sections.
-
+  
 ** Functional Requirements
    Define variables used by various other ansible roles.
 
@@ -147,8 +147,6 @@ setup_ovpl_centos: https://github.com/vlead/cluster-setup-ovpl-centos.git
 consumer_key: "949417609070-6sj9jiumei4k858v2vh39m1e2i8ngvrs.apps.googleusercontent.com"
 consumer_secret: "m15wAK1ln46LevbvuiRqenOh"
 
-
- 
 #+END_SRC
 
 
