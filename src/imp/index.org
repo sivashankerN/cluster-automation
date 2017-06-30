@@ -10,6 +10,7 @@
   creation.
 * Implementation
   - [[./spec/index.org][Cluster Specifications]]
+  - [[./common-vars.org][Common variables for this project]]
   - [[./base-setup.org][Base machine setup]]
   - [[./create-cluster-containers.org][Create cluster containers]]
   - [[./router.org][Router]]
