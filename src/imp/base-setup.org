@@ -205,7 +205,7 @@
 
 
 - name: clonning systems-model repo from bitbucket
-  git: repo="{{systems_model_repo}}" dest="{{systems_model_dest}}" version=cluster-automationxs
+  git: repo="{{systems_model_repo}}" dest="{{systems_model_dest}}" version=cluster-automation
   environment: "{{proxy_env}}"
 
 #+END_SRC
