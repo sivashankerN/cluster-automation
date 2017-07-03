@@ -883,11 +883,15 @@ dependencies:
      args: 
        chdir: ovpl/config/
    - name: COOKIE UPDATE
-   #  command: 'sed -i "s/COOKIE_SECRET.*/COOKIE_SECRET\"=\"jgsjdhgfcjgsdjgfvjhsdfhkjsdgk\"/g" ovpl/config/config.json'
      replace: 
        path: ovpl/config/config.json
        regexp: '"COOKIE_SECRET.*"'
        replace: '"COOKIE_SECRET": "jgsjdhgfcjgsdjgfvjhsdfhkjsdgk"'
+   - name: Set SERVER_IP in ADS config.json file
+     replace: 
+       path: ovpl/config/config.json
+       regexp: '"SERVER_IP":.*"'
+       replace: '"SERVER_IP": "10.100.1.9"'
 
    - name: Set POOLID and ADAPTER_TO_USE
      replace: 
