@@ -158,7 +158,7 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
 *** Config-with-vlead-user
     Configures all other containers from ansible machine through vlead
     user.
-**** installing sshpass 
+**** Installing sshpass 
 This script installs sshpass package for copying sshkeys  into other containers
 
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/main.yml 
@@ -171,7 +171,7 @@ This script installs sshpass package for copying sshkeys  into other containers
 
 #+END_SRC
 
-**** including yml files
+**** Including yml files
 Description of these files can be found below
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/main.yml
  - include: copy-sshkeys.yml
@@ -496,7 +496,7 @@ This script downloads emacs- org-mode
      machine
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/site_run.yml
 
-- name: Testing  site yml file using ansible
+- name: Syntax checking configure_servers.yml
   command: ansible-playbook -i hosts --list-tasks --syntax-check configure_servers.yaml
   register: out
   args:
@@ -504,7 +504,7 @@ This script downloads emacs- org-mode
 - debug: var=out.stdout_lines
 
 
-- name: Running all container server files using ansible
+- name: Configuring all server nodes
   command: ansible-playbook -i hosts  configure_servers.yaml
   register: out
   args:
@@ -512,13 +512,12 @@ This script downloads emacs- org-mode
 - debug: var=out.stdout_lines
 
 
-- name: Running site yml file using ansible
+- name: Installing clients ossec-client,rsyslog-client,nagios... in all server nodes
   command: ansible-playbook -i hosts  install_clients_in_servers.yaml
   register: out
   args:
      chdir: systems-model/build/{{clustername}}/
 - debug: var=out.stdout_lines
-
 
 
 #+end_src
@@ -527,28 +526,27 @@ This script downloads emacs- org-mode
    systems-model
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/site_run2.yml
 
- - name: Replacing private-dns-ips
+ - name: Updating private-dns-ips
    replace:
         path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml       
         regexp: 'private_dns_ips: none'
         replace: 'private_dns_ips: \n    - 10.100.1.5'
        
- - name: Replacing private-dns-zone
+ - name: Updating private-dns-zone
    replace:
         path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml       
         regexp: 'private_dns_zone: none'
         replace: 'private_dns_zone: "{{clustername}}.virtual-labs.ac.in {{clustername}}.vlabs.ac.in"'
 
 
- - name: Testing  site yml file using ansible
+ - name: Syntax checking configure_servers.yml
    command: ansible-playbook -i hosts --list-tasks --syntax-check configure_servers.yaml
    register: out
    args:
       chdir: systems-model/build/{{clustername}}/
  - debug: var=out.stdout_lines
 
-
- - name: Running all container server files using ansible
+ - name: Configuring all server nodes to set cluster dns ip in all server nodes
    command: ansible-playbook -i hosts  configure_servers.yaml
    register: out
    args:
