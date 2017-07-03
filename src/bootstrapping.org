@@ -25,6 +25,7 @@ cd cluster-automation
 * Open shell script and  change some variables
 
 #+BEGIN_EXAMPLE
+
 #! /bin/bash
 
 password=vlead123
@@ -40,9 +41,14 @@ yum install sshpass -y
 
 
 ssh-keygen -t rsa -f /root/.ssh/id_rsa -q -P ""
+
+echo 'StrictHostKeyChecking no' >> /etc/ssh/ssh_config
+
 sudo mknod -m 666 /dev/tty c 5 0
 sshpass -p $password ssh-copy-id root@localhost
 sshpass -p $password ssh-copy-id root@127.0.0.1
+
+
 
 #+END_EXAMPLE
 
