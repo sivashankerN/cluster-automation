@@ -225,7 +225,6 @@ Description of these yml files will be explained below.
  - include: ads.yml
  - include: knownhost.yml
  - include: cluster_site.yml
- - include: site_modify.yml
  - include: site_run.yml
  - include: site_run2.yml
  - include: site_run.yml
@@ -365,33 +364,6 @@ This script downloads emacs- org-mode
      rsnapshot-client and ossec-client are commented.
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/dns-servers.yml
 ---
-- name: Commenting rsnapshot_client  in public_dns.yml
-  lineinfile: 
-     path: systems-model/build/{{clustername}}/public_dns.yaml
-     regexp: '^    - rsnapshot_client'
-     line: '    # - rsnapshot_client'
-  
-
-- name: Commenting ossec_client in public_dns.yml
-  lineinfile: 
-     path: systems-model/build/{{clustername}}/public_dns.yaml
-     regexp: '^    - ossec_client'
-     line: '    # - ossec_client'
-
-- name: Commenting rsnapshot_client in private_dns.yml
-  lineinfile: 
-     path: systems-model/build/{{clustername}}/private_dns.yaml
-     regexp: '^    - rsnapshot_client'
-     line: '    # - rsnapshot_client'
-  
-
-- name: Commenting ossec_client in private_dns.yml
-  lineinfile: 
-     path: systems-model/build/{{clustername}}/private_dns.yaml
-     regexp: '^    - ossec_client'
-     line: '    # - ossec_client'
-
-
 - name: Running public_dns.yml playbook
   command: ansible-playbook -i hosts public_dns.yaml
   #environment: "{{proxy_env}}"
@@ -419,19 +391,6 @@ This script downloads emacs- org-mode
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/router.yml
 
 ---
-- name: Commenting rsnapshot_client in router.yaml
-  replace:
-     path: systems-model/build/{{clustername}}/router.yaml
-     regexp: '^    - rsnapshot_client'
-     replace: '    # - rsnapshot_client'
-
-
-- name: Commenting ossec_client in router.yaml
-  replace:
-     path: systems-model/build/{{clustername}}/router.yaml
-     regexp: '^    - ossec_client'
-     replace: '    # - ossec_client'
-
 - name: Running router.yaml playbook
   command: ansible-playbook -i hosts router.yaml
   environment: "{{proxy_env}}"
@@ -537,136 +496,6 @@ This script downloads emacs- org-mode
    shell: 'cp main.yml backup-main-$(date +%d-%b-%Y).yml'
    args:
      chdir: systems-model/build/{{clustername}}/roles/common_vars/vars/ 
-
-
- - name: Commenting  ossec-server.yaml file in site.yaml
-   replace:
-        path: systems-model/build/{{clustername}}/site.yaml     
-        regexp: '^- include: ossec_server.yaml'
-        replace: '#- include: ossec_server.yaml'
- 
-#+end_src
-
-**** Comment some of the lines in systems-model roles
-     Modifies all yaml files to create necessary environment for
-     runnning site.yaml script
-#+begin_src yml :tangle roles/config-with-vlead-user/tasks/site_modify.yml
-
- - name: commenting  ossec-client in ossec-server
-   replace: 
-      path: systems-model/build/{{clustername}}/ossec_server.yaml
-      regexp: '^    - ossec_client'
-      replace: '    # - ossec_client'
- 
- - name: Uncommenting rsnapshot-client in ossec-server 
-   replace: 
-      path: systems-model/build/{{clustername}}/ossec_server.yaml
-      regexp: '^    # - rsnapshot_client'
-      replace: '    - rsnapshot_client'
- 
- - name: commenting ossec-client in config-server
-   replace: 
-      path: systems-model/build/{{clustername}}/config_server.yaml
-      regexp: '^    - ossec_client'
-      replace: '    # - ossec_client'
- 
- - name: Uncommenting rsnapshot-client in config-server 
-   replace: 
-      path: systems-model/build/{{clustername}}/config_server.yaml
-      regexp: '^    # - rsnapshot_client'
-      replace: '    - rsnapshot_client'
-
- 
- - name: commenting oseec-client in nagios-server
-   replace: 
-      path: systems-model/build/{{clustername}}/nagios_server.yaml
-      regexp: '^    - ossec_client'
-      replace: '    # - ossec_client'
- 
- - name: Uncommenting rsnapshot-client in nagios-server
-   replace: 
-      path: systems-model/build/{{clustername}}/nagios_server.yaml
-      regexp: '^    # - rsnapshot_client'
-      replace: '    - rsnapshot_client'
-
-
- - name: commenting oseec-client in public-dns-server
-   replace: 
-      path: systems-model/build/{{clustername}}/public_dns.yaml
-      regexp: '^    - ossec_client'
-      replace: '    # - ossec_client'
- 
- - name: Uncommenting rsnapshot-client in public-dns-server
-   replace: 
-      path: systems-model/build/{{clustername}}/public_dns.yaml
-      regexp: '^    # - rsnapshot_client'
-      replace: '    - rsnapshot_client'
-
- - name: commenting oseec-client in reverseproxy-server
-   replace: 
-      path: systems-model/build/{{clustername}}/reverseproxy_server.yaml
-      regexp: '^    - ossec_client'
-      replace: '    # - ossec_client'
- 
- - name: Uncommenting rsnapshot-client in reverseproxy-server
-   replace: 
-      path: systems-model/build/{{clustername}}/reverseproxy_server.yaml
-      regexp: '^    # - rsnapshot_client'
-      replace: '    - rsnapshot_client'
-
-
- - name: commenting oseec-client in router
-   replace: 
-      path: systems-model/build/{{clustername}}/router.yaml
-      regexp: '^    - ossec_client'
-      replace: '    # - ossec_client'
- 
- - name: Uncommenting rsnapshot-client in router
-   replace: 
-      path: systems-model/build/{{clustername}}/router.yaml
-      regexp: '^    # - rsnapshot_client'
-      replace: '    - rsnapshot_client'
-
-
- - name: commenting oseec-client in private-dns-server
-   replace: 
-      path: systems-model/build/{{clustername}}/private_dns.yaml
-      regexp: '^    - ossec_client'
-      replace: '    # - ossec_client'
- 
- - name: Uncommenting rsnapshot-client in private-dns-server
-   replace: 
-      path: systems-model/build/{{clustername}}/private_dns.yaml
-      regexp: '^    # - rsnapshot_client'
-      replace: '    - rsnapshot_client'
-
-
- - name: commenting oseec-client in rsnapshot-server
-   replace: 
-      path: systems-model/build/{{clustername}}/rsnapshot_server.yaml
-      regexp: '^    - ossec_client'
-      replace: '    # - ossec_client'
- 
- - name: Uncommenting rsnapshot-client in rsnapshot-server
-   replace: 
-      path: systems-model/build/{{clustername}}/rsnapshot_server.yaml
-      regexp: '^    # - rsnapshot_client'
-      replace: '    - rsnapshot_client'
-
-
- - name: commenting oseec-client in rsyslog-server
-   replace: 
-      path: systems-model/build/{{clustername}}/rsyslog_server.yaml
-      regexp: '^    - ossec_client'
-      replace: '    # - ossec_client'
- 
- - name: Uncommenting rsnapshot-client in rsyslog-server
-   replace: 
-      path: systems-model/build/{{clustername}}/rsyslog_server.yaml
-      regexp: '^    # - rsnapshot_client'
-      replace: '    - rsnapshot_client'
-
-
 #+end_src
 
 **** Syntax check systems-model site.yaml and run site.yaml
@@ -674,15 +503,16 @@ This script downloads emacs- org-mode
      machine
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/site_run.yml
 
-
-- name: commenting lab_rsnapshot_server.yaml in site.yaml
-  replace:
-     path: systems-model/build/{{clustername}}/site.yaml
-     regexp: '^- include: lab_rsnapshot_server.yaml'
-     replace: '#- include: lab_rsnapshot_server.yaml'
-
 - name: Testing  site yml file using ansible
-  command: ansible-playbook -i hosts --list-tasks --syntax-check site.yaml
+  command: ansible-playbook -i hosts --list-tasks --syntax-check configure_servers.yaml
+  register: out
+  args:
+     chdir: systems-model/build/{{clustername}}/
+- debug: var=out.stdout_lines
+
+
+- name: Running all container server files using ansible
+  command: ansible-playbook -i hosts  configure_servers.yaml
   register: out
   args:
      chdir: systems-model/build/{{clustername}}/
@@ -690,7 +520,7 @@ This script downloads emacs- org-mode
 
 
 - name: Running site yml file using ansible
-  command: ansible-playbook -i hosts  site.yaml
+  command: ansible-playbook -i hosts  install_clients_in_servers.yaml
   register: out
   args:
      chdir: systems-model/build/{{clustername}}/
