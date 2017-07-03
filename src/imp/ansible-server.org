@@ -160,7 +160,8 @@ export_proxy:  export http_proxy="{{proxy_env.http_proxy}}" && export https_prox
     user.
 **** installing sshpass 
 This script installs sshpass package for copying sshkeys  into other containers
-#+BEGIN_SRC yml: tangle roles/config-with-vlead-user/tasks/main.yml 
+
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/main.yml 
 
 ---
  #tasks file for config-with-vlead-user
@@ -198,13 +199,6 @@ This script describes
    register: out
    args:
     chdir: ~/systems-model/
- - debug: var=out.stdout_lines
-
- - name: checking syntax of ansible playbook
-   command: ansible-playbook -i hosts --list-tasks --syntax-check site.yaml
-   register: out
-   args:
-    chdir: ~/systems-model/build/{{clustername}}
  - debug: var=out.stdout_lines
 
  - name: Changing proxy-port of system-model
