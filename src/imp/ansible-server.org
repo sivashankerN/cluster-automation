@@ -546,6 +546,21 @@ This script downloads emacs- org-mode
         replace: 'private_dns_zone: "{{clustername}}.virtual-labs.ac.in {{clustername}}.vlabs.ac.in"'
 
 
+ - name: Testing  site yml file using ansible
+   command: ansible-playbook -i hosts --list-tasks --syntax-check configure_servers.yaml
+   register: out
+   args:
+      chdir: systems-model/build/{{clustername}}/
+ - debug: var=out.stdout_lines
+
+
+ - name: Running all container server files using ansible
+   command: ansible-playbook -i hosts  configure_servers.yaml
+   register: out
+   args:
+      chdir: systems-model/build/{{clustername}}/
+ - debug: var=out.stdout_lines
+ 
 #+END_SRC
 **** handlers
  Comes into play when there is any notify field mentioned in tasks of this role
