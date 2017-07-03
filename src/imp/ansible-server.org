@@ -227,7 +227,6 @@ Description of these yml files will be explained below.
  - include: cluster_site.yml
  - include: site_run.yml
  - include: site_run2.yml
- - include: site_run.yml
 #+END_SRC
 
 **** Copy-sshkeys of ansible/config-server to containesr
@@ -530,7 +529,8 @@ This script downloads emacs- org-mode
 
 #+end_src
 **** Update cluster DNS ips in common-vars
-   Changes private-dns-ips and private-dns-zone in common-vars of systems-model
+   Changes private-dns-ips and private-dns-zone in common-vars of
+   systems-model
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/site_run2.yml
 
  - name: Replacing private-dns-ips
