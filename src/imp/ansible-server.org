@@ -503,6 +503,7 @@ This script downloads emacs- org-mode
      chdir: systems-model/build/{{clustername}}/
 - debug: var=out.stdout_lines
 
+#this step needs to be changed and done parallel
 
 - name: Configuring all server nodes
   command: ansible-playbook -i hosts  configure_servers.yaml
