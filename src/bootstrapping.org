@@ -59,3 +59,16 @@ ansible-playbook -i hosts cluster.yml
 
 #+END_EXAMPLE
 
+* Configuring servers parallely
+Run the following playbooks in seperate terminals parallely
+#+BEGIN_EXAMPLE
+
+ansible-playbook -i hosts rsnapshot_server.yml
+ansible-playbook -i hosts config_server.yml
+ansible-playbook -i hosts router_server.yml
+ansible-playbook -i hosts publicdns_server.yml
+ansible-playbook -i hosts privatedns_server.yml
+ansible-playbook -i hosts rsyslog_server.yml
+ansible-playbook -i hosts reverseproxy_server.yml
+ansible-playbook -i hosts nagios_server.yml
+#+END_EXAMPLE
