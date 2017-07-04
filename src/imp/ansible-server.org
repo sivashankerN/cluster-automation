@@ -465,10 +465,10 @@ This script downloads emacs- org-mode
 - debug: var=out.stdout_lines
 
 - name: Waiting for servers to configure
-  pause: minutes=10
+  pause: minutes=15
 
 - name: Installing clients ossec-client,rsyslog-client,nagios... in all server nodes
-  command: ansible-playbook -i hosts install_clients_in_rsnapshot_server.yaml & ansible-playbook -i hosts install_clients_in_config_server.yaml & ansible-playbook -i hosts install_clients_in_router_server.yaml & ansible-playbook -i hosts install_clients_in_public_dns.yaml & ansible-playbook -i hosts install_clients_in_private_dns.yaml & ansible-playbook -i hosts install_clients_in_rsyslog_server.yaml & ansible-playbook -i hosts install_clients_in_reverseproxy_server.yaml & ansible-playbook -i hosts install_clients_in_nagios_server.yaml
+  command: ansible-playbook -i hosts install_clients_in_rsnapshot_server.yaml & ansible-playbook -i hosts install_clients_in_config_server.yaml & ansible-playbook -i hosts install_clients_in_router_server.yaml & ansible-playbook -i hosts install_clients_in_public_dns.yaml & ansible-playbook -i hosts install_clients_in_private_dns.yaml & ansible-playbook -i hosts install_clients_in_rsyslog_server.yaml & ansible-playbook -i hosts install_clients_in_reverseproxy_server.yaml & ansible-playbook -i hosts install_clients_in_nagios_server.yaml &
   register: out
   args:
      chdir: systems-model/build/{{clustername}}/
