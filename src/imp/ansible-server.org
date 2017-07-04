@@ -219,8 +219,8 @@ Description of these yml files will be explained below.
  - include: ads.yml
  - include: knownhost.yml
  - include: cluster_site.yml
- - include: site_run.yml
- - include: site_run2.yml
+# - include: site_run.yml
+ #- include: site_run2.yml
 #+END_SRC
 
 **** Copy-sshkeys of ansible/config-server to containesr
