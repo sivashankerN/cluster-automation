@@ -214,8 +214,6 @@ This script describes
 Description of these yml files will be explained below.
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/main.yml
  - include: set-proxy.yml
- - include: dns-servers.yml
- - include: router.yml
  - include: ads.yml
  - include: knownhost.yml
  - include: cluster_site.yml
@@ -351,52 +349,6 @@ This script downloads emacs- org-mode
 - debug: var=out.stdout_lines
 #+END_SRC
 
-**** Dns Server
-     Configures dns-servers by executing playbooks =public_dns.yaml=
-     and =private_dns.yaml=.Before executing these playbooks
-     rsnapshot-client and ossec-client are commented.
-#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/dns-servers.yml
----
-- name: Running public_dns.yml playbook
-  command: ansible-playbook -i hosts public_dns.yaml
-  #environment: "{{proxy_env}}"
-  register: out
-  args: 
-    chdir: systems-model/build/{{clustername}}/
-- debug: 
-    var: out
-
-
-- name: Running private_dns.yml playbook
-  command: ansible-playbook -i hosts private_dns.yaml
-  #environment: "{{proxy_env}}"
-  register: out
-  args: 
-    chdir: systems-model/build/{{clustername}}/
-- debug: 
-     var: out
-
-#+END_SRC
-**** Router
-     This script changes/replace some text in yml files to create
-     possible environment for executing router.yaml file and then
-     configures router by executing router.yaml playbook.
-#+begin_src yml :tangle roles/config-with-vlead-user/tasks/router.yml
-
----
-- name: Running router.yaml playbook
-  command: ansible-playbook -i hosts router.yaml
-  environment: "{{proxy_env}}"
-  register: out
-  args:
-    chdir: systems-model/build/{{clustername}}/
-- debug:
-    var: out
-
-
-
-#+end_src
-
 **** ADS
      Configures ads-server.
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/ads.yml  
@@ -491,8 +443,8 @@ This script downloads emacs- org-mode
      chdir: systems-model/build/{{clustername}}/roles/common_vars/vars/ 
 #+end_src
 
-**** Syntax check systems-model site.yaml and run site.yaml
-     This script runs =site.yaml= file in vlead user on ansible
+**** Syntax check systems-model configure_servers.yaml and run configure_servers.yaml
+     This script runs =configure_servers.yaml= file in vlead user on ansible
      machine
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/site_run.yml
 
@@ -506,12 +458,14 @@ This script downloads emacs- org-mode
 #this step needs to be changed and done parallel
 
 - name: Configuring all server nodes
-  command: ansible-playbook -i hosts  rsnapshot_server.yaml & ansible-playbook -i hosts config_server.yaml & ansible-playbook -i hosts  router.yaml & ansible-playbook -i hosts  public_dns.yaml & ansible-playbook -i hosts  private_dns.yaml & ansible-playbook -i hosts  rsyslog_server.yaml & ansible-playbook -i hosts  reverseproxy_server.yaml & ansible-playbook -i hosts  nagios_server.yaml 
+  shell: ansible-playbook -i hosts rsnapshot_server.yaml & ansible-playbook -i hosts config_server.yaml & ansible-playbook -i hosts router.yaml & ansible-playbook -i hosts public_dns.yaml & ansible-playbook -i hosts private_dns.yaml & ansible-playbook -i hosts rsyslog_server.yaml & ansible-playbook -i hosts reverseproxy_server.yaml & ansible-playbook -i hosts nagios_server.yaml &
   register: out
   args:
      chdir: systems-model/build/{{clustername}}/
 - debug: var=out.stdout_lines
 
+- name: Waiting for servers to configure
+  pause: minutes=10
 
 - name: Installing clients ossec-client,rsyslog-client,nagios... in all server nodes
   command: ansible-playbook -i hosts  install_clients_in_servers.yaml
