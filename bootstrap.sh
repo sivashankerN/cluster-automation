@@ -78,7 +78,7 @@ sed -i "s|net_mask:.*|net_mask: $NET_MASK|g" "$COMMONVARS_PATH"
 sed -i "s|corkscrew_proxy:.*|corkscrew_proxy: $CORKSCREW_PROXY|g" "$COMMONVARS_PATH"
 sed -i "/[config-server]/{ n; s/10.2.*/$CONFIG_SERVER_IP/; }" $HOST_PATH
 
-sed -i "|^ansible-playbook .*|d" /etc/rc.local
+sed -i "/^ansible-playbook .*/d" /etc/rc.local
 echo "cd ~/cluster-automation/build/code/imp/" >> /etc/rc.local
 echo "ansible-playbook -i hosts cluster.yml" >> /etc/rc.local
 
@@ -89,7 +89,8 @@ read -p "Have you added host machine's public key ( ~/.ssh/id_rsa.pub) in bitbuc
 echo "Please press Y or y to continue."
 if [[ ! $REPLY =~ ^[Yy]$ ]]
 then
-cd ~/cluster-automation/build/code/imp/ && ansible-playbook -i hosts base-machine-setup.yml 
-fi
-echo "Please press Y or y to setup base machine"
+ echo "You Pressed wrong key please run make again and press correct key (y or Y)"
+else
+ cd ~/cluster-automation/build/code/imp/ && ansible-playbook -i hosts base-machine-setup.yml 
+fi     
     
