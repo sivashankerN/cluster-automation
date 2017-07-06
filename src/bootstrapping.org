@@ -82,7 +82,6 @@ sed -i "s|subnet:.*|subnet: $SUBNET|g" "$COMMONVARS_PATH"
 sed -i "s|internet_gateway:.*|internet_gateway: $INTERNET_GATEWAY|g" "$COMMONVARS_PATH"
 sed -i "s|net_mask:.*|net_mask: $NET_MASK|g" "$COMMONVARS_PATH"
 sed -i "s|corkscrew_proxy:.*|corkscrew_proxy: $CORKSCREW_PROXY|g" "$COMMONVARS_PATH"
-sed -i "s|[config-server]\n*|hello|g" $HOST_PATH
 sed -i "/[config-server]/{ n; s/10.2.*/$CONFIG_SERVER_IP/; }" $HOST_PATH
 
 

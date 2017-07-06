@@ -102,21 +102,21 @@ Variables for cluster are defined in the following section
 ---
 # vars file for common
 
-http_proxy: http://proxy.iiit.ac.in:8080 
-https_proxy: http://proxy.iiit.ac.in:8080
+http_proxy_name: http://proxy.iiit.ac.in:8080 
+https_proxy_name: http://proxy.iiit.ac.in:8080
 
 hostmachine_ip: 10.2.59.2
 router_ip: 10.2.59.223  
 config_server_ip: 10.2.59.224
 
-dns1: 10.4.12.160
-dns2: 10.4.12.220
+dns1_server: 10.4.12.160
+dns2_server: 10.4.12.220
 
 
 
 proxy_env: 
-   http_proxy: "{{http_proxy}}" 
-   https_proxy: "{{https_proxy}}"
+   http_proxy: "{{http_proxy_name}}" 
+   https_proxy: "{{https_proxy_name}}"
 
 export_proxy: export http_proxy={{proxy_env.http_proxy}} &&  export https_proxy={{proxy_env.https_proxy}}
 
@@ -145,8 +145,8 @@ ipaddress:
 clustername: base8
 
 dnsaddress:
-      dns1: "{dns1}}"
-      dns2: "{{dns2}}"
+      dns1: "{dns1_server}}"
+      dns2: "{{dns2_server}}"
 
 subnet: 10.100.0.0/22
 internet_gateway: 10.2.56.1
