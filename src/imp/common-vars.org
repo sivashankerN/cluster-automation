@@ -98,11 +98,25 @@ Variables for cluster are defined in the following section
 
 #+BEGIN_SRC yml :tangle roles/common-vars/vars/main.yml
 
+
 ---
 # vars file for common
+
+http_proxy: http://proxy.iiit.ac.in:8080 
+https_proxy: http://proxy.iiit.ac.in:8080
+
+hostmachine_ip: 10.2.59.2
+router_ip: 10.2.59.223  
+config_server_ip: 10.2.59.224
+
+dns1: 10.4.12.160
+dns2: 10.4.12.220
+
+
+
 proxy_env: 
-   http_proxy: http://proxy.iiit.ac.in:8080 
-   https_proxy: http://proxy.iiit.ac.in:8080
+   http_proxy: {{http_proxy}} 
+   https_proxy: {{https_proxy}}
 
 export_proxy: export http_proxy={{proxy_env.http_proxy}} &&  export https_proxy={{proxy_env.https_proxy}}
 
@@ -124,15 +138,15 @@ systems_model_repo: git@altssh.bitbucket.org:vlead/systems-model.git
 systems_model_dest: "{{corkscrew_dest}}/systems-model"
 
 ipaddress:
-     hostmachine: 10.2.59.2
-     router: 10.2.59.223  
-     config_server: 10.2.59.224
+     hostmachine: {{hostmachine_ip}}
+     router: {{router_ip}}
+     config_server: {{config_server_ip}}
 
 clustername: base8
 
 dnsaddress:
-      dns1: 10.4.12.160
-      dns2: 10.4.12.220
+      dns1: {dns1}}
+      dns2: {{dns2}}
 
 subnet: 10.100.0.0/22
 internet_gateway: 10.2.56.1
@@ -146,6 +160,7 @@ setup_ovpl_centos: https://github.com/vlead/cluster-setup-ovpl-centos.git
 
 consumer_key: "949417609070-6sj9jiumei4k858v2vh39m1e2i8ngvrs.apps.googleusercontent.com"
 consumer_secret: "m15wAK1ln46LevbvuiRqenOh"
+
 
 #+END_SRC
 
