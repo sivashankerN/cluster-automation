@@ -10,9 +10,11 @@ all: build
 
 init: 
 	./init.sh
+	yum install emacs -y
 
 build: init
 	make -f tangle-make -k all
+	sh bootstrap.sh
 
 clean:	
 	make -f tangle-make clean
