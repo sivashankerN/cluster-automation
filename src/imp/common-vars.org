@@ -145,7 +145,7 @@ ipaddress:
 clustername: base8
 
 dnsaddress:
-      dns1: "{dns1_server}}"
+      dns1: "{{dns1_server}}"
       dns2: "{{dns2_server}}"
 
 subnet: 10.100.0.0/22
