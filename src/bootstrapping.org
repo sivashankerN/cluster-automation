@@ -28,7 +28,7 @@ cd cluster-automation
 
 #! /bin/bash
 
-#PASSWORD_HOSTMACHINE=vlead123
+PASSWORD_HOSTMACHINE=vlead123
 HTTP_PROXY="http://proxy.iiit.ac.in:8080"
 HTTPS_PROXY="http://proxy.iiit.ac.in:8080"
 HOSTMACHINE_IP=10.4.59.220
@@ -45,19 +45,24 @@ INTERNET_GATEWAY=
 NET_MASK=
 CORKSCREW_PROXY=
 
-COMMONVARS_PATH=build/code/imp/roles/common-vars/vars/main.yml
-
+COMMONVARS_PATH=cluster-automation/build/code/imp/roles/common-vars/vars/main.yml
+HOST_PATH=~/internship/cluster-automation/build/code/imp/hosts
 
 sed -i '/proxy=.*/d' /etc/yum.conf
-echo 'proxy=$HTTP_PROXY' >> /etc/yum.conf
+echo "proxy=$HTTP_PROXY" >> /etc/yum.conf
+
 
 yum install epel-release -y
 yum install ansible -y
 yum install emacs -y
 yum install sshpass -y
 
+
 ssh-keygen -t rsa -f /root/.ssh/id_rsa -q -P ""
+
 echo 'StrictHostKeyChecking no' >> /etc/ssh/ssh_config
+
+sudo mknod -m 666 /dev/tty c 5 0
 sshpass -p $PASSWORD_HOSTMACHINE ssh-copy-id root@localhost
 sshpass -p $PASSWORD_HOSTMACHINE ssh-copy-id root@127.0.0.1
 
@@ -77,6 +82,8 @@ sed -i "s|subnet:.*|subnet: $SUBNET|g" "$COMMONVARS_PATH"
 sed -i "s|internet_gateway:.*|internet_gateway: $INTERNET_GATEWAY|g" "$COMMONVARS_PATH"
 sed -i "s|net_mask:.*|net_mask: $NET_MASK|g" "$COMMONVARS_PATH"
 sed -i "s|corkscrew_proxy:.*|corkscrew_proxy: $CORKSCREW_PROXY|g" "$COMMONVARS_PATH"
+sed -i "s|[config-server]\n*|hello|g" $HOST_PATH
+sed -i "/[config-server]/{ n; s/10.2.*/$CONFIG_SERVER_IP/; }" $HOST_PATH
 
 
 #+END_SRC
