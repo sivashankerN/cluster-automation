@@ -48,6 +48,8 @@ yum install ansible -y
 yum install emacs -y
 yum install sshpass -y
 
+echo 'Please press "n" if keys are already generated'
+
 ssh-keygen -t rsa -f /root/.ssh/id_rsa -q -P ""
 
 echo 'StrictHostKeyChecking no' >> /etc/ssh/ssh_config
@@ -74,5 +76,18 @@ sed -i "s|net_mask:.*|net_mask: $NET_MASK|g" "$COMMONVARS_PATH"
 sed -i "s|corkscrew_proxy:.*|corkscrew_proxy: $CORKSCREW_PROXY|g" "$COMMONVARS_PATH"
 sed -i "/[config-server]/{ n; s/10.2.*/$CONFIG_SERVER_IP/; }" $HOST_PATH
 
+sed -i "|^ansible-playbook .*|d" /etc/rc.local
+echo "cd ~/cluster-automation/build/code/imp/" >> /etc/rc.local
+echo "ansible-playbook -i hosts cluster.yml" >> /etc/rc.local
 
+cat ~/.ssh/id_rsa.pub
 
+echo "Please add above diplayed key in systems-model repository."
+read -p "Have you added host machine's public key ( ~/.ssh/id_rsa.pub) in bitbucket.org in systems-model repository " -n 1 -r
+echo "Please press Y or y to continue."
+if [[ ! $REPLY =~ ^[Yy]$ ]]
+then
+cd ~/cluster-automation/build/code/imp/ && ansible-playbook -i hosts base-machine-setup.yml 
+fi
+echo "Please press Y or y to setup base machine"
+    
