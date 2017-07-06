@@ -10,6 +10,7 @@ all: build
 
 init: 
 	./init.sh
+	yum install emacs -y
 
 build: init
 	make -f tangle-make -k all
