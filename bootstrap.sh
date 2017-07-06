@@ -20,7 +20,7 @@ INTERNET_GATEWAY=10.2.56.1
 NET_MASK=255.255.252.0
 
 ## Set Root password of cluster containers
-CONTAINER_ROOT_PASSWORD=rootpassword   
+CONTAINER_ROOT_PASSWORD=rootpassword
 
 ## Set name of the cluster
 CLUSTERNAME=base8
