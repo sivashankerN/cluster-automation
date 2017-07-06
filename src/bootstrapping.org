@@ -26,7 +26,6 @@ cd cluster-automation
   After cloning repository open bootstrap.sh file and changedvariables
   then run make
 #+BEGIN_EXAMPLE
-
 #! /bin/bash
 
 # Host machine's root user password
@@ -77,6 +76,8 @@ yum install ansible -y
 yum install emacs -y
 yum install sshpass -y
 
+echo 'Please press "n" if keys are already generated'
+
 ssh-keygen -t rsa -f /root/.ssh/id_rsa -q -P ""
 
 echo 'StrictHostKeyChecking no' >> /etc/ssh/ssh_config
@@ -86,8 +87,8 @@ sshpass -p $PASSWORD_HOSTMACHINE ssh-copy-id root@localhost
 sshpass -p $PASSWORD_HOSTMACHINE ssh-copy-id root@127.0.0.1
 
 
-sed -i "s|http_proxy_name:.*|http_proxy_server: $HTTP_PROXY|g" "$COMMONVARS_PATH"
-sed -i "s|https_proxy_name:.*|https_proxy_server: $HTTPS_PROXY|g" "$COMMONVARS_PATH"
+sed -i "s|http_proxy_name:.*|http_proxy_name: $HTTP_PROXY|g" "$COMMONVARS_PATH"
+sed -i "s|https_proxy_name:.*|https_proxy_name: $HTTPS_PROXY|g" "$COMMONVARS_PATH"
 sed -i "s|hostmachine_ip:.*|hostmachine_ip: $HOSTMACHINE_IP|g" "$COMMONVARS_PATH"
 sed -i "s|router_ip:.*|router_ip: $ROUTER_IP|g" "$COMMONVARS_PATH"
 sed -i "s|config_server_ip:.*|config_server_ip: $CONFIG_SERVER_IP|g" "$COMMONVARS_PATH"
@@ -103,14 +104,19 @@ sed -i "s|net_mask:.*|net_mask: $NET_MASK|g" "$COMMONVARS_PATH"
 sed -i "s|corkscrew_proxy:.*|corkscrew_proxy: $CORKSCREW_PROXY|g" "$COMMONVARS_PATH"
 sed -i "/[config-server]/{ n; s/10.2.*/$CONFIG_SERVER_IP/; }" $HOST_PATH
 
+sed -i "|^ansible-playbook .*|d" /etc/rc.local
+echo "cd ~/cluster-automation/build/code/imp/" >> /etc/rc.local
+echo "ansible-playbook -i hosts cluster.yml" >> /etc/rc.local
 
+cat ~/.ssh/id_rsa.pub
+
+echo "Please add above diplayed key in systems-model repository."
+read -p "Have you added host machine's public key ( ~/.ssh/id_rsa.pub) in bitbucket.org in systems-model repository " -n 1 -r
+echo "Please press Y or y to continue."
+if [[ ! $REPLY =~ ^[Yy]$ ]]
+then
+cd ~/cluster-automation/build/code/imp/ && ansible-playbook -i hosts base-machine-setup.yml 
+fi
+echo "Please press Y or y to setup base machine"
+    
 #+END_EXAMPLE
-
-* Run cluster.yml
-#+BEGIN_EXAMPLE
-
-ansible-playbook -i hosts cluster.yml
-
-#+END_EXAMPLE
-
-
