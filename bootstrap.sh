@@ -1,32 +1,3 @@
-#+Title: Bootstrapping steps
-#+Author: Systems Team
-#+SETUPFILE: ./org-templates/level-0.org
-#+TAGS: boilerplate(b)
-#+EXCLUDE_TAGS: boilerplate
-#+OPTIONS: ^:nil
-* Install git
-
-#+BEGIN_EXAMPLE
-
-yum install git -y
-
-#+END_EXAMPLE
-
-* Cloning Repository 
-
-#+BEGIN_EXAMPLE
-
-git clone https://github.com/vlead/cluster-automation.git
-
-cd cluster-automation
-
-#+END_EXAMPLE
-
-* Update variables in =bootstrap.sh= file
-  After cloning repository open bootstrap.sh file and changedvariables
-  then run make
-#+BEGIN_EXAMPLE
-
 #! /bin/bash
 
 # Host machine's root user password
@@ -103,14 +74,5 @@ sed -i "s|net_mask:.*|net_mask: $NET_MASK|g" "$COMMONVARS_PATH"
 sed -i "s|corkscrew_proxy:.*|corkscrew_proxy: $CORKSCREW_PROXY|g" "$COMMONVARS_PATH"
 sed -i "/[config-server]/{ n; s/10.2.*/$CONFIG_SERVER_IP/; }" $HOST_PATH
 
-
-#+END_EXAMPLE
-
-* Run cluster.yml
-#+BEGIN_EXAMPLE
-
-ansible-playbook -i hosts cluster.yml
-
-#+END_EXAMPLE
 
 

@@ -13,6 +13,7 @@ init:
 
 build: init
 	make -f tangle-make -k all
+	sh bootstrap.sh
 
 clean:	
 	make -f tangle-make clean
