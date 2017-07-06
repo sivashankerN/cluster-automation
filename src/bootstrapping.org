@@ -24,7 +24,7 @@ cd cluster-automation
 
 * Open shell script and  change some variables
 
-#+BEGIN_EXAMPLE
+#+BEGIN_SRC sh :tangle ../../bootstrap.sh
 
 #! /bin/bash
 
@@ -45,7 +45,7 @@ INTERNET_GATEWAY=
 NET_MASK=
 CORKSCREW_PROXY=
 
-COMMONVARS_PATH=cluster-automation/build/code/imp/roles/common-vars/vars/main.yml
+COMMONVARS_PATH=build/code/imp/roles/common-vars/vars/main.yml
 
 
 sed -i '/proxy=.*/d' /etc/yum.conf
@@ -79,7 +79,7 @@ sed -i "s|net_mask:.*|net_mask: $NET_MASK|g" "$COMMONVARS_PATH"
 sed -i "s|corkscrew_proxy:.*|corkscrew_proxy: $CORKSCREW_PROXY|g" "$COMMONVARS_PATH"
 
 
-#+END_EXAMPLE
+#+END_SRC
 
 * Run cluster.yml
 #+BEGIN_EXAMPLE
