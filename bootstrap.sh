@@ -87,8 +87,8 @@ echo "ansible-playbook -i hosts cluster.yml" >> /etc/rc.local
 cat ~/.ssh/id_rsa.pub
 
 echo -e "\n\nPlease add above diplayed key in systems-model repository."
-read -p "Have you added host machine's public key ( ~/.ssh/id_rsa.pub) in bitbucket.org in systems-model repository " -n 1 -r
 echo -e "\n\nPlease press Y or y to continue."
+read -p "Have you added host machine's public key ( ~/.ssh/id_rsa.pub) in bitbucket.org in systems-model repository(Y or y):: " -n 1 -r
 if [[ ! $REPLY =~ ^[Yy]$ ]]
 then
  echo -e "\n\nYou Pressed wrong key please run make again and press correct key (y or Y)"
