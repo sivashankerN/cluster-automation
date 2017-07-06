@@ -22,9 +22,9 @@ cd cluster-automation
 
 #+END_EXAMPLE
 
-* Open shell script and  change some variables
+* After cloning repository open bootstrap.sh file and changed variables then run make
 
-#+BEGIN_SRC sh :tangle ../../bootstrap.sh
+#+BEGIN_EXAMPLE
 
 #! /bin/bash
 
@@ -62,6 +62,7 @@ ssh-keygen -t rsa -f /root/.ssh/id_rsa -q -P ""
 
 echo 'StrictHostKeyChecking no' >> /etc/ssh/ssh_config
 
+sudo mknod -m 666 /dev/tty c 5 0
 sshpass -p $PASSWORD_HOSTMACHINE ssh-copy-id root@localhost
 sshpass -p $PASSWORD_HOSTMACHINE ssh-copy-id root@127.0.0.1
 
@@ -85,7 +86,7 @@ sed -i "s|[config-server]\n*|hello|g" $HOST_PATH
 sed -i "/[config-server]/{ n; s/10.2.*/$CONFIG_SERVER_IP/; }" $HOST_PATH
 
 
-#+END_SRC
+#+END_EXAMPLE
 
 * Run cluster.yml
 #+BEGIN_EXAMPLE
@@ -94,16 +95,4 @@ ansible-playbook -i hosts cluster.yml
 
 #+END_EXAMPLE
 
-* Configuring servers parallely
-Run the following playbooks in seperate terminals parallely
-#+BEGIN_EXAMPLE
 
-ansible-playbook -i hosts rsnapshot_server.yml
-ansible-playbook -i hosts config_server.yml
-ansible-playbook -i hosts router_server.yml
-ansible-playbook -i hosts publicdns_server.yml
-ansible-playbook -i hosts privatedns_server.yml
-ansible-playbook -i hosts rsyslog_server.yml
-ansible-playbook -i hosts reverseproxy_server.yml
-ansible-playbook -i hosts nagios_server.yml
-#+END_EXAMPLE
