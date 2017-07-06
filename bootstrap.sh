@@ -58,6 +58,8 @@ sudo mknod -m 666 /dev/tty c 5 0
 sshpass -p $PASSWORD_HOSTMACHINE ssh-copy-id root@localhost
 sshpass -p $PASSWORD_HOSTMACHINE ssh-copy-id root@127.0.0.1
 
+## Have a copy of original file
+cp $COMMONVARS_PATH $COMMONVARS_PATH.bkp
 
 sed -i "s|http_proxy_name:.*|http_proxy_name: $HTTP_PROXY|g" "$COMMONVARS_PATH"
 sed -i "s|https_proxy_name:.*|https_proxy_name: $HTTPS_PROXY|g" "$COMMONVARS_PATH"

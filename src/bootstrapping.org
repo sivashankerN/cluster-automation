@@ -86,6 +86,8 @@ sudo mknod -m 666 /dev/tty c 5 0
 sshpass -p $PASSWORD_HOSTMACHINE ssh-copy-id root@localhost
 sshpass -p $PASSWORD_HOSTMACHINE ssh-copy-id root@127.0.0.1
 
+## Have a copy of original file
+cp $COMMONVARS_PATH $COMMONVARS_PATH.bkp
 
 sed -i "s|http_proxy_name:.*|http_proxy_name: $HTTP_PROXY|g" "$COMMONVARS_PATH"
 sed -i "s|https_proxy_name:.*|https_proxy_name: $HTTPS_PROXY|g" "$COMMONVARS_PATH"
@@ -98,7 +100,6 @@ sed -i "s|clustername:.*|clustername: $CLUSTERNAME|g" "$COMMONVARS_PATH"
 sed -i "s|container_root_password:.*|container_root_password: $CONTAINER_ROOT_PASSWORD|g" "$COMMONVARS_PATH"
 sed -i "s|smtp_smart_host:.*|smtp_smart_host: $SMTP_SMART_HOST|g" "$COMMONVARS_PATH"
 sed -i "s|proxy_port:.*|proxy_port: $PROXY_PORT|g" "$COMMONVARS_PATH"
-sed -i "s|subnet:.*|subnet: $SUBNET|g" "$COMMONVARS_PATH"
 sed -i "s|internet_gateway:.*|internet_gateway: $INTERNET_GATEWAY|g" "$COMMONVARS_PATH"
 sed -i "s|net_mask:.*|net_mask: $NET_MASK|g" "$COMMONVARS_PATH"
 sed -i "s|corkscrew_proxy:.*|corkscrew_proxy: $CORKSCREW_PROXY|g" "$COMMONVARS_PATH"
