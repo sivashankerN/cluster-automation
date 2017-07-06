@@ -74,7 +74,6 @@ sed -i "s|clustername:.*|clustername: $CLUSTERNAME|g" "$COMMONVARS_PATH"
 sed -i "s|container_root_password:.*|container_root_password: $CONTAINER_ROOT_PASSWORD|g" "$COMMONVARS_PATH"
 sed -i "s|smtp_smart_host:.*|smtp_smart_host: $SMTP_SMART_HOST|g" "$COMMONVARS_PATH"
 sed -i "s|proxy_port:.*|proxy_port: $PROXY_PORT|g" "$COMMONVARS_PATH"
-sed -i "s|subnet:.*|subnet: $SUBNET|g" "$COMMONVARS_PATH"
 sed -i "s|internet_gateway:.*|internet_gateway: $INTERNET_GATEWAY|g" "$COMMONVARS_PATH"
 sed -i "s|net_mask:.*|net_mask: $NET_MASK|g" "$COMMONVARS_PATH"
 sed -i "s|corkscrew_proxy:.*|corkscrew_proxy: $CORKSCREW_PROXY|g" "$COMMONVARS_PATH"
@@ -88,7 +87,7 @@ cat ~/.ssh/id_rsa.pub
 
 echo -e "\n\nPlease add above diplayed key in systems-model repository."
 echo -e "\n\nPlease press Y or y to continue."
-read -p "Have you added host machine's public key ( ~/.ssh/id_rsa.pub) in bitbucket.org in systems-model repository(Y or y):: " -n 1 -r
+read -p "Have you added host machine's public key ( ~/.ssh/id_rsa.pub) in bitbucket.org in systems-model repository(Y/y):: " -n 1 -r
 if [[ ! $REPLY =~ ^[Yy]$ ]]
 then
  echo -e "\n\nYou Pressed wrong key please run make again and press correct key (y or Y)"
