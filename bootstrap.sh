@@ -57,13 +57,13 @@ sshpass -p $PASSWORD_HOSTMACHINE ssh-copy-id root@localhost
 sshpass -p $PASSWORD_HOSTMACHINE ssh-copy-id root@127.0.0.1
 
 
-sed -i "s|http_proxy:.*|http_proxy: $HTTP_PROXY|g" "$COMMONVARS_PATH"
-sed -i "s|https_proxy:.*|https_proxy: $HTTPS_PROXY|g" "$COMMONVARS_PATH"
+sed -i "s|http_proxy_name:.*|http_proxy_name: $HTTP_PROXY|g" "$COMMONVARS_PATH"
+sed -i "s|https_proxy_name:.*|https_proxy_name: $HTTPS_PROXY|g" "$COMMONVARS_PATH"
 sed -i "s|hostmachine_ip:.*|hostmachine_ip: $HOSTMACHINE_IP|g" "$COMMONVARS_PATH"
 sed -i "s|router_ip:.*|router_ip: $ROUTER_IP|g" "$COMMONVARS_PATH"
 sed -i "s|config_server_ip:.*|config_server_ip: $CONFIG_SERVER_IP|g" "$COMMONVARS_PATH"
-sed -i "s|dns1:.*|dns1: $DNS1|g" "$COMMONVARS_PATH"
-sed -i "s|dns2:.*|dns2: $DNS2|g" "$COMMONVARS_PATH"
+sed -i "s|dns1_server:.*|dns1_server: $DNS1|g" "$COMMONVARS_PATH"
+sed -i "s|dns2_server:.*|dns2_server: $DNS2|g" "$COMMONVARS_PATH"
 sed -i "s|clustername:.*|clustername: $CLUSTERNAME|g" "$COMMONVARS_PATH"
 sed -i "s|container_root_password:.*|container_root_password: $CONTAINER_ROOT_PASSWORD|g" "$COMMONVARS_PATH"
 sed -i "s|smtp_smart_host:.*|smtp_smart_host: $SMTP_SMART_HOST|g" "$COMMONVARS_PATH"
