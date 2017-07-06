@@ -45,21 +45,23 @@ echo "proxy=$HTTP_PROXY" >> /etc/yum.conf
 ## Install required packages
 yum install epel-release -y
 yum install ansible -y
-yum install emacs -y
 yum install sshpass -y
 
-echo 'Please press "n" if keys are already generated'
+echo -e '\n\nPlease press "n" if keys are already generated'
 
 ssh-keygen -t rsa -f /root/.ssh/id_rsa -q -P ""
 
+sed -i '/^StrictHostKey.*/d' /etc/ssh/ssh_config
 echo 'StrictHostKeyChecking no' >> /etc/ssh/ssh_config
 
-sudo mknod -m 666 /dev/tty c 5 0
+
 sshpass -p $PASSWORD_HOSTMACHINE ssh-copy-id root@localhost
 sshpass -p $PASSWORD_HOSTMACHINE ssh-copy-id root@127.0.0.1
 
 ## Have a copy of original file
 cp $COMMONVARS_PATH $COMMONVARS_PATH.bkp
+
+#Updating variables in common-vars of cluster-automation
 
 sed -i "s|http_proxy_name:.*|http_proxy_name: $HTTP_PROXY|g" "$COMMONVARS_PATH"
 sed -i "s|https_proxy_name:.*|https_proxy_name: $HTTPS_PROXY|g" "$COMMONVARS_PATH"
@@ -84,12 +86,12 @@ echo "ansible-playbook -i hosts cluster.yml" >> /etc/rc.local
 
 cat ~/.ssh/id_rsa.pub
 
-echo "Please add above diplayed key in systems-model repository."
+echo -e "\n\nPlease add above diplayed key in systems-model repository."
 read -p "Have you added host machine's public key ( ~/.ssh/id_rsa.pub) in bitbucket.org in systems-model repository " -n 1 -r
-echo "Please press Y or y to continue."
+echo -e "\n\nPlease press Y or y to continue."
 if [[ ! $REPLY =~ ^[Yy]$ ]]
 then
- echo "You Pressed wrong key please run make again and press correct key (y or Y)"
+ echo -e "\n\nYou Pressed wrong key please run make again and press correct key (y or Y)"
 else
  cd ~/cluster-automation/build/code/imp/ && ansible-playbook -i hosts base-machine-setup.yml 
 fi     
