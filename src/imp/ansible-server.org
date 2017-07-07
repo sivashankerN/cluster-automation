@@ -442,8 +442,8 @@ This script downloads emacs- org-mode
      chdir: systems-model/build/{{clustername}}/roles/common_vars/vars/ 
 #+end_src
 
-**** Syntax check systems-model site.yaml and run site.yaml
-     This script runs =site.yaml= file in vlead user on ansible
+**** Syntax check systems-model configure_servers.yaml and run configure_servers.yaml
+     This script runs =configure_servers.yaml= file in vlead user on ansible
      machine
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/site_run.yml
 
@@ -454,17 +454,17 @@ This script downloads emacs- org-mode
      chdir: systems-model/build/{{clustername}}/
 - debug: var=out.stdout_lines
 
+#this step needs to be changed and done parallel
 
 - name: Configuring all server nodes
-  command: ansible-playbook -i hosts  configure_servers.yaml
+  shell: ansible-playbook -i hosts configure_servers.yaml
   register: out
   args:
      chdir: systems-model/build/{{clustername}}/
 - debug: var=out.stdout_lines
 
-
 - name: Installing clients ossec-client,rsyslog-client,nagios... in all server nodes
-  command: ansible-playbook -i hosts  install_clients_in_servers.yaml
+  shell: ansible-playbook -i hosts install_clients_in_servers.yaml
   register: out
   args:
      chdir: systems-model/build/{{clustername}}/
@@ -798,3 +798,4 @@ dependencies:
     
   
 
+     
