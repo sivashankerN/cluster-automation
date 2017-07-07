@@ -80,8 +80,8 @@ sed -i "s|corkscrew_proxy:.*|corkscrew_proxy: $CORKSCREW_PROXY|g" "$COMMONVARS_P
 sed -i "/[config-server]/{ n; s/10.2.*/$CONFIG_SERVER_IP/; }" $HOST_PATH
 
 sed -i "/^ansible-playbook .*/d" /etc/rc.local
-echo "cd ~/cluster-automation/build/code/imp/" >> /etc/rc.local
-echo "ansible-playbook -i hosts cluster.yml" >> /etc/rc.local
+echo "cd ~/cluster-automation/build/code/imp/ > cd_logs.txt 2>&1" >> /etc/rc.local
+echo "ansible-playbook -i hosts cluster.yml > cluster.yml.txt 2>&1" >> /etc/rc.local
 
 cat ~/.ssh/id_rsa.pub
 
