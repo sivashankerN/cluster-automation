@@ -114,28 +114,6 @@
 
 #+END_SRC
 
-*** Generate SSH-Keys on Host machine
-     Generates ssh-keys in host machine and modifies =ssh_Config= file
-     to change =stricthostkeychecking= to =no=. 
-     
-     Public key of the host machine is required
- 
-     1. for running ansible-playbooks on localhost 
-     2. to run playbooks on config-server.
-     3. To clone systems-model repo from bitbucket.org
-
-     
-#+BEGIN_SRC yml :tangle roles/basesetup/tasks/ssh-keys.yml
----
-- name: ssh-key generate
-  user: name=root generate_ssh_key=yes
-
-- name: Strict host check no
-  lineinfile: path=/etc/ssh/ssh_config regexp="^Strict.*" line="StrictHostKeyChecking no" state=present
-  notify: restart_ssh
-
-#+END_SRC
-
 *** Install corkscrew
     Install corkscrew and its dependencies. Corckscrew is needed when
     network blocks outgoing =ssh= port over =the http_proxy=.
@@ -239,16 +217,6 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
 
 #+END_SRC
 
-*** Handlers 
-    Handlers comes into play when there is a notify statement in any of the task
-    files.
-
-#+BEGIN_SRC yml :tangle roles/basesetup/handlers/main.yml
-- name: restart_ssh
-  service: name=sshd state=restarted
-
-#+END_SRC
-
 *** Include all tasks files 
     The following playbook contains included task files. These include
     files that are already described above.This playbooks sets up base machine. 
@@ -258,7 +226,6 @@ ProxyCommand corkscrew {{corkscrew_proxy}} {{proxy_port}} %h %p
 - include: eth0.yml
 - include: br0.yml
 - include: br1.yml
-- include: ssh-keys.yml
 - include: corkscrew_installation.yml
 
 #+End_SRC

@@ -53,7 +53,7 @@ ssh-keygen -t rsa -f /root/.ssh/id_rsa -q -P ""
 
 sed -i '/^StrictHostKey.*/d' /etc/ssh/ssh_config
 echo 'StrictHostKeyChecking no' >> /etc/ssh/ssh_config
-
+service sshd restart
 
 sshpass -p $PASSWORD_HOSTMACHINE ssh-copy-id root@localhost
 sshpass -p $PASSWORD_HOSTMACHINE ssh-copy-id root@127.0.0.1
