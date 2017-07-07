@@ -458,7 +458,7 @@ This script downloads emacs- org-mode
 #this step needs to be changed and done parallel
 
 - name: Configuring all server nodes
-  shell: ansible-playbook -i hosts rsnapshot_server.yaml & ansible-playbook -i hosts config_server.yaml & ansible-playbook -i hosts router.yaml & ansible-playbook -i hosts public_dns.yaml & ansible-playbook -i hosts private_dns.yaml & ansible-playbook -i hosts rsyslog_server.yaml & ansible-playbook -i hosts reverseproxy_server.yaml & ansible-playbook -i hosts nagios_server.yaml && sudo iptables -F
+  shell: ansible-playbook -i hosts public_dns.yaml & ansible-playbook -i hosts private_dns.yaml & ansible-playbook -i hosts router.yaml & ansible-playbook -i hosts config_server.yaml & ansible-playbook -i hosts rsnapshot_server.yaml  &  & ansible-playbook -i hosts rsyslog_server.yaml & ansible-playbook -i hosts reverseproxy_server.yaml & ansible-playbook -i hosts nagios_server.yaml && sudo iptables -F
   register: out
   args:
      chdir: systems-model/build/{{clustername}}/
@@ -470,7 +470,6 @@ This script downloads emacs- org-mode
   args:
      chdir: systems-model/build/{{clustername}}/
 - debug: var=out.stdout_lines
-
 
 #+end_src
 **** Update cluster DNS ips in common-vars
