@@ -79,9 +79,12 @@ sed -i "s|net_mask:.*|net_mask: $NET_MASK|g" "$COMMONVARS_PATH"
 sed -i "s|corkscrew_proxy:.*|corkscrew_proxy: $CORKSCREW_PROXY|g" "$COMMONVARS_PATH"
 sed -i "/[config-server]/{ n; s/10.2.*/$CONFIG_SERVER_IP/; }" $HOST_PATH
 
-sed -i "/^ansible-playbook .*/d" /etc/rc.d/rc.local
-echo "cd ~/cluster-automation/build/code/imp/ > cd_logs.txt 2>&1" >> /etc/rc.d/rc.local
-echo "ansible-playbook -i hosts cluster.yml > cluster.yml.txt 2>&1" >> /etc/rc.d/rc.local
+RC_LOCAL=/etc/rc.d/rc.local
+
+echo "cd ~/cluster-automation/build/code/imp/ > cd_logs.txt 2>&1" >> $RC_LOCAL
+echo "ansible-playbook -i hosts cluster.yml > cluster.yml.txt 2>&1" >> $RC_LOCAL
+echo 'sed -i "/ansible-playbook.*/d" '$RC_LOCAL'' >> $RC_LOCAL
+echo 'sed -i "/cluster-automation.*/d" '$RC_LOCAL'' >> $RC_LOCAL
 
 cat ~/.ssh/id_rsa.pub
 
