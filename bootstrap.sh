@@ -14,8 +14,8 @@ HTTPS_PROXY="http://proxy.iiit.ac.in:8080"
 HOSTMACHINE_IP=10.4.59.220
 ROUTER_IP=10.4.59.221
 CONFIG_SERVER_IP=10.4.59.222
-DNS1=10.4.20.204
-DNS2=10.4.20.220
+DNS1=10.4.12.160
+DNS2=10.4.12.220
 INTERNET_GATEWAY=10.2.56.1
 NET_MASK=255.255.252.0
 
@@ -23,7 +23,7 @@ NET_MASK=255.255.252.0
 CONTAINER_ROOT_PASSWORD=rootpassword
 
 ## Set name of the cluster
-CLUSTERNAME=base10
+CLUSTERNAME=base8
 
 ## Server name through which mails will be delivered to specified email address in /etc/mail/sendmail.mc. 
 #Each cluster container will be sending mails through this server
@@ -79,9 +79,12 @@ sed -i "s|net_mask:.*|net_mask: $NET_MASK|g" "$COMMONVARS_PATH"
 sed -i "s|corkscrew_proxy:.*|corkscrew_proxy: $CORKSCREW_PROXY|g" "$COMMONVARS_PATH"
 sed -i "/[config-server]/{ n; s/10.2.*/$CONFIG_SERVER_IP/; }" $HOST_PATH
 
-sed -i "/^ansible-playbook .*/d" /etc/rc.d/rc.local
-echo "cd ~/cluster-automation/build/code/imp/ > cd_logs.txt 2>&1" >> /etc/rc.d/rc.local
-echo "ansible-playbook -i hosts cluster.yml > cluster.yml.txt 2>&1" >> /etc/rc.d/rc.local
+RC_LOCAL=/etc/rc.d/rc.local
+
+echo "cd ~/cluster-automation/build/code/imp/ > cd_logs.txt 2>&1" >> $RC_LOCAL
+echo "ansible-playbook -i hosts cluster.yml > cluster.yml.txt 2>&1" >> $RC_LOCAL
+echo 'sed -i "/ansible-playbook.*/d" '$RC_LOCAL'' >> $RC_LOCAL
+echo 'sed -i "/cluster-automation.*/d" '$RC_LOCAL'' >> $RC_LOCAL
 
 cat ~/.ssh/id_rsa.pub
 
@@ -93,5 +96,4 @@ then
  echo -e "\n\nYou Pressed wrong key please run make again and press correct key (y or Y)"
 else
  cd ~/cluster-automation/build/code/imp/ && ansible-playbook -i hosts base-machine-setup.yml 
-fi     
-    
+fi 
